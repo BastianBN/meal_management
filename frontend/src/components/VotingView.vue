@@ -120,6 +120,11 @@ async function handleVoteSubmit() {
     });
 
     localStorage.setItem(`meal_voter_${props.session.id}`, name);
+    localStorage.setItem(`meal_choices_${props.session.id}`, JSON.stringify({
+      first: firstChoiceName.value,
+      second: secondChoiceName.value,
+      third: thirdChoiceName.value,
+    }));
     emit('voteSubmitted', { leaderboard, voterName: name });
   } catch (err) {
     errorMessage.value = err.message || "Erreur lors de l'enregistrement de votre vote.";
