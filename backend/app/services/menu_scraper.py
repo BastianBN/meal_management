@@ -17,75 +17,111 @@ HEADERS = {
 # Mots-clés pour repérer les liens de menu dans les balises <a>
 MENU_LINK_KEYWORDS = [
     "carte", "menu", "formule", "dejeuner", "midi", "ardoise", "tarifs", 
-    "lunch", "food", "plats", "specialites"
+    "lunch", "food", "plats", "specialites", "notre-carte", "la-carte", "les-menus"
 ]
 
-# Domaines d'annuaires à ignorer lors de la recherche du site officiel
+# Domaines d'annuaires ou réseaux sociaux à ignorer pour trouver le site officiel
 EXCLUDED_DOMAINS = {
     "tripadvisor.fr", "tripadvisor.com", "thefork.fr", "thefork.com", "lafourchette.com",
     "pagesjaunes.fr", "yelp.fr", "yelp.com", "ubereats.com", "deliveroo.fr", 
-    "just-eat.fr", "facebook.com", "instagram.com", "linternaute.com", "mapstr.com"
+    "just-eat.fr", "facebook.com", "instagram.com", "linternaute.com", "mapstr.com",
+    "societe.com", "infogreffe.fr", "lefigaro.fr", "actu.fr", "wikipedia.org", "google.com"
 }
+
+
+def build_google_maps_url(name: str, address: Optional[str] = None) -> str:
+    """Construit un lien direct vers la fiche Google Maps / Google Card du restaurant."""
+    query_parts = [name]
+    if address:
+        query_parts.append(address)
+    query_str = " ".join(query_parts)
+    encoded = urllib.parse.quote_plus(query_str)
+    return f"https://www.google.com/maps/search/?api=1&query={encoded}"
+
+
+async def is_url_alive(url: str, timeout: float = 4.0) -> bool:
+    """Vérifie si une URL est active et accessible (statut HTTP < 400)."""
+    if not url or not url.startswith("http"):
+        return False
+    try:
+        async with httpx.AsyncClient(headers=HEADERS, timeout=timeout, follow_redirects=True, verify=False) as client:
+            resp = await client.get(url)
+            return resp.status_code < 400
+    except Exception:
+        return False
 
 
 async def search_restaurant_website(name: str, city_or_address: Optional[str] = None) -> Optional[str]:
     """
-    Recherche le site officiel du restaurant sur le web en cas d'absence d'URL dans OpenStreetMap.
-    Utilise le moteur DuckDuckGo HTML sans clé d'API.
+    Recherche le site officiel du restaurant en cas d'absence d'URL ou d'URL morte dans OpenStreetMap.
+    Extrait les liens réels de DuckDuckGo avec décodage des redirections uddg.
     """
-    query_parts = ["restaurant", f'"{name}"']
+    clean_name = re.sub(r"[^\w\s-]", " ", name).strip()
+    query_parts = ["restaurant", f'"{clean_name}"']
     if city_or_address:
-        query_parts.append(city_or_address)
+        # Extraire la ville ou un extrait court
+        city_match = re.search(r"\b(\d{5}\s+[\w\s-]+|[A-Z][a-zéèêàïç\-]+)\b", city_or_address)
+        if city_match:
+            query_parts.append(city_match.group(0))
+        else:
+            query_parts.append(city_or_address[:30])
     query = " ".join(query_parts)
 
     url = "https://html.duckduckgo.com/html/"
     params = {"q": query}
 
     try:
-        async with httpx.AsyncClient(headers=HEADERS, timeout=8.0, follow_redirects=True) as client:
+        async with httpx.AsyncClient(headers=HEADERS, timeout=6.0, follow_redirects=True) as client:
             resp = await client.post(url, data=params)
             if resp.status_code != 200:
                 return None
 
             soup = BeautifulSoup(resp.text, "html.parser")
-            results = soup.select(".result__url")
             
-            for res in results:
-                raw_link = res.get_text(strip=True)
-                if not raw_link.startswith("http"):
-                    raw_link = "https://" + raw_link
-                
-                parsed = urllib.parse.urlparse(raw_link)
-                domain = parsed.netloc.lower()
-                
-                # Vérifie que le domaine n'est pas un annuaire générique
-                if not any(excluded in domain for excluded in EXCLUDED_DOMAINS):
-                    return f"{parsed.scheme}://{parsed.netloc}"
+            # Liens de résultats DuckDuckGo
+            links = soup.select(".result__body a.result__url, .result__body h2 a.result__snippet")
+            for link in links:
+                href = link.get("href", "")
+                actual_url = None
+
+                # Décoder le redirect DuckDuckGo uddg
+                if "uddg=" in href:
+                    parsed_qs = urllib.parse.parse_qs(urllib.parse.urlparse(href).query)
+                    candidate = parsed_qs.get("uddg", [None])[0]
+                    if candidate:
+                        actual_url = candidate
+                elif href.startswith("http"):
+                    actual_url = href
+
+                if actual_url:
+                    parsed = urllib.parse.urlparse(actual_url)
+                    domain = parsed.netloc.lower()
+                    if not any(ex in domain for ex in EXCLUDED_DOMAINS):
+                        clean_url = f"{parsed.scheme}://{parsed.netloc}"
+                        if await is_url_alive(clean_url):
+                            return clean_url
 
     except Exception as exc:
-        logger.debug(f"Erreur recherche web site pour '{name}': {exc}")
+        logger.debug(f"Recherche DuckDuckGo pour '{name}': {exc}")
     
     return None
 
 
 def extract_french_lunch_formulas(text: str) -> List[Dict[str, str]]:
     """
-    Analyse le texte brut d'une page web pour identifier les formules midi
-    (ex: Plat du jour, Entrée + Plat, Formule Midi, Tarifs en €).
+    Analyse le texte pour identifier les formules midi, plats du jour et tarifs en euros.
     """
     formulas = []
     lines = [line.strip() for line in text.split("\n") if line.strip()]
 
-    # Regex pour capter les prix en euros (ex: 14.50€, 16 €, 18,90 EUR)
     price_regex = re.compile(r"(\d{1,2}(?:[.,]\d{2})?)\s*(?:€|EUR|euros?)", re.IGNORECASE)
 
-    # Motifs caractéristiques de formules déjeuners françaises
     formula_patterns = [
-        re.compile(r"(formule\s+midi|formule\s+déjeuner|menu\s+du\s+midi|menu\s+déjeuner)", re.IGNORECASE),
-        re.compile(r"(plat\s+du\s+jour|plat\s+du\s+midi)", re.IGNORECASE),
+        re.compile(r"(formule\s+midi|formule\s+déjeuner|menu\s+du\s+midi|menu\s+déjeuner|menu\s+du\s+jour)", re.IGNORECASE),
+        re.compile(r"(plat\s+du\s+jour|plat\s+du\s+midi|suggestion\s+du\s+jour)", re.IGNORECASE),
         re.compile(r"(entrée\s*\+\s*plat\s*\+\s*dessert)", re.IGNORECASE),
         re.compile(r"(entrée\s*\+\s*plat|plat\s*\+\s*dessert)", re.IGNORECASE),
-        re.compile(r"(menu\s+du\s+jour|formule\s+express)", re.IGNORECASE),
+        re.compile(r"(formule\s+express|menu\s+express|menu\s+bistrot)", re.IGNORECASE),
     ]
 
     for i, line in enumerate(lines):
@@ -93,17 +129,15 @@ def extract_french_lunch_formulas(text: str) -> List[Dict[str, str]]:
             match = pattern.search(line)
             if match:
                 title = match.group(0).capitalize()
-                
-                # Chercher le prix sur la ligne ou les 2 lignes suivantes
                 price = None
                 description_parts = []
                 
-                # Chercher sur la ligne courante
+                # Chercher le prix sur la même ligne
                 price_match = price_regex.search(line)
                 if price_match:
                     price = f"{price_match.group(1).replace('.', ',')} €"
                 
-                # Regarder les lignes adjacentes (souvent le tarif est en dessous)
+                # Chercher dans les 3 lignes suivantes
                 for next_idx in range(i + 1, min(i + 4, len(lines))):
                     next_line = lines[next_idx]
                     if not price:
@@ -111,12 +145,11 @@ def extract_french_lunch_formulas(text: str) -> List[Dict[str, str]]:
                         if next_price_match:
                             price = f"{next_price_match.group(1).replace('.', ',')} €"
                             continue
-                    if len(next_line) < 80 and not any(p.search(next_line) for p in formula_patterns):
+                    if len(next_line) < 90 and not any(p.search(next_line) for p in formula_patterns):
                         description_parts.append(next_line)
 
                 desc = " • ".join(description_parts[:2]) if description_parts else None
 
-                # Éviter les doublons
                 if not any(f["name"].lower() == title.lower() for f in formulas):
                     formulas.append({
                         "name": title,
@@ -128,81 +161,113 @@ def extract_french_lunch_formulas(text: str) -> List[Dict[str, str]]:
     return formulas[:4]
 
 
+def extract_fallback_dishes(soup: BeautifulSoup) -> Optional[str]:
+    """Extrait des suggestions de plats ou sections de carte quand aucune formule formelle n'est détectée."""
+    dishes = []
+    # Chercher des éléments de liste ou paragraphes courts contenant des noms de plats
+    for el in soup.find_all(["li", "p", "h3", "h4"]):
+        t = el.get_text(strip=True)
+        if 15 < len(t) < 70 and not any(k in t.lower() for k in ["cookie", "politique", "mentions", "copyright", "tous droits"]):
+            dishes.append(t)
+            if len(dishes) >= 3:
+                break
+    
+    if dishes:
+        return "À la carte : " + " • ".join(dishes)
+    return "Carte et suggestions du chef disponibles sur place."
+
+
 async def scrape_restaurant_menu(
     name: str, 
     website_url: Optional[str] = None, 
     city_or_address: Optional[str] = None
-) -> Tuple[Optional[str], Optional[str], Optional[str], List[Dict[str, str]]]:
+) -> Tuple[Optional[str], Optional[str], Optional[str], List[Dict[str, str]], str]:
     """
-    Explore le site web du restaurant, localise la page carte/menu,
-    extrait les formules du midi et produit un résumé lisible.
-    Retourne (website_url, menu_url, menu_summary, lunch_formulas).
+    Explore le site web du restaurant, localise la page carte/menu (ou PDF),
+    extrait les formules et renvoie l'URL Google Maps garantie.
+    Retourne (website_url, menu_url, menu_summary, lunch_formulas, google_maps_url).
     """
-    # 1. Découverte de l'URL si absente
+    google_maps_url = build_google_maps_url(name, city_or_address)
+
+    # 1. Vérifier si l'URL existante est bien vivante
+    if website_url:
+        alive = await is_url_alive(website_url)
+        if not alive:
+            logger.info(f"Lien OSM mort pour {name} ({website_url}), tentative de recherche web...")
+            website_url = None
+
+    # 2. Découverte de l'URL si manquante ou morte
     if not website_url:
         website_url = await search_restaurant_website(name, city_or_address)
 
     if not website_url:
-        return None, None, "Menu consultable directement sur place.", []
+        return None, None, "Carte et formules du midi consultables sur place ou sur la fiche Google.", [], google_maps_url
 
     menu_url = None
     menu_summary = None
     lunch_formulas = []
 
     try:
-        async with httpx.AsyncClient(headers=HEADERS, timeout=8.0, follow_redirects=True, verify=False) as client:
+        async with httpx.AsyncClient(headers=HEADERS, timeout=7.0, follow_redirects=True, verify=False) as client:
             resp = await client.get(website_url)
-            if resp.status_code != 200:
-                return website_url, None, "Site web accessible. Carte du midi disponible au restaurant.", []
+            if resp.status_code >= 400:
+                return None, None, "Carte consultable au restaurant et sur Google.", [], google_maps_url
 
             soup = BeautifulSoup(resp.text, "html.parser")
 
-            # Retirer scripts, styles, svg
-            for tag in soup(["script", "style", "svg", "noscript", "footer", "nav"]):
-                tag.decompose()
+            # 3. Chercher un lien direct vers un PDF ou vers la page Menu / Carte
+            pdf_link = None
+            html_menu_link = None
 
-            # 2. Chercher un lien vers la page Menu / Carte
             for a_tag in soup.find_all("a", href=True):
                 href = a_tag["href"].strip()
                 link_text = a_tag.get_text(separator=" ", strip=True).lower()
                 href_lower = href.lower()
 
-                if any(kw in link_text or kw in href_lower for kw in MENU_LINK_KEYWORDS):
-                    # Résoudre URL absolue
-                    menu_url = urllib.parse.urljoin(website_url, href)
-                    break
+                # Détection PDF
+                if href_lower.endswith(".pdf") or ".pdf?" in href_lower:
+                    if any(kw in link_text or kw in href_lower for kw in MENU_LINK_KEYWORDS):
+                        pdf_link = urllib.parse.urljoin(website_url, href)
+                        break
 
-            # 3. Récupérer le contenu de la page Menu (ou de la page d'accueil si pas de sous-page)
-            target_url = menu_url if menu_url else website_url
-            if menu_url and menu_url != website_url:
+                # Détection page HTML de menu
+                if not html_menu_link and any(kw in link_text or kw in href_lower for kw in MENU_LINK_KEYWORDS):
+                    html_menu_link = urllib.parse.urljoin(website_url, href)
+
+            if pdf_link and await is_url_alive(pdf_link):
+                menu_url = pdf_link
+            elif html_menu_link and await is_url_alive(html_menu_link):
+                menu_url = html_menu_link
+
+            # 4. Récupérer le contenu de la page Menu pour analyse
+            target_url = menu_url if (menu_url and not menu_url.endswith(".pdf")) else website_url
+            if menu_url and menu_url != website_url and not menu_url.endswith(".pdf"):
                 try:
                     menu_resp = await client.get(menu_url)
                     if menu_resp.status_code == 200:
                         soup = BeautifulSoup(menu_resp.text, "html.parser")
-                        for tag in soup(["script", "style", "svg", "noscript"]):
-                            tag.decompose()
                 except Exception:
                     pass
 
+            for tag in soup(["script", "style", "svg", "noscript", "footer", "nav"]):
+                tag.decompose()
+
             page_text = soup.get_text(separator="\n", strip=True)
 
-            # 4. Extraire les formules midi spécifiques
+            # 5. Extraction des formules midi
             lunch_formulas = extract_french_lunch_formulas(page_text)
 
-            # 5. Créer un résumé concis
+            # 6. Résumé
             if lunch_formulas:
                 items_str = ", ".join([f"{f['name']} ({f['price']})" for f in lunch_formulas])
                 menu_summary = f"Formules repérées : {items_str}"
+            elif menu_url and menu_url.endswith(".pdf"):
+                menu_summary = "Carte complète du midi disponible en téléchargement PDF."
             else:
-                # Extraire quelques lignes parlantes ou plats
-                short_lines = [l for l in page_text.split("\n") if 15 < len(l) < 90 and not l.startswith("http")]
-                if short_lines:
-                    menu_summary = "Extraits de la carte : " + " • ".join(short_lines[:3])
-                else:
-                    menu_summary = "Carte et suggestions du chef disponibles sur le site et sur place."
+                menu_summary = extract_fallback_dishes(soup)
 
     except Exception as exc:
         logger.debug(f"Erreur scraping pour {name} ({website_url}): {exc}")
-        menu_summary = "Site en ligne. Carte du jour disponible au restaurant."
+        menu_summary = "Carte et formules du midi disponibles sur place."
 
-    return website_url, menu_url, menu_summary, lunch_formulas
+    return website_url, menu_url, menu_summary, lunch_formulas, google_maps_url

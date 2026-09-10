@@ -19,6 +19,7 @@ class RestaurantBase(BaseModel):
     longitude: Optional[float] = None
     website_url: Optional[str] = None
     menu_url: Optional[str] = None
+    google_maps_url: Optional[str] = None
     menu_summary: Optional[str] = None
     lunch_formulas: List[Any] = []
 
@@ -74,6 +75,8 @@ class LeaderboardItem(BaseModel):
     distance_meters: int = 0
     walking_time_min: int = 0
     website_url: Optional[str] = None
+    menu_url: Optional[str] = None
+    google_maps_url: Optional[str] = None
     points: int = 0
     first_votes: int = 0
     second_votes: int = 0

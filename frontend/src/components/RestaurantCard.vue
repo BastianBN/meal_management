@@ -1,6 +1,6 @@
 <script setup>
 import { computed } from 'vue';
-import { ExternalLink, Footprints, UtensilsCrossed, Check } from 'lucide-vue-next';
+import { ExternalLink, Footprints, Check, MapPin, FileText } from 'lucide-vue-next';
 
 const props = defineProps({
   restaurant: {
@@ -23,6 +23,13 @@ const hasFormulas = computed(() => {
   return props.restaurant.lunch_formulas && props.restaurant.lunch_formulas.length > 0;
 });
 
+const isPdfMenu = computed(() => {
+  return props.restaurant.menu_url && (
+    props.restaurant.menu_url.toLowerCase().endsWith('.pdf') || 
+    props.restaurant.menu_url.includes('.pdf?')
+  );
+});
+
 function handleRankClick(rank) {
   if (props.disabled) return;
   emit('toggleRank', { restaurantId: props.restaurant.id, rank });
@@ -33,18 +40,32 @@ function handleRankClick(rank) {
   <div 
     :class="[
       'rounded-2xl border p-5 sm:p-6 transition-all duration-200 bg-white relative flex flex-col justify-between',
-      currentRank === 1 ? 'border-amber-500 ring-2 ring-amber-500/20 shadow-md bg-amber-50/10' :
-      currentRank === 2 ? 'border-slate-400 ring-2 ring-slate-400/20 shadow-sm' :
-      currentRank === 3 ? 'border-amber-700/60 ring-2 ring-amber-700/10 shadow-sm' :
+      currentRank === 1 ? 'border-amber-500 ring-2 ring-amber-500/20 shadow-md bg-amber-50/15' :
+      currentRank === 2 ? 'border-slate-500 ring-2 ring-slate-500/20 shadow-sm bg-slate-50/20' :
+      currentRank === 3 ? 'border-amber-800 ring-2 ring-amber-800/15 shadow-sm bg-amber-900/5' :
       'border-slate-200 hover:border-slate-300 shadow-xs'
     ]"
   >
+    <!-- Badge de choix actif sur la carte -->
+    <div 
+      v-if="currentRank"
+      :class="[
+        currentRank === 1 ? 'bg-amber-500 text-white' :
+        currentRank === 2 ? 'bg-slate-700 text-white' :
+        'bg-amber-900 text-white',
+        'absolute -top-3 right-5 px-3 py-0.5 rounded-full text-xs font-bold shadow-xs flex items-center gap-1.5'
+      ]"
+    >
+      <Check class="w-3.5 h-3.5" />
+      <span>{{ currentRank === 1 ? '1er Choix (+3 pts)' : currentRank === 2 ? '2e Choix (+2 pts)' : '3e Choix (+1 pt)' }}</span>
+    </div>
+
     <!-- En-tête : Nom, Cuisine, Distance -->
     <div>
       <div class="flex items-start justify-between gap-3 mb-2">
         <div>
           <span class="inline-block text-xs font-semibold px-2.5 py-0.5 rounded-full bg-slate-100 text-slate-700 mb-1.5">
-            {{ restaurant.cuisine || 'Restaurant' }}
+            {{ restaurant.cuisine || 'Bistrot' }}
           </span>
           <h3 class="text-lg font-bold text-slate-900 leading-tight">
             {{ restaurant.name }}
@@ -52,7 +73,7 @@ function handleRankClick(rank) {
         </div>
 
         <!-- Badge temps de marche -->
-        <div class="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-emerald-50 text-emerald-800 border border-emerald-200/60 text-xs font-medium shrink-0">
+        <div class="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-emerald-50 text-emerald-800 border border-emerald-200/60 text-xs font-semibold shrink-0">
           <Footprints class="w-3.5 h-3.5 text-emerald-600" />
           <span>{{ restaurant.walking_time_min }} min</span>
           <span class="text-emerald-400">•</span>
@@ -65,46 +86,67 @@ function handleRankClick(rank) {
       </p>
 
       <!-- Formules du midi extraites -->
-      <div class="mt-3 mb-4">
+      <div class="mt-2 mb-4">
         <div v-if="hasFormulas" class="space-y-2">
           <div 
             v-for="(f, idx) in restaurant.lunch_formulas" 
             :key="idx"
-            class="p-2.5 rounded-xl bg-slate-50 border border-slate-200/80 text-xs"
+            class="p-2.5 rounded-xl bg-amber-50/40 border border-amber-200/60 text-xs"
           >
-            <div class="flex items-center justify-between gap-2 font-semibold text-slate-900">
-              <span>{{ f.name }}</span>
-              <span class="text-brand-700 font-bold shrink-0">{{ f.price }}</span>
+            <div class="flex items-center justify-between gap-2 font-bold text-slate-900">
+              <span class="text-slate-800">{{ f.name }}</span>
+              <span class="text-orange-700 font-extrabold shrink-0 bg-white px-2 py-0.5 rounded-md border border-amber-200/80">{{ f.price }}</span>
             </div>
-            <p v-if="f.description" class="text-slate-600 mt-0.5 text-[11px] leading-relaxed">
+            <p v-if="f.description" class="text-slate-600 mt-1 text-[11px] leading-relaxed">
               {{ f.description }}
             </p>
           </div>
         </div>
 
-        <div v-else-if="restaurant.menu_summary" class="p-3 rounded-xl bg-slate-50 border border-slate-200/70 text-xs text-slate-700 italic">
+        <div v-else-if="restaurant.menu_summary" class="p-3 rounded-xl bg-slate-50 border border-slate-200/80 text-xs text-slate-700">
           {{ restaurant.menu_summary }}
         </div>
       </div>
     </div>
 
-    <!-- Pied de carte : Lien externe & Sélecteur de rang -->
+    <!-- Pied de carte : Liens & Sélecteur de rang -->
     <div class="pt-3 border-t border-slate-100 flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
-      <!-- Lien site web officiel si disponible -->
-      <div>
+      <!-- Liens externes (Site officiel & Fiche Google) -->
+      <div class="flex flex-wrap items-center gap-3 text-xs">
         <a 
-          v-if="restaurant.website_url || restaurant.menu_url"
-          :href="restaurant.menu_url || restaurant.website_url"
+          v-if="restaurant.website_url"
+          :href="restaurant.website_url"
           target="_blank"
           rel="noopener noreferrer"
-          class="inline-flex items-center gap-1 text-xs font-medium text-slate-600 hover:text-brand-600 transition"
+          class="inline-flex items-center gap-1 font-semibold text-orange-700 hover:text-orange-800 hover:underline transition"
         >
-          <span>Consulter le site / carte</span>
+          <span>Site officiel</span>
           <ExternalLink class="w-3 h-3" />
         </a>
-        <span v-else class="text-xs text-slate-400 italic">
-          Carte sur place
-        </span>
+
+        <a 
+          v-if="restaurant.menu_url"
+          :href="restaurant.menu_url"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="inline-flex items-center gap-1 font-semibold text-emerald-700 hover:text-emerald-800 hover:underline transition"
+        >
+          <FileText v-if="isPdfMenu" class="w-3 h-3" />
+          <ExternalLink v-else class="w-3 h-3" />
+          <span>{{ isPdfMenu ? 'Carte (PDF)' : 'Carte en ligne' }}</span>
+        </a>
+
+        <a 
+          v-if="restaurant.google_maps_url"
+          :href="restaurant.google_maps_url"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="inline-flex items-center gap-1 font-medium text-blue-600 hover:text-blue-800 hover:underline transition"
+          title="Consulter la fiche Google Maps avec avis et photos des plats"
+        >
+          <MapPin class="w-3 h-3 text-blue-500" />
+          <span>Fiche Google & Avis</span>
+        </a>
       </div>
 
       <!-- Boutons de classement (1er, 2e, 3e choix) -->
@@ -115,13 +157,13 @@ function handleRankClick(rank) {
           @click="handleRankClick(1)"
           :class="[
             currentRank === 1 
-              ? 'bg-amber-500 text-white font-bold ring-2 ring-amber-500/40 shadow-xs' 
-              : 'bg-slate-100 hover:bg-slate-200 text-slate-700',
-            'flex-1 sm:flex-none px-3 py-1.5 rounded-lg text-xs font-medium transition btn-interaction flex items-center justify-center gap-1 cursor-pointer'
+              ? 'bg-amber-500 text-white font-bold ring-2 ring-amber-400 shadow-sm border border-amber-600' 
+              : 'bg-white hover:bg-amber-50 text-slate-800 border-2 border-slate-200 hover:border-amber-400',
+            'flex-1 sm:flex-none px-3.5 py-2 rounded-xl text-xs font-bold transition btn-interaction flex items-center justify-center gap-1 cursor-pointer'
           ]"
           title="1er Choix (attribue 3 points)"
         >
-          <Check v-if="currentRank === 1" class="w-3.5 h-3.5" />
+          <Check v-if="currentRank === 1" class="w-3.5 h-3.5 stroke-[3]" />
           <span>1er (3 pts)</span>
         </button>
 
@@ -131,13 +173,13 @@ function handleRankClick(rank) {
           @click="handleRankClick(2)"
           :class="[
             currentRank === 2 
-              ? 'bg-slate-700 text-white font-bold ring-2 ring-slate-700/40 shadow-xs' 
-              : 'bg-slate-100 hover:bg-slate-200 text-slate-700',
-            'flex-1 sm:flex-none px-3 py-1.5 rounded-lg text-xs font-medium transition btn-interaction flex items-center justify-center gap-1 cursor-pointer'
+              ? 'bg-slate-700 text-white font-bold ring-2 ring-slate-500 shadow-sm border border-slate-800' 
+              : 'bg-white hover:bg-slate-100 text-slate-800 border-2 border-slate-200 hover:border-slate-500',
+            'flex-1 sm:flex-none px-3.5 py-2 rounded-xl text-xs font-bold transition btn-interaction flex items-center justify-center gap-1 cursor-pointer'
           ]"
           title="2e Choix (attribue 2 points)"
         >
-          <Check v-if="currentRank === 2" class="w-3.5 h-3.5" />
+          <Check v-if="currentRank === 2" class="w-3.5 h-3.5 stroke-[3]" />
           <span>2e (2 pts)</span>
         </button>
 
@@ -147,13 +189,13 @@ function handleRankClick(rank) {
           @click="handleRankClick(3)"
           :class="[
             currentRank === 3 
-              ? 'bg-amber-800 text-white font-bold ring-2 ring-amber-800/40 shadow-xs' 
-              : 'bg-slate-100 hover:bg-slate-200 text-slate-700',
-            'flex-1 sm:flex-none px-3 py-1.5 rounded-lg text-xs font-medium transition btn-interaction flex items-center justify-center gap-1 cursor-pointer'
+              ? 'bg-amber-900 text-white font-bold ring-2 ring-amber-700 shadow-sm border border-amber-950' 
+              : 'bg-white hover:bg-amber-50 text-slate-800 border-2 border-slate-200 hover:border-amber-700',
+            'flex-1 sm:flex-none px-3.5 py-2 rounded-xl text-xs font-bold transition btn-interaction flex items-center justify-center gap-1 cursor-pointer'
           ]"
           title="3e Choix (attribue 1 point)"
         >
-          <Check v-if="currentRank === 3" class="w-3.5 h-3.5" />
+          <Check v-if="currentRank === 3" class="w-3.5 h-3.5 stroke-[3]" />
           <span>3e (1 pt)</span>
         </button>
       </div>

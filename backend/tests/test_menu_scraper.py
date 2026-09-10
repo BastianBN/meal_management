@@ -45,3 +45,10 @@ def test_format_cuisine():
     assert format_cuisine("italian") == "Italien & Pâtes"
     assert format_cuisine("burger;american") == "Burgers gourmets"
     assert format_cuisine(None) == "Bistrot & Cuisine variée"
+
+
+def test_build_google_maps_url():
+    from backend.app.services.menu_scraper import build_google_maps_url
+    url = build_google_maps_url("Le Bistrot", "Paris")
+    assert "https://www.google.com/maps/search/?api=1&query=" in url
+    assert "Le+Bistrot" in url

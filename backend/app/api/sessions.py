@@ -18,20 +18,25 @@ logger = logging.getLogger(__name__)
 
 
 async def scrape_restaurant_worker(sem: asyncio.Semaphore, r_data: dict, city_context: str):
+    from backend.app.services.menu_scraper import build_google_maps_url
+    r_data["google_maps_url"] = build_google_maps_url(r_data["name"], r_data.get("address") or city_context)
+
     async with sem:
         try:
-            web_url, menu_url, summary, formulas = await asyncio.wait_for(
+            web_url, menu_url, summary, formulas, g_maps_url = await asyncio.wait_for(
                 scrape_restaurant_menu(
                     name=r_data["name"],
                     website_url=r_data.get("website_url"),
                     city_or_address=city_context
                 ),
-                timeout=5.0
+                timeout=6.0
             )
-            r_data["website_url"] = web_url or r_data.get("website_url")
+            r_data["website_url"] = web_url
             r_data["menu_url"] = menu_url
             r_data["menu_summary"] = summary
             r_data["lunch_formulas"] = formulas
+            if g_maps_url:
+                r_data["google_maps_url"] = g_maps_url
         except Exception as exc:
             logger.debug(f"Timeout ou erreur pour {r_data.get('name')}: {exc}")
             r_data["menu_summary"] = "Carte et formules disponibles sur place."
@@ -125,6 +130,7 @@ async def create_session(payload: SessionCreate, db: AsyncSession = Depends(get_
             longitude=r.get("longitude"),
             website_url=r.get("website_url"),
             menu_url=r.get("menu_url"),
+            google_maps_url=r.get("google_maps_url"),
             menu_summary=r.get("menu_summary"),
             lunch_formulas=r.get("lunch_formulas", []),
             osm_id=r.get("osm_id")

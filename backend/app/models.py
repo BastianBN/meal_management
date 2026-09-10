@@ -38,6 +38,7 @@ class RestaurantModel(Base):
     longitude = Column(Float, nullable=True)
     website_url = Column(String(500), nullable=True)
     menu_url = Column(String(500), nullable=True)
+    google_maps_url = Column(String(500), nullable=True)
     menu_summary = Column(Text, nullable=True)
     lunch_formulas = Column(JSON, default=list)
     osm_id = Column(String(50), nullable=True)
