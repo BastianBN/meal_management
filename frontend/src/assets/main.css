@@ -1,0 +1,21 @@
+@import "tailwindcss";
+
+@layer base {
+  ::selection {
+    background-color: #ea580c;
+    color: #ffffff;
+  }
+
+  body {
+    font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+  }
+}
+
+/* Transitions discrètes et réactives */
+.btn-interaction {
+  transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.btn-interaction:active {
+  transform: scale(0.98);
+}

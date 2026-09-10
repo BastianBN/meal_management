@@ -1,0 +1,29 @@
+{
+  "name": "meal-manager",
+  "version": "1.0.0",
+  "description": "Plateforme collaborative de vote de restaurant du midi avec découverte OpenStreetMap et extraction de formules",
+  "main": "run.py",
+  "scripts": {
+    "dev": "python run.py --dev",
+    "dev:frontend": "npm run dev --prefix frontend",
+    "build:frontend": "npm run build --prefix frontend",
+    "dev:backend": "uv run uvicorn backend.app.main:app --reload --port 8000",
+    "test:backend": "uv run pytest",
+    "start": "python run.py"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:BastianBN/meal_management.git"
+  },
+  "keywords": ["lunch", "restaurant", "vote", "ranked-choice", "openstreetmap", "fastapi", "vue"],
+  "author": "BastianBN",
+  "license": "MIT",
+  "devDependencies": {
+    "@semantic-release/changelog": "^6.0.3",
+    "@semantic-release/commit-analyzer": "^13.0.0",
+    "@semantic-release/git": "^10.0.1",
+    "@semantic-release/github": "^11.0.0",
+    "@semantic-release/release-notes-generator": "^14.0.0",
+    "semantic-release": "^24.2.0"
+  }
+}

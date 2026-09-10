@@ -1,0 +1,33 @@
+# Python & Virtual environments
+__pycache__/
+*.py[cod]
+*$py.class
+.venv/
+env/
+venv/
+.pytest_cache/
+*.sqlite
+*.sqlite3
+*.db
+meal_manager.db
+*.egg-info/
+
+# Node & Frontend
+node_modules/
+dist/
+dist-ssr/
+*.local
+.env.local
+.env.*.local
+
+# IDE & Editor files
+.idea/
+.vscode/
+*.swp
+*.swo
+.DS_Store
+Thumbs.db
+
+# Impeccable / Logs
+.system_generated/
+*.log
