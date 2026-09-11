@@ -76,3 +76,22 @@ async def test_session_lifecycle_and_voting():
         assert lb_bob["total_voters"] == 2
         assert "Alice" in lb_bob["voters"]
         assert "Bob" in lb_bob["voters"]
+
+
+@pytest.mark.asyncio
+async def test_create_session_fails_cleanly_when_no_restaurants(monkeypatch):
+    """Vérifie qu'aucun restaurant mock n'est créé et qu'une 404 propre est renvoyée."""
+    from backend.app.api import sessions
+
+    async def mock_find_empty(*args, **kwargs):
+        return []
+
+    monkeypatch.setattr(sessions, "find_nearby_restaurants", mock_find_empty)
+
+    async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as client:
+        resp = await client.post("/api/sessions", json={
+            "departure_address": "Place de la Concorde, 75008 Paris",
+            "radius_meters": 600
+        })
+        assert resp.status_code == 404
+        assert "aucun restaurant" in resp.json()["detail"].lower()

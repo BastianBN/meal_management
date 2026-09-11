@@ -1,5 +1,5 @@
 <script setup>
-import { ref, computed } from 'vue';
+import { ref, computed, watch } from 'vue';
 import { createSession } from '../api';
 import { MapPin, Navigation, Utensils, ArrowRight, Loader2, AlertCircle, Footprints, Clock } from 'lucide-vue-next';
 
@@ -11,6 +11,11 @@ const radiusMeters = computed(() => Math.round(walkMinutes.value * 80));
 const isLoading = ref(false);
 const loadingStep = ref('');
 const errorMessage = ref('');
+
+// Efface l'erreur dès que l'utilisateur modifie l'adresse ou la durée
+watch([departureAddress, walkMinutes], () => {
+  if (errorMessage.value) errorMessage.value = '';
+});
 
 const durationPresets = [
   { minutes: 5, label: '5 min', meters: '~400 m' },
@@ -136,9 +141,12 @@ async function handleCreateSession() {
 
 
         <!-- Message d'erreur éventuel -->
-        <div v-if="errorMessage" class="rounded-xl bg-red-50 border border-red-200 p-4 flex items-start gap-3 text-red-800 text-sm">
-          <AlertCircle class="w-5 h-5 text-red-500 shrink-0 mt-0.5" />
-          <span>{{ errorMessage }}</span>
+        <div v-if="errorMessage" class="rounded-xl bg-red-50 border border-red-200 p-4 flex items-start gap-3 text-red-800 text-sm shadow-xs">
+          <AlertCircle class="w-5 h-5 text-red-600 shrink-0 mt-0.5" />
+          <div class="space-y-1">
+            <p class="font-medium text-red-900">{{ errorMessage }}</p>
+            <p class="text-xs text-red-700">Conseil : essayez d'augmenter le temps de marche avec le curseur ci-dessus (ex. 15 ou 20 min) ou de préciser la ville.</p>
+          </div>
         </div>
 
         <!-- Bouton d'action -->
