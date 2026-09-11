@@ -1,20 +1,22 @@
 <script setup>
-import { ref } from 'vue';
+import { ref, computed } from 'vue';
 import { createSession } from '../api';
-import { MapPin, Navigation, Utensils, ArrowRight, Loader2, AlertCircle } from 'lucide-vue-next';
+import { MapPin, Navigation, Utensils, ArrowRight, Loader2, AlertCircle, Footprints, Clock } from 'lucide-vue-next';
 
 const emit = defineEmits(['sessionCreated']);
 
 const departureAddress = ref('');
-const radiusMeters = ref(800);
+const walkMinutes = ref(10);
+const radiusMeters = computed(() => Math.round(walkMinutes.value * 80));
 const isLoading = ref(false);
 const loadingStep = ref('');
 const errorMessage = ref('');
 
-const radiusOptions = [
-  { value: 500, label: '500 m', desc: '~6 min à pied' },
-  { value: 800, label: '800 m', desc: '~10 min à pied' },
-  { value: 1200, label: '1 200 m', desc: '~15 min à pied' },
+const durationPresets = [
+  { minutes: 5, label: '5 min', meters: '~400 m' },
+  { minutes: 10, label: '10 min', meters: '~800 m' },
+  { minutes: 15, label: '15 min', meters: '~1,2 km' },
+  { minutes: 20, label: '20 min', meters: '~1,6 km' },
 ];
 
 async function handleCreateSession() {
@@ -80,30 +82,58 @@ async function handleCreateSession() {
           </p>
         </div>
 
-        <!-- Rayon de marche -->
-        <div>
-          <label class="block text-sm font-semibold text-slate-900 mb-2.5">
-            Distance de marche maximale
-          </label>
-          <div class="grid grid-cols-3 gap-3">
+        <!-- Slider Durée de marche maximale -->
+        <div class="bg-slate-50/80 rounded-xl p-4 sm:p-5 border border-slate-200/80">
+          <div class="flex items-center justify-between gap-2 mb-3">
+            <label for="walk-slider" class="text-sm font-semibold text-slate-900 flex items-center gap-2">
+              <Footprints class="w-4 h-4 text-brand-600" />
+              <span>Durée de marche maximale</span>
+            </label>
+            <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-brand-50 border border-brand-200 text-brand-700 font-bold text-sm shadow-xs">
+              <Clock class="w-4 h-4 text-brand-600" />
+              <span>{{ walkMinutes }} min</span>
+              <span class="text-xs font-normal text-brand-600/80">(~{{ radiusMeters >= 1000 ? (radiusMeters / 1000).toFixed(1).replace('.', ',') + ' km' : radiusMeters + ' m' }})</span>
+            </div>
+          </div>
+
+          <div class="py-2">
+            <input
+              id="walk-slider"
+              v-model.number="walkMinutes"
+              type="range"
+              min="4"
+              max="25"
+              step="1"
+              :disabled="isLoading"
+              class="slider-custom"
+            />
+          </div>
+
+          <!-- Raccourcis cliquables sous le slider -->
+          <div class="flex justify-between items-center text-xs mt-1">
             <button
-              v-for="opt in radiusOptions"
-              :key="opt.value"
+              v-for="preset in durationPresets"
+              :key="preset.minutes"
               type="button"
               :disabled="isLoading"
-              @click="radiusMeters = opt.value"
+              @click="walkMinutes = preset.minutes"
               :class="[
-                radiusMeters === opt.value
-                  ? 'border-brand-600 bg-brand-50/50 text-brand-900 ring-2 ring-brand-600/30 font-semibold'
-                  : 'border-slate-200 hover:border-slate-300 bg-white text-slate-700',
-                'p-3.5 text-center rounded-xl border transition btn-interaction flex flex-col items-center justify-center'
+                walkMinutes === preset.minutes
+                  ? 'text-brand-700 font-bold bg-brand-100/80 ring-1 ring-brand-300'
+                  : 'text-slate-500 hover:text-slate-800 hover:bg-slate-200/60',
+                'cursor-pointer transition px-2 py-0.5 rounded-md flex items-center gap-1'
               ]"
             >
-              <span class="text-sm font-bold">{{ opt.label }}</span>
-              <span class="text-xs text-slate-500 mt-0.5">{{ opt.desc }}</span>
+              <span>{{ preset.label }}</span>
+              <span class="text-[10px] text-slate-400 font-normal hidden sm:inline">({{ preset.meters }})</span>
             </button>
           </div>
+
+          <p class="mt-3 text-xs text-slate-500">
+            Recherche tous les restaurants situés dans un rayon d'environ <strong class="text-slate-700 font-semibold">{{ radiusMeters }} mètres</strong> (allure moyenne ~4,8 km/h).
+          </p>
         </div>
+
 
         <!-- Message d'erreur éventuel -->
         <div v-if="errorMessage" class="rounded-xl bg-red-50 border border-red-200 p-4 flex items-start gap-3 text-red-800 text-sm">
