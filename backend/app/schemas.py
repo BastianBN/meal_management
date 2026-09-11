@@ -33,7 +33,7 @@ class RestaurantResponse(RestaurantBase):
 
 class SessionCreate(BaseModel):
     departure_address: str = Field(..., min_length=2, description="Adresse de départ")
-    radius_meters: Optional[int] = Field(default=800, ge=300, le=3000, description="Rayon de marche en mètres")
+    radius_meters: Optional[int] = Field(default=1000, ge=200, le=6000, description="Rayon de marche en mètres")
 
 
 class SessionResponse(BaseModel):

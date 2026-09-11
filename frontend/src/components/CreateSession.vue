@@ -6,8 +6,9 @@ import { MapPin, Navigation, Utensils, ArrowRight, Loader2, AlertCircle, Footpri
 const emit = defineEmits(['sessionCreated']);
 
 const departureAddress = ref('');
-const walkMinutes = ref(10);
-const radiusMeters = computed(() => Math.round(walkMinutes.value * 80));
+const walkMinutes = ref(15);
+const WALKING_SPEED_M_PER_MIN = 100; // Allure dynamique ~6 km/h (100 m/min)
+const radiusMeters = computed(() => Math.round(walkMinutes.value * WALKING_SPEED_M_PER_MIN));
 const isLoading = ref(false);
 const loadingStep = ref('');
 const errorMessage = ref('');
@@ -18,10 +19,11 @@ watch([departureAddress, walkMinutes], () => {
 });
 
 const durationPresets = [
-  { minutes: 5, label: '5 min', meters: '~400 m' },
-  { minutes: 10, label: '10 min', meters: '~800 m' },
-  { minutes: 15, label: '15 min', meters: '~1,2 km' },
-  { minutes: 20, label: '20 min', meters: '~1,6 km' },
+  { minutes: 5, label: '5 min', meters: '~500 m' },
+  { minutes: 10, label: '10 min', meters: '~1 km' },
+  { minutes: 15, label: '15 min', meters: '~1,5 km' },
+  { minutes: 20, label: '20 min', meters: '~2 km' },
+  { minutes: 30, label: '30 min', meters: '~3 km' },
 ];
 
 async function handleCreateSession() {
@@ -106,8 +108,8 @@ async function handleCreateSession() {
               id="walk-slider"
               v-model.number="walkMinutes"
               type="range"
-              min="4"
-              max="25"
+              min="3"
+              max="35"
               step="1"
               :disabled="isLoading"
               class="slider-custom"
@@ -135,7 +137,7 @@ async function handleCreateSession() {
           </div>
 
           <p class="mt-3 text-xs text-slate-500">
-            Recherche tous les restaurants situés dans un rayon d'environ <strong class="text-slate-700 font-semibold">{{ radiusMeters }} mètres</strong> (allure moyenne ~4,8 km/h).
+            Recherche tous les restaurants situés dans un rayon d'environ <strong class="text-slate-700 font-semibold">{{ radiusMeters >= 1000 ? (radiusMeters / 1000).toFixed(1).replace('.', ',') + ' km' : radiusMeters + ' mètres' }}</strong> (allure dynamique ~6 km/h).
           </p>
         </div>
 

@@ -24,19 +24,19 @@ def haversine_distance(lat1: float, lon1: float, lat2: float, lon2: float) -> in
     c = 2 * math.atan2(math.sqrt(a), math.sqrt(1 - a))
 
     straight_line = R * c
-    # Facteur urbain piéton : les rues ne sont pas en ligne droite
-    urban_walking = straight_line * 1.25
+    # Facteur urbain piéton : cheminement réel des rues
+    urban_walking = straight_line * 1.18
     return int(round(urban_walking))
 
 
 def estimate_walking_time(distance_meters: int) -> int:
     """
-    Estime le temps de marche en minutes (base ~4.8 km/h soit 80 m/min).
+    Estime le temps de marche en minutes (base marche dynamique / rapide ~6.0 km/h soit 100 m/min).
     Minimum 1 minute.
     """
     if distance_meters <= 0:
         return 1
-    minutes = math.ceil(distance_meters / 80.0)
+    minutes = math.ceil(distance_meters / 100.0)
     return max(1, minutes)
 
 
@@ -136,7 +136,7 @@ async def _search_nominatim_restaurants(lat: float, lon: float, radius_meters: i
     return []
 
 
-async def find_nearby_restaurants(lat: float, lon: float, radius_meters: int = 800) -> List[Dict[str, Any]]:
+async def find_nearby_restaurants(lat: float, lon: float, radius_meters: int = 1000) -> List[Dict[str, Any]]:
     """
     Interroge l'API Overpass pour trouver les restaurants et brasseries dans un rayon donné.
     Utilise plusieurs miroirs interrogés en concurrence pour une réponse sub-seconde et haute disponibilité.

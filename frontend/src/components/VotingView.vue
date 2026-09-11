@@ -149,7 +149,7 @@ async function handleVoteSubmit() {
         <p class="text-xs text-slate-500 mt-1 flex items-center gap-2 flex-wrap">
           <span class="inline-flex items-center gap-1 font-medium text-slate-700">
             <Footprints class="w-3.5 h-3.5 text-emerald-600" />
-            Rayon : {{ session.radius_meters }} mètres (~{{ Math.round(session.radius_meters / 80) }} min max à pied)
+            Rayon : {{ session.radius_meters >= 1000 ? (session.radius_meters / 1000).toFixed(1).replace('.', ',') + ' km' : session.radius_meters + ' mètres' }} (~{{ Math.round(session.radius_meters / 100) }} min max à pied)
           </span>
           <span>•</span>
           <span class="font-medium text-slate-700">{{ restaurants.length }} restaurants découverts</span>
