@@ -1,5 +1,6 @@
 import math
 import logging
+import asyncio
 from typing import List, Dict, Any, Optional
 import httpx
 from backend.app.config import settings
@@ -75,14 +76,73 @@ def format_cuisine(raw_cuisine: Optional[str]) -> str:
     return translations.get(first_type, first_type.capitalize())
 
 
+async def _fetch_overpass_mirror(client: httpx.AsyncClient, endpoint: str, query: str) -> Optional[Dict[str, Any]]:
+    try:
+        response = await client.post(endpoint, data={"data": query})
+        if response.status_code == 200:
+            data = response.json()
+            if data and data.get("elements"):
+                return data
+    except Exception as exc:
+        logger.debug(f"Miroir {endpoint} échoué: {exc}")
+    return None
+
+
+async def _search_nominatim_restaurants(lat: float, lon: float, radius_meters: int) -> List[Dict[str, Any]]:
+    """Secours via la recherche amenity de Nominatim si tous les miroirs Overpass sont inaccessibles."""
+    delta = (radius_meters / 111000.0) * 1.15
+    viewbox = f"{lon - delta},{lat + delta},{lon + delta},{lat - delta}"
+    headers = {"User-Agent": settings.NOMINATIM_USER_AGENT, "Accept": "application/json"}
+    params = {
+        "amenity": "restaurant",
+        "format": "json",
+        "viewbox": viewbox,
+        "bounded": 1,
+        "limit": settings.MAX_RESTAURANTS,
+    }
+    try:
+        async with httpx.AsyncClient(headers=headers, timeout=6.0) as client:
+            resp = await client.get("https://nominatim.openstreetmap.org/search", params=params)
+            if resp.status_code == 200:
+                results = resp.json()
+                restaurants = []
+                seen = set()
+                for item in results:
+                    name = item.get("name") or (item.get("display_name", "").split(",")[0].strip())
+                    if not name or name.lower() in seen:
+                        continue
+                    seen.add(name.lower())
+                    r_lat = float(item["lat"])
+                    r_lon = float(item["lon"])
+                    dist = haversine_distance(lat, lon, r_lat, r_lon)
+                    restaurants.append({
+                        "osm_id": str(item.get("osm_id", "")),
+                        "name": name,
+                        "address": item.get("display_name"),
+                        "cuisine": "Bistrot & Restauration",
+                        "distance_meters": dist,
+                        "walking_time_min": estimate_walking_time(dist),
+                        "latitude": r_lat,
+                        "longitude": r_lon,
+                        "website_url": None,
+                        "menu_url": None,
+                        "menu_summary": None,
+                        "lunch_formulas": []
+                    })
+                restaurants.sort(key=lambda r: r["distance_meters"])
+                return restaurants
+    except Exception as exc:
+        logger.debug(f"Nominatim fallback restaurants échoué: {exc}")
+    return []
+
+
 async def find_nearby_restaurants(lat: float, lon: float, radius_meters: int = 800) -> List[Dict[str, Any]]:
     """
     Interroge l'API Overpass pour trouver les restaurants et brasseries dans un rayon donné.
-    Retourne une liste ordonnée par proximité.
+    Utilise plusieurs miroirs interrogés en concurrence pour une réponse sub-seconde et haute disponibilité.
     """
-    # Requête Overpass ciblée sur les restaurants, brasseries, fast-food de qualité
     query = f"""
-    [out:json][timeout:20];
+    [out:json][timeout:15];
     (
       node["amenity"="restaurant"](around:{radius_meters},{lat},{lon});
       way["amenity"="restaurant"](around:{radius_meters},{lat},{lon});
@@ -99,26 +159,38 @@ async def find_nearby_restaurants(lat: float, lon: float, radius_meters: int = 8
     }
 
     overpass_endpoints = [
-        settings.OVERPASS_URL,
+        "https://overpass.openstreetmap.fr/api/interpreter",
+        "https://lz4.overpass-api.de/api/interpreter",
+        "https://overpass-api.de/api/interpreter",
         "https://overpass.kumi.systems/api/interpreter",
-        "https://overpass.private.coffee/api/interpreter"
+        "https://overpass.private.coffee/api/interpreter",
     ]
 
     data = None
-    for endpoint in overpass_endpoints:
-        try:
-            async with httpx.AsyncClient(headers=headers, timeout=12.0) as client:
-                response = await client.post(endpoint, data={"data": query})
-                if response.status_code == 200:
-                    data = response.json()
+    try:
+        async with httpx.AsyncClient(headers=headers, timeout=8.0) as client:
+            tasks = [
+                asyncio.create_task(_fetch_overpass_mirror(client, ep, query))
+                for ep in overpass_endpoints
+            ]
+            for completed_task in asyncio.as_completed(tasks):
+                res = await completed_task
+                if res and res.get("elements"):
+                    data = res
+                    for t in tasks:
+                        if not t.done():
+                            t.cancel()
                     break
-        except Exception as exc:
-            logger.debug(f"Miroir {endpoint} échoué: {exc}. Essai du suivant...")
-            continue
+    except Exception as exc:
+        logger.warning(f"Erreur lors de l'appel concurrent Overpass: {exc}")
 
-    if not data:
-        logger.warning("Tous les miroirs Overpass ont échoué. Utilisation du fallback.")
+    if not data or not data.get("elements"):
+        logger.info("Miroirs Overpass indisponibles ou vides. Utilisation du fallback Nominatim...")
+        nominatim_res = await _search_nominatim_restaurants(lat, lon, radius_meters)
+        if nominatim_res:
+            return nominatim_res
         return []
+
 
     elements = data.get("elements", [])
     restaurants = []
