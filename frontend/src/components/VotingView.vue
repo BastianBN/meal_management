@@ -196,22 +196,22 @@ async function handleVoteSubmit() {
 <template>
   <div class="space-y-6">
     <!-- En-tête de session : Adresse, Rayon, Partage -->
-    <div class="bg-white rounded-2xl border border-slate-200 p-5 sm:p-6 shadow-xs flex flex-col md:flex-row md:items-center justify-between gap-4">
+    <div class="bg-white/90 backdrop-blur-sm rounded-2xl border border-[#E7E2D9] p-5 sm:p-6 shadow-xs flex flex-col md:flex-row md:items-center justify-between gap-4">
       <div>
-        <div class="flex items-center gap-2 text-xs font-semibold text-orange-700 mb-1">
-          <MapPin class="w-4 h-4 text-orange-600 shrink-0" />
-          <span>Point de départ du groupe :</span>
+        <div class="flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-[#C2410C] mb-1">
+          <MapPin class="w-3.5 h-3.5 text-[#C2410C] shrink-0" />
+          <span>Point de départ</span>
         </div>
-        <h2 class="text-lg sm:text-xl font-extrabold text-slate-900 leading-snug">
+        <h2 class="font-serif text-xl sm:text-2xl font-bold text-[#1C1917] tracking-tight leading-snug">
           {{ session.departure_address }}
         </h2>
-        <p class="text-xs text-slate-500 mt-1 flex items-center gap-2 flex-wrap">
-          <span class="inline-flex items-center gap-1 font-medium text-slate-700">
-            <Footprints class="w-3.5 h-3.5 text-emerald-600" />
-            Rayon : {{ session.radius_meters >= 1000 ? (session.radius_meters / 1000).toFixed(1).replace('.', ',') + ' km' : session.radius_meters + ' mètres' }} (~{{ Math.round(session.radius_meters / 100) }} min max à pied)
+        <p class="text-xs text-[#78716C] mt-1.5 flex items-center gap-2 flex-wrap">
+          <span class="inline-flex items-center gap-1.5 font-semibold text-[#1C1917] bg-[#F3EFEA] px-2.5 py-0.5 rounded-md border border-[#E7E2D9]">
+            <Footprints class="w-3.5 h-3.5 text-emerald-700" />
+            Rayon : {{ session.radius_meters >= 1000 ? (session.radius_meters / 1000).toFixed(1).replace('.', ',') + ' km' : session.radius_meters + ' m' }} (~{{ Math.round(session.radius_meters / 100) }} min à pied)
           </span>
-          <span>•</span>
-          <span class="font-medium text-slate-700">{{ restaurants.length }} restaurants découverts</span>
+          <span class="text-[#D5CEC2]">•</span>
+          <span class="font-semibold text-[#44403C]">{{ restaurants.length }} restaurants sélectionnés</span>
         </p>
       </div>
 
@@ -220,20 +220,20 @@ async function handleVoteSubmit() {
         <button
           type="button"
           @click="showMap = !showMap"
-          class="inline-flex items-center gap-1.5 px-3.5 py-2.5 rounded-xl border border-slate-300 hover:border-slate-400 bg-white hover:bg-slate-50 text-slate-700 text-xs font-bold transition btn-interaction cursor-pointer"
+          class="inline-flex items-center gap-1.5 px-3.5 py-2.5 rounded-xl border border-[#D5CEC2] hover:border-[#1C1917] bg-[#FAF7F2] hover:bg-white text-[#44403C] hover:text-[#1C1917] text-xs font-bold transition cursor-pointer"
         >
-          <MapIcon v-if="!showMap" class="w-4 h-4 text-slate-500" />
-          <List v-else class="w-4 h-4 text-slate-500" />
+          <MapIcon v-if="!showMap" class="w-4 h-4 text-[#78716C]" />
+          <List v-else class="w-4 h-4 text-[#78716C]" />
           <span>{{ showMap ? 'Masquer la carte' : 'Afficher la carte' }}</span>
         </button>
 
         <button
           type="button"
           @click="copyShareLink"
-          class="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-xl border border-orange-200 hover:border-orange-300 bg-orange-50/80 hover:bg-orange-100 text-orange-800 text-xs font-bold transition btn-interaction cursor-pointer"
+          class="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-xl border border-[#EA580C]/30 hover:border-[#EA580C] bg-[#FFF7ED] hover:bg-[#FFEDD5] text-[#9A3412] text-xs font-bold transition shadow-2xs cursor-pointer"
         >
-          <CheckCircle2 v-if="copySuccess" class="w-4 h-4 text-emerald-600" />
-          <Share2 v-else class="w-4 h-4 text-orange-600" />
+          <CheckCircle2 v-if="copySuccess" class="w-4 h-4 text-emerald-700" />
+          <Share2 v-else class="w-4 h-4 text-[#C2410C]" />
           <span>{{ copySuccess ? 'Lien copié !' : 'Partager le vote' }}</span>
         </button>
       </div>
@@ -258,17 +258,16 @@ async function handleVoteSubmit() {
       />
     </div>
 
-
     <!-- Barre d'action fixe et bien visible pour voter -->
-    <div class="bg-white rounded-2xl border-2 border-slate-200 p-5 shadow-md sticky top-4 z-20 backdrop-blur-md bg-white/95">
+    <div class="bg-[#FAF7F2]/95 backdrop-blur-md rounded-2xl border border-[#D5CEC2] p-4 sm:p-5 shadow-md sticky top-4 z-20">
       <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
         <!-- Champ nom du votant -->
         <div class="w-full lg:w-72 shrink-0">
-          <label for="voter-name" class="block text-xs font-bold text-slate-800 mb-1">
-            Votre prénom ou nom <span class="text-red-500">*</span>
+          <label for="voter-name" class="block text-xs font-bold text-[#1C1917] mb-1">
+            Votre prénom ou nom <span class="text-[#C2410C]">*</span>
           </label>
-          <div class="relative rounded-xl shadow-xs">
-            <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3 text-slate-400">
+          <div class="relative rounded-xl shadow-2xs">
+            <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3 text-[#78716C]">
               <User class="h-4 w-4" />
             </div>
             <input
@@ -277,7 +276,7 @@ async function handleVoteSubmit() {
               type="text"
               required
               placeholder="ex : Marc, Camille..."
-              class="block w-full rounded-xl border-2 border-slate-300 pl-9 pr-3 py-2 text-sm font-semibold text-slate-900 placeholder:text-slate-400 placeholder:font-normal focus:border-orange-600 focus:ring-2 focus:ring-orange-500/20 focus:outline-none"
+              class="block w-full rounded-xl border border-[#D5CEC2] bg-white pl-9 pr-3 py-2 text-sm font-semibold text-[#1C1917] placeholder:text-[#A8A29E] placeholder:font-normal focus:border-[#C2410C] focus:ring-2 focus:ring-[#C2410C]/20 focus:outline-none transition"
             />
           </div>
         </div>
@@ -287,33 +286,33 @@ async function handleVoteSubmit() {
           <!-- Choix 1 -->
           <div 
             :class="[
-              firstChoiceId ? 'bg-amber-100/70 border-amber-400 text-amber-950 font-bold' : 'bg-slate-50 border-slate-200 text-slate-400',
+              firstChoiceId ? 'bg-[#FEF3C7] border-[#F59E0B] text-[#78350F] font-bold shadow-2xs' : 'bg-white/70 border-dashed border-[#D5CEC2] text-[#A8A29E]',
               'px-3 py-2 rounded-xl border flex items-center gap-2 transition'
             ]"
           >
-            <span class="w-5 h-5 rounded-full bg-amber-500 text-white flex items-center justify-center font-extrabold text-[10px] shadow-xs">1</span>
+            <span class="w-5 h-5 rounded-full bg-[#D97706] text-white flex items-center justify-center font-bold text-[10px] shadow-2xs">1</span>
             <span class="truncate max-w-[130px] sm:max-w-[170px]">{{ firstChoiceName || '1er choix (+3 pts)' }}</span>
           </div>
 
           <!-- Choix 2 -->
           <div 
             :class="[
-              secondChoiceId ? 'bg-slate-200/80 border-slate-400 text-slate-900 font-bold' : 'bg-slate-50 border-slate-200 text-slate-400',
+              secondChoiceId ? 'bg-[#F3EFEA] border-[#78716C] text-[#1C1917] font-bold shadow-2xs' : 'bg-white/70 border-dashed border-[#D5CEC2] text-[#A8A29E]',
               'px-3 py-2 rounded-xl border flex items-center gap-2 transition'
             ]"
           >
-            <span class="w-5 h-5 rounded-full bg-slate-700 text-white flex items-center justify-center font-extrabold text-[10px] shadow-xs">2</span>
+            <span class="w-5 h-5 rounded-full bg-[#44403C] text-white flex items-center justify-center font-bold text-[10px] shadow-2xs">2</span>
             <span class="truncate max-w-[130px] sm:max-w-[170px]">{{ secondChoiceName || '2e choix (+2 pts)' }}</span>
           </div>
 
           <!-- Choix 3 -->
           <div 
             :class="[
-              thirdChoiceId ? 'bg-amber-900/15 border-amber-700 text-amber-950 font-bold' : 'bg-slate-50 border-slate-200 text-slate-400',
+              thirdChoiceId ? 'bg-[#FFEDD5] border-[#FB923C] text-[#7C2D12] font-bold shadow-2xs' : 'bg-white/70 border-dashed border-[#D5CEC2] text-[#A8A29E]',
               'px-3 py-2 rounded-xl border flex items-center gap-2 transition'
             ]"
           >
-            <span class="w-5 h-5 rounded-full bg-amber-900 text-white flex items-center justify-center font-extrabold text-[10px] shadow-xs">3</span>
+            <span class="w-5 h-5 rounded-full bg-[#C2410C] text-white flex items-center justify-center font-bold text-[10px] shadow-2xs">3</span>
             <span class="truncate max-w-[130px] sm:max-w-[170px]">{{ thirdChoiceName || '3e choix (+1 pt)' }}</span>
           </div>
         </div>
@@ -326,15 +325,15 @@ async function handleVoteSubmit() {
             @click="handleVoteSubmit"
             :class="[
               canSubmit
-                ? 'bg-orange-600 hover:bg-orange-700 active:bg-orange-800 text-white shadow-md ring-2 ring-orange-500/30'
-                : 'bg-slate-200 text-slate-400 cursor-not-allowed border border-slate-300',
-              'px-6 py-3 rounded-xl font-extrabold text-sm transition btn-interaction flex items-center justify-center gap-2 cursor-pointer'
+                ? 'bg-[#C2410C] hover:bg-[#9A3412] active:bg-[#7C2D12] text-white shadow-sm ring-2 ring-[#C2410C]/30'
+                : 'bg-[#E7E2D9] text-[#A8A29E] cursor-not-allowed border border-[#D5CEC2]',
+              'px-6 py-3 rounded-xl font-bold text-sm transition flex items-center justify-center gap-2 cursor-pointer'
             ]"
           >
             <Lock class="w-4 h-4 shrink-0" />
             <span>{{ isSubmitting ? 'Enregistrement...' : submitButtonLabel }}</span>
           </button>
-          <span class="text-[11px] text-slate-500 mt-1 text-center lg:text-right font-medium">
+          <span class="text-[11px] text-[#78716C] mt-1 text-center lg:text-right font-medium">
             Vote définitif • Enregistrement irrévocable
           </span>
         </div>
@@ -348,28 +347,28 @@ async function handleVoteSubmit() {
     </div>
 
     <!-- Barre de filtrage & tri -->
-    <div class="bg-white rounded-2xl border border-slate-200 p-4 sm:p-5 shadow-xs space-y-3">
+    <div class="bg-white/90 backdrop-blur-sm rounded-2xl border border-[#E7E2D9] p-4 sm:p-5 shadow-xs space-y-3">
       <div class="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
         <!-- Recherche textuelle -->
         <div class="relative flex-1">
-          <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3.5 text-slate-400">
+          <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3.5 text-[#78716C]">
             <Search class="w-4 h-4" />
           </div>
           <input
             v-model="searchQuery"
             type="text"
             placeholder="Rechercher par nom, cuisine ou adresse..."
-            class="block w-full rounded-xl border border-slate-200 pl-10 pr-3 py-2 text-sm font-medium text-slate-900 placeholder:text-slate-400 focus:border-orange-500 focus:ring-2 focus:ring-orange-500/20 focus:outline-none transition"
+            class="block w-full rounded-xl border border-[#E7E2D9] bg-[#FAF7F2] pl-10 pr-3 py-2 text-sm font-medium text-[#1C1917] placeholder:text-[#A8A29E] focus:bg-white focus:border-[#C2410C] focus:ring-2 focus:ring-[#C2410C]/20 focus:outline-none transition"
           />
         </div>
 
         <!-- Bascule de Tri : Note vs Distance -->
-        <div class="flex items-center gap-1.5 shrink-0 bg-slate-100/90 p-1 rounded-xl border border-slate-200/80">
+        <div class="flex items-center gap-1.5 shrink-0 bg-[#F3EFEA] p-1 rounded-xl border border-[#E7E2D9]">
           <button
             type="button"
             @click="sortBy = 'rating'"
             :class="[
-              sortBy === 'rating' ? 'bg-white text-amber-950 font-bold shadow-xs ring-1 ring-slate-200' : 'text-slate-600 hover:text-slate-900',
+              sortBy === 'rating' ? 'bg-white text-[#1C1917] font-bold shadow-2xs border border-[#E7E2D9]' : 'text-[#78716C] hover:text-[#1C1917]',
               'px-3 py-1.5 rounded-lg text-xs transition flex items-center gap-1.5 cursor-pointer'
             ]"
           >
@@ -380,26 +379,26 @@ async function handleVoteSubmit() {
             type="button"
             @click="sortBy = 'distance'"
             :class="[
-              sortBy === 'distance' ? 'bg-white text-slate-900 font-bold shadow-xs ring-1 ring-slate-200' : 'text-slate-600 hover:text-slate-900',
+              sortBy === 'distance' ? 'bg-white text-[#1C1917] font-bold shadow-2xs border border-[#E7E2D9]' : 'text-[#78716C] hover:text-[#1C1917]',
               'px-3 py-1.5 rounded-lg text-xs transition flex items-center gap-1.5 cursor-pointer'
             ]"
           >
-            <Footprints class="w-3.5 h-3.5 text-emerald-600" />
+            <Footprints class="w-3.5 h-3.5 text-emerald-700" />
             <span>Plus proches</span>
           </button>
         </div>
       </div>
 
       <!-- Filtres secondaires : Cuisines, Formules, Compteur -->
-      <div class="flex flex-wrap items-center justify-between gap-3 pt-3 border-t border-slate-100 text-xs">
+      <div class="flex flex-wrap items-center justify-between gap-3 pt-3 border-t border-[#E7E2D9] text-xs">
         <div class="flex flex-wrap items-center gap-2">
           <!-- Filtre Cuisine -->
-          <div class="flex items-center gap-1.5 text-slate-600 font-medium">
-            <Filter class="w-3.5 h-3.5 text-slate-400" />
+          <div class="flex items-center gap-1.5 text-[#44403C] font-medium">
+            <Filter class="w-3.5 h-3.5 text-[#78716C]" />
             <span>Cuisine :</span>
             <select
               v-model="selectedCuisine"
-              class="rounded-lg border border-slate-200 bg-white px-2.5 py-1 text-xs font-semibold text-slate-800 focus:border-orange-500 focus:outline-none cursor-pointer"
+              class="rounded-lg border border-[#D5CEC2] bg-[#FAF7F2] px-2.5 py-1 text-xs font-semibold text-[#1C1917] focus:border-[#C2410C] focus:outline-none cursor-pointer"
             >
               <option value="ALL">Toutes les cuisines ({{ restaurants.length }})</option>
               <option v-for="c in availableCuisines" :key="c" :value="c">{{ c }}</option>
@@ -412,8 +411,8 @@ async function handleVoteSubmit() {
             @click="onlyWithMenu = !onlyWithMenu"
             :class="[
               onlyWithMenu 
-                ? 'bg-emerald-50 text-emerald-800 border-emerald-300 font-bold ring-1 ring-emerald-300' 
-                : 'bg-slate-50 text-slate-600 border-slate-200 hover:bg-slate-100',
+                ? 'bg-emerald-50 text-emerald-900 border-emerald-400 font-bold ring-1 ring-emerald-400/30' 
+                : 'bg-[#FAF7F2] text-[#44403C] border-[#D5CEC2] hover:bg-white',
               'px-3 py-1 rounded-lg border text-xs transition cursor-pointer flex items-center gap-1.5'
             ]"
           >
@@ -421,8 +420,8 @@ async function handleVoteSubmit() {
           </button>
         </div>
 
-        <span class="text-slate-500 font-medium text-xs">
-          <strong>{{ filteredRestaurants.length }}</strong> sur {{ restaurants.length }} restaurants affichés
+        <span class="text-[#78716C] font-medium text-xs">
+          <strong class="text-[#1C1917]">{{ filteredRestaurants.length }}</strong> sur {{ restaurants.length }} restaurants affichés
         </span>
       </div>
     </div>
@@ -431,23 +430,23 @@ async function handleVoteSubmit() {
     <div>
       <div class="flex items-center justify-between mb-4">
         <div>
-          <h3 class="text-lg font-extrabold text-slate-900">
+          <h3 class="font-serif text-2xl font-bold text-[#1C1917] tracking-tight">
             Établissements accessibles à pied
           </h3>
-          <p class="text-xs text-slate-500">
+          <p class="text-xs text-[#78716C] mt-0.5">
             Attribuez vos 3 préférences avec les boutons 1er (+3 pts), 2e (+2 pts) ou 3e (+1 pt)
           </p>
         </div>
       </div>
 
       <!-- État vide si filtre trop restrictif -->
-      <div v-if="filteredRestaurants.length === 0" class="rounded-2xl border border-slate-200 bg-slate-50/50 p-8 text-center text-slate-600 space-y-2">
-        <p class="font-semibold text-slate-800">Aucun restaurant ne correspond à votre filtre.</p>
-        <p class="text-xs text-slate-500">Essayez de réinitialiser la recherche ou de sélectionner "Toutes les cuisines".</p>
+      <div v-if="filteredRestaurants.length === 0" class="rounded-2xl border border-[#E7E2D9] bg-white/70 p-8 text-center text-[#44403C] space-y-2">
+        <p class="font-serif text-base font-bold text-[#1C1917]">Aucun restaurant ne correspond à votre filtre.</p>
+        <p class="text-xs text-[#78716C]">Essayez de réinitialiser la recherche ou de sélectionner "Toutes les cuisines".</p>
         <button
           type="button"
           @click="searchQuery = ''; selectedCuisine = 'ALL'; onlyWithMenu = false;"
-          class="mt-2 inline-flex items-center px-3 py-1.5 rounded-lg bg-white border border-slate-300 text-xs font-bold text-slate-700 hover:bg-slate-50 cursor-pointer"
+          class="mt-2 inline-flex items-center px-3 py-1.5 rounded-lg bg-white border border-[#D5CEC2] text-xs font-bold text-[#1C1917] hover:bg-[#FAF7F2] cursor-pointer"
         >
           Réinitialiser les filtres
         </button>

@@ -141,21 +141,21 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <div class="min-h-full flex flex-col font-sans selection:bg-brand-600 selection:text-white">
+  <div class="min-h-full flex flex-col font-sans selection:bg-[#C2410C] selection:text-white bg-[#FAF7F2]">
     <!-- Barre de navigation supérieure -->
-    <header class="bg-white border-b border-slate-200/80 sticky top-0 z-30 shadow-xs">
+    <header class="bg-[#FAF7F2]/95 backdrop-blur-md border-b border-[#E7E2D9] sticky top-0 z-30">
       <div class="max-w-6xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
         <!-- Logo -->
         <div 
           @click="resetToHome"
           class="flex items-center gap-2.5 cursor-pointer select-none group"
         >
-          <div class="w-9 h-9 rounded-xl bg-brand-600 group-hover:bg-brand-700 text-white flex items-center justify-center shadow-xs transition">
+          <div class="w-9 h-9 rounded-xl bg-[#FFF7ED] border border-[#FFEDD5] text-[#C2410C] flex items-center justify-center shadow-xs transition group-hover:bg-[#FFEDD5]">
             <Utensils class="w-5 h-5" />
           </div>
           <div>
-            <span class="text-base font-extrabold text-slate-900 tracking-tight block leading-tight">Meal Manager</span>
-            <span class="text-[11px] text-slate-400 block -mt-0.5">Le vote du midi</span>
+            <span class="font-serif text-lg font-bold text-[#1C1917] tracking-tight block leading-tight">Meal Manager</span>
+            <span class="text-[11px] text-[#78716C] block -mt-0.5 font-medium">Déjeuner & Vote en équipe</span>
           </div>
         </div>
 
@@ -164,9 +164,9 @@ onUnmounted(() => {
           <button
             v-if="currentSession"
             @click="resetToHome"
-            class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-slate-200 hover:border-slate-300 text-xs font-semibold text-slate-700 bg-white hover:bg-slate-50 transition btn-interaction cursor-pointer"
+            class="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl border border-[#E7E2D9] hover:border-[#D5CEC2] text-xs font-bold text-[#1C1917] bg-white hover:bg-[#F5F2EB] transition btn-interaction cursor-pointer shadow-2xs"
           >
-            <Plus class="w-3.5 h-3.5" />
+            <Plus class="w-3.5 h-3.5 text-[#C2410C]" />
             <span class="hidden sm:inline">Nouvelle session</span>
           </button>
         </div>
@@ -177,20 +177,20 @@ onUnmounted(() => {
     <main class="flex-1 max-w-6xl w-full mx-auto px-4 sm:px-6 py-6 sm:py-8">
       <!-- Chargement initial -->
       <div v-if="isLoading" class="text-center py-20">
-        <Loader2 class="w-8 h-8 animate-spin text-brand-600 mx-auto mb-3" />
-        <p class="text-sm text-slate-600 font-medium">Chargement de la session de vote...</p>
+        <Loader2 class="w-8 h-8 animate-spin text-[#C2410C] mx-auto mb-3" />
+        <p class="text-sm text-[#78716C] font-medium">Chargement de la session...</p>
       </div>
 
       <!-- Erreur de chargement de la session -->
       <div v-else-if="loadError" class="max-w-md mx-auto text-center py-16">
-        <div class="w-12 h-12 rounded-full bg-red-50 text-red-500 mx-auto flex items-center justify-center mb-3">
+        <div class="w-12 h-12 rounded-full bg-red-50 text-red-500 mx-auto flex items-center justify-center mb-3 border border-red-200">
           <AlertCircle class="w-6 h-6" />
         </div>
-        <h3 class="text-lg font-bold text-slate-900 mb-2">Session introuvable</h3>
-        <p class="text-sm text-slate-600 mb-6">{{ loadError }}</p>
+        <h3 class="font-serif text-xl font-bold text-[#1C1917] mb-2">Session introuvable</h3>
+        <p class="text-sm text-[#78716C] mb-6">{{ loadError }}</p>
         <button
           @click="resetToHome"
-          class="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-brand-600 text-white text-sm font-semibold hover:bg-brand-700 transition"
+          class="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-[#C2410C] text-white text-sm font-bold hover:bg-[#9A3412] transition"
         >
           <ArrowLeft class="w-4 h-4" />
           <span>Créer une nouvelle session</span>
@@ -207,12 +207,12 @@ onUnmounted(() => {
       <div v-else class="space-y-6">
         <!-- Onglets Vote / Résultats si l'utilisateur n'a pas encore voté -->
         <div v-if="!hasVoted" class="flex items-center justify-center">
-          <div class="inline-flex p-1 rounded-xl bg-slate-200/80 border border-slate-300/60 shadow-inner">
+          <div class="inline-flex p-1 rounded-xl bg-[#EFE9E0] border border-[#E7E2D9]">
             <button
               type="button"
               @click="activeTab = 'vote'"
               :class="[
-                activeTab === 'vote' ? 'bg-white text-slate-900 shadow-xs font-bold' : 'text-slate-600 hover:text-slate-900 font-medium',
+                activeTab === 'vote' ? 'bg-white text-[#1C1917] shadow-xs font-bold' : 'text-[#78716C] hover:text-[#1C1917] font-medium',
                 'px-5 py-2 rounded-lg text-xs sm:text-sm transition cursor-pointer'
               ]"
             >
@@ -222,7 +222,7 @@ onUnmounted(() => {
               type="button"
               @click="activeTab = 'results'"
               :class="[
-                activeTab === 'results' ? 'bg-white text-slate-900 shadow-xs font-bold' : 'text-slate-600 hover:text-slate-900 font-medium',
+                activeTab === 'results' ? 'bg-white text-[#1C1917] shadow-xs font-bold' : 'text-[#78716C] hover:text-[#1C1917] font-medium',
                 'px-5 py-2 rounded-lg text-xs sm:text-sm transition cursor-pointer'
               ]"
             >
@@ -232,9 +232,9 @@ onUnmounted(() => {
         </div>
 
         <!-- Message d'information si déjà voté -->
-        <div v-if="hasVoted" class="rounded-xl bg-emerald-50 border border-emerald-200 p-4 text-emerald-900 text-xs sm:text-sm flex items-center justify-between gap-3 shadow-xs">
+        <div v-if="hasVoted" class="rounded-xl bg-emerald-50 border border-emerald-200/80 p-4 text-emerald-900 text-xs sm:text-sm flex items-center justify-between gap-3 shadow-xs">
           <span>
-            Merci <strong>{{ currentVoterName }}</strong> ! Votre vote préférentiel a été enregistré. Le classement ci-dessous s'actualise en temps réel.
+            Merci <strong>{{ currentVoterName }}</strong> ! Votre vote a été enregistré. Le classement ci-dessous s'actualise en temps réel.
           </span>
         </div>
 
@@ -256,11 +256,11 @@ onUnmounted(() => {
     </main>
 
     <!-- Pied de page discret et soigné -->
-    <footer class="mt-auto border-t border-slate-200 bg-white py-6 text-center text-xs text-slate-500">
+    <footer class="mt-auto border-t border-[#E7E2D9] bg-[#FAF7F2] py-6 text-center text-xs text-[#78716C]">
       <div class="max-w-6xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-3">
         <div>
           <span>Meal Manager • Données cartographiques © </span>
-          <a href="https://www.openstreetmap.org" target="_blank" rel="noopener" class="underline hover:text-slate-800">OpenStreetMap</a>
+          <a href="https://www.openstreetmap.org" target="_blank" rel="noopener" class="underline hover:text-[#1C1917]">OpenStreetMap</a>
         </div>
         <div>
           <span>Vote préférentiel par classement (3, 2, 1 pts)</span>
@@ -269,3 +269,4 @@ onUnmounted(() => {
     </footer>
   </div>
 </template>
+

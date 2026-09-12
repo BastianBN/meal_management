@@ -5,21 +5,26 @@
   --color-brand-50: #fff7ed;
   --color-brand-100: #ffedd5;
   --color-brand-200: #fed7aa;
-  --color-brand-500: #f97316;
-  --color-brand-600: #ea580c;
-  --color-brand-700: #c2410c;
-  --color-brand-800: #9a3412;
-  --color-brand-900: #7c2d12;
+  --color-brand-500: #ea580c;
+  --color-brand-600: #c2410c;
+  --color-brand-700: #9a3412;
+  --color-brand-800: #7c2d12;
+  --color-brand-900: #431407;
 
-  --color-bistro-dark: #0f172a;
-  --color-bistro-surface: #ffffff;
-  --color-bistro-warm: #fbfbf9;
-  --color-bistro-muted: #64748b;
-  --color-bistro-border: #e2e8f0;
-  --color-bistro-accent: #059669;
+  --color-canvas: #FAF7F2;
+  --color-canvas-subtle: #F3EFEA;
+  --color-surface: #FFFFFF;
+  --color-border-warm: #E7E2D9;
+  --color-border-strong: #D5CEC2;
 
-  --font-sans: "Plus Jakarta Sans", Inter, -apple-system, BlinkMacSystemFont, sans-serif;
+  --color-ink: #1C1917;
+  --color-ink-secondary: #57534E;
+  --color-ink-muted: #78716C;
+
+  --font-sans: "Plus Jakarta Sans", -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-serif: "Fraunces", Georgia, serif;
 }
+
 
 @layer base {
   ::selection {
