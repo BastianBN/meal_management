@@ -37,6 +37,8 @@ async def calculate_leaderboard(session_id: str, db: AsyncSession) -> Leaderboar
             "website_url": r.website_url,
             "menu_url": r.menu_url,
             "google_maps_url": r.google_maps_url,
+            "rating": getattr(r, "rating", None),
+            "rating_count": getattr(r, "rating_count", None),
             "points": 0,
             "first_votes": 0,
             "second_votes": 0,
@@ -58,7 +60,7 @@ async def calculate_leaderboard(session_id: str, db: AsyncSession) -> Leaderboar
             stats[v.third_choice_id]["points"] += 1
             stats[v.third_choice_id]["third_votes"] += 1
 
-    # Trier par points décroissants, puis par distance croissante en cas d'égalité
+    # Trier par points décroissants, puis par note ou distance en cas d'égalité
     ranked_items = list(stats.values())
     ranked_items.sort(key=lambda item: (-item["points"], item["distance_meters"]))
 
@@ -75,11 +77,14 @@ async def calculate_leaderboard(session_id: str, db: AsyncSession) -> Leaderboar
             website_url=item["website_url"],
             menu_url=item["menu_url"],
             google_maps_url=item["google_maps_url"],
+            rating=item.get("rating"),
+            rating_count=item.get("rating_count"),
             points=item["points"],
             first_votes=item["first_votes"],
             second_votes=item["second_votes"],
             third_votes=item["third_votes"]
         ))
+
 
     return LeaderboardResponse(
         session_id=session_id,

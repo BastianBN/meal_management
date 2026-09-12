@@ -22,6 +22,8 @@ class RestaurantBase(BaseModel):
     google_maps_url: Optional[str] = None
     menu_summary: Optional[str] = None
     lunch_formulas: List[Any] = []
+    rating: Optional[float] = None
+    rating_count: Optional[int] = None
 
 
 class RestaurantResponse(RestaurantBase):
@@ -34,6 +36,8 @@ class RestaurantResponse(RestaurantBase):
 class SessionCreate(BaseModel):
     departure_address: str = Field(..., min_length=2, description="Adresse de départ")
     radius_meters: Optional[int] = Field(default=1000, ge=200, le=6000, description="Rayon de marche en mètres")
+    limit: Optional[int] = Field(default=35, ge=10, le=60, description="Nombre maximum de restaurants")
+
 
 
 class SessionResponse(BaseModel):
@@ -77,7 +81,10 @@ class LeaderboardItem(BaseModel):
     website_url: Optional[str] = None
     menu_url: Optional[str] = None
     google_maps_url: Optional[str] = None
+    rating: Optional[float] = None
+    rating_count: Optional[int] = None
     points: int = 0
+
     first_votes: int = 0
     second_votes: int = 0
     third_votes: int = 0

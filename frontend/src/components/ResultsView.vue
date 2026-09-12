@@ -1,7 +1,9 @@
 <script setup>
 import { ref, computed, onMounted } from 'vue';
-import { Trophy, Footprints, ExternalLink, Users, MapPin, Map as MapIcon, List, CheckCircle2, Lock } from 'lucide-vue-next';
+
+import { Trophy, Footprints, ExternalLink, Users, MapPin, Map as MapIcon, List, CheckCircle2, Lock, Star } from 'lucide-vue-next';
 import RestaurantsMap from './RestaurantsMap.vue';
+
 
 const props = defineProps({
   leaderboard: {
@@ -131,13 +133,24 @@ onMounted(() => {
           <h3 class="text-2xl sm:text-3xl font-black text-slate-900">
             {{ winner.name }}
           </h3>
-          <p class="text-sm font-semibold text-slate-700 mt-1">
-            {{ winner.cuisine }}
-          </p>
+          <div class="flex items-center gap-2 flex-wrap mt-1">
+            <p class="text-sm font-semibold text-slate-700">
+              {{ winner.cuisine }}
+            </p>
+            <div 
+              v-if="winner.rating"
+              class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-amber-100 text-amber-950 text-xs font-bold"
+            >
+              <Star class="w-3 h-3 text-amber-600 fill-amber-500" />
+              <span>{{ Number(winner.rating).toFixed(1) }}</span>
+              <span v-if="winner.rating_count" class="text-[10px] text-amber-800 font-normal">({{ winner.rating_count }})</span>
+            </div>
+          </div>
           <div class="flex items-center gap-2 mt-2 text-xs font-bold text-emerald-800">
             <Footprints class="w-4 h-4 text-emerald-600" />
             <span>{{ winner.walking_time_min }} min à pied ({{ winner.distance_meters }} m)</span>
           </div>
+
         </div>
 
         <div class="flex sm:flex-col items-baseline sm:items-end justify-between sm:justify-center border-t sm:border-t-0 border-amber-200 pt-3 sm:pt-0 shrink-0">
@@ -250,11 +263,16 @@ onMounted(() => {
                   <ExternalLink class="w-3.5 h-3.5" />
                 </a>
               </div>
-              <div class="flex items-center gap-2 text-xs text-slate-500 mt-0.5">
+              <div class="flex items-center gap-2 text-xs text-slate-500 mt-0.5 flex-wrap">
                 <span class="font-medium text-slate-700">{{ item.cuisine }}</span>
+                <span v-if="item.rating" class="inline-flex items-center gap-0.5 text-amber-900 font-bold bg-amber-50 px-1.5 py-0.5 rounded border border-amber-200/80 text-[11px]">
+                  <Star class="w-2.5 h-2.5 text-amber-500 fill-amber-400" />
+                  <span>{{ Number(item.rating).toFixed(1) }}</span>
+                </span>
                 <span>•</span>
                 <span>{{ item.walking_time_min }} min ({{ item.distance_meters }} m)</span>
               </div>
+
             </div>
           </div>
 

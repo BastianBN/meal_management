@@ -1,9 +1,10 @@
 <script setup>
 import { ref, computed } from 'vue';
 import RestaurantCard from './RestaurantCard.vue';
+
 import RestaurantsMap from './RestaurantsMap.vue';
 import { submitVote } from '../api';
-import { Share2, MapPin, Footprints, AlertCircle, CheckCircle2, User, Lock, Map as MapIcon, List } from 'lucide-vue-next';
+import { Share2, MapPin, Footprints, AlertCircle, CheckCircle2, User, Lock, Map as MapIcon, List, Star, Search, Filter } from 'lucide-vue-next';
 
 const props = defineProps({
   session: {
@@ -23,7 +24,65 @@ const errorMessage = ref('');
 const copySuccess = ref(false);
 const showMap = ref(true);
 
+const sortBy = ref('rating'); // 'rating' or 'distance'
+const selectedCuisine = ref('ALL');
+const onlyWithMenu = ref(false);
+const searchQuery = ref('');
+
 const restaurants = computed(() => props.session.restaurants || []);
+
+// Liste des cuisines disponibles
+const availableCuisines = computed(() => {
+  const set = new Set();
+  for (const r of restaurants.value) {
+    if (r.cuisine) set.add(r.cuisine);
+  }
+  return Array.from(set).sort();
+});
+
+// Filtrage et tri réactifs
+const filteredRestaurants = computed(() => {
+  let list = [...restaurants.value];
+
+  // Recherche texte
+  const q = searchQuery.value.trim().toLowerCase();
+  if (q) {
+    list = list.filter(r => 
+      r.name.toLowerCase().includes(q) || 
+      (r.address && r.address.toLowerCase().includes(q)) ||
+      (r.cuisine && r.cuisine.toLowerCase().includes(q))
+    );
+  }
+
+  // Filtre cuisine
+  if (selectedCuisine.value !== 'ALL') {
+    list = list.filter(r => r.cuisine === selectedCuisine.value);
+  }
+
+  // Filtre carte / menu
+  if (onlyWithMenu.value) {
+    list = list.filter(r => 
+      (r.lunch_formulas && r.lunch_formulas.length > 0) || 
+      r.menu_url || 
+      (r.menu_summary && !r.menu_summary.includes('consultables sur place'))
+    );
+  }
+
+  // Tri
+  if (sortBy.value === 'rating') {
+    list.sort((a, b) => {
+      const rateA = Number(a.rating) || 0;
+      const rateB = Number(b.rating) || 0;
+      if (rateB !== rateA) return rateB - rateA;
+      return a.distance_meters - b.distance_meters;
+    });
+  } else {
+    list.sort((a, b) => a.distance_meters - b.distance_meters);
+  }
+
+  return list;
+});
+
 
 // Attribution d'un rang (1, 2 ou 3) à un restaurant
 function handleToggleRank({ restaurantId, rank }) {
@@ -189,7 +248,7 @@ async function handleVoteSubmit() {
           longitude: session.longitude,
           radius_meters: session.radius_meters
         }"
-        :restaurants="restaurants"
+        :restaurants="filteredRestaurants"
         :selected-rankings="{
           firstChoiceId,
           secondChoiceId,
@@ -198,6 +257,7 @@ async function handleVoteSubmit() {
         @toggle-rank="handleToggleRank"
       />
     </div>
+
 
     <!-- Barre d'action fixe et bien visible pour voter -->
     <div class="bg-white rounded-2xl border-2 border-slate-200 p-5 shadow-md sticky top-4 z-20 backdrop-blur-md bg-white/95">
@@ -287,6 +347,86 @@ async function handleVoteSubmit() {
       </div>
     </div>
 
+    <!-- Barre de filtrage & tri -->
+    <div class="bg-white rounded-2xl border border-slate-200 p-4 sm:p-5 shadow-xs space-y-3">
+      <div class="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
+        <!-- Recherche textuelle -->
+        <div class="relative flex-1">
+          <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3.5 text-slate-400">
+            <Search class="w-4 h-4" />
+          </div>
+          <input
+            v-model="searchQuery"
+            type="text"
+            placeholder="Rechercher par nom, cuisine ou adresse..."
+            class="block w-full rounded-xl border border-slate-200 pl-10 pr-3 py-2 text-sm font-medium text-slate-900 placeholder:text-slate-400 focus:border-orange-500 focus:ring-2 focus:ring-orange-500/20 focus:outline-none transition"
+          />
+        </div>
+
+        <!-- Bascule de Tri : Note vs Distance -->
+        <div class="flex items-center gap-1.5 shrink-0 bg-slate-100/90 p-1 rounded-xl border border-slate-200/80">
+          <button
+            type="button"
+            @click="sortBy = 'rating'"
+            :class="[
+              sortBy === 'rating' ? 'bg-white text-amber-950 font-bold shadow-xs ring-1 ring-slate-200' : 'text-slate-600 hover:text-slate-900',
+              'px-3 py-1.5 rounded-lg text-xs transition flex items-center gap-1.5 cursor-pointer'
+            ]"
+          >
+            <Star class="w-3.5 h-3.5 text-amber-500 fill-amber-400" />
+            <span>Mieux notés ⭐</span>
+          </button>
+          <button
+            type="button"
+            @click="sortBy = 'distance'"
+            :class="[
+              sortBy === 'distance' ? 'bg-white text-slate-900 font-bold shadow-xs ring-1 ring-slate-200' : 'text-slate-600 hover:text-slate-900',
+              'px-3 py-1.5 rounded-lg text-xs transition flex items-center gap-1.5 cursor-pointer'
+            ]"
+          >
+            <Footprints class="w-3.5 h-3.5 text-emerald-600" />
+            <span>Plus proches</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Filtres secondaires : Cuisines, Formules, Compteur -->
+      <div class="flex flex-wrap items-center justify-between gap-3 pt-3 border-t border-slate-100 text-xs">
+        <div class="flex flex-wrap items-center gap-2">
+          <!-- Filtre Cuisine -->
+          <div class="flex items-center gap-1.5 text-slate-600 font-medium">
+            <Filter class="w-3.5 h-3.5 text-slate-400" />
+            <span>Cuisine :</span>
+            <select
+              v-model="selectedCuisine"
+              class="rounded-lg border border-slate-200 bg-white px-2.5 py-1 text-xs font-semibold text-slate-800 focus:border-orange-500 focus:outline-none cursor-pointer"
+            >
+              <option value="ALL">Toutes les cuisines ({{ restaurants.length }})</option>
+              <option v-for="c in availableCuisines" :key="c" :value="c">{{ c }}</option>
+            </select>
+          </div>
+
+          <!-- Toggle avec formule/menu -->
+          <button
+            type="button"
+            @click="onlyWithMenu = !onlyWithMenu"
+            :class="[
+              onlyWithMenu 
+                ? 'bg-emerald-50 text-emerald-800 border-emerald-300 font-bold ring-1 ring-emerald-300' 
+                : 'bg-slate-50 text-slate-600 border-slate-200 hover:bg-slate-100',
+              'px-3 py-1 rounded-lg border text-xs transition cursor-pointer flex items-center gap-1.5'
+            ]"
+          >
+            <span>Avec carte / menu en ligne</span>
+          </button>
+        </div>
+
+        <span class="text-slate-500 font-medium text-xs">
+          <strong>{{ filteredRestaurants.length }}</strong> sur {{ restaurants.length }} restaurants affichés
+        </span>
+      </div>
+    </div>
+
     <!-- Grille des cartes de restaurants -->
     <div>
       <div class="flex items-center justify-between mb-4">
@@ -295,14 +435,27 @@ async function handleVoteSubmit() {
             Établissements accessibles à pied
           </h3>
           <p class="text-xs text-slate-500">
-            Attribuez vos 3 préférences avec les boutons 1er, 2e ou 3e
+            Attribuez vos 3 préférences avec les boutons 1er (+3 pts), 2e (+2 pts) ou 3e (+1 pt)
           </p>
         </div>
       </div>
 
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <!-- État vide si filtre trop restrictif -->
+      <div v-if="filteredRestaurants.length === 0" class="rounded-2xl border border-slate-200 bg-slate-50/50 p-8 text-center text-slate-600 space-y-2">
+        <p class="font-semibold text-slate-800">Aucun restaurant ne correspond à votre filtre.</p>
+        <p class="text-xs text-slate-500">Essayez de réinitialiser la recherche ou de sélectionner "Toutes les cuisines".</p>
+        <button
+          type="button"
+          @click="searchQuery = ''; selectedCuisine = 'ALL'; onlyWithMenu = false;"
+          class="mt-2 inline-flex items-center px-3 py-1.5 rounded-lg bg-white border border-slate-300 text-xs font-bold text-slate-700 hover:bg-slate-50 cursor-pointer"
+        >
+          Réinitialiser les filtres
+        </button>
+      </div>
+
+      <div v-else class="grid grid-cols-1 md:grid-cols-2 gap-4">
         <RestaurantCard
-          v-for="r in restaurants"
+          v-for="r in filteredRestaurants"
           :key="r.id"
           :restaurant="r"
           :current-rank="getRestaurantRank(r.id)"
@@ -312,3 +465,4 @@ async function handleVoteSubmit() {
     </div>
   </div>
 </template>
+

@@ -42,8 +42,11 @@ class RestaurantModel(Base):
     menu_summary = Column(Text, nullable=True)
     lunch_formulas = Column(JSON, default=list)
     osm_id = Column(String(50), nullable=True)
+    rating = Column(Float, nullable=True)
+    rating_count = Column(Integer, nullable=True)
 
     session = relationship("SessionModel", back_populates="restaurants")
+
 
 
 class VoteModel(Base):

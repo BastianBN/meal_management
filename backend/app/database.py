@@ -28,3 +28,19 @@ async def get_db():
 async def init_db():
     async with engine.begin() as conn:
         await conn.run_sync(Base.metadata.create_all)
+
+        def migrate_columns(sync_conn):
+            from sqlalchemy import text
+            try:
+                res = sync_conn.execute(text("PRAGMA table_info(restaurants);")).fetchall()
+                existing_cols = {row[1] for row in res}
+                if existing_cols:
+                    if "rating" not in existing_cols:
+                        sync_conn.execute(text("ALTER TABLE restaurants ADD COLUMN rating FLOAT;"))
+                    if "rating_count" not in existing_cols:
+                        sync_conn.execute(text("ALTER TABLE restaurants ADD COLUMN rating_count INTEGER;"))
+            except Exception:
+                pass
+
+        await conn.run_sync(migrate_columns)
+

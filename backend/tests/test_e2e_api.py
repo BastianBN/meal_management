@@ -95,3 +95,21 @@ async def test_create_session_fails_cleanly_when_no_restaurants(monkeypatch):
         })
         assert resp.status_code == 404
         assert "aucun restaurant" in resp.json()["detail"].lower()
+
+
+@pytest.mark.asyncio
+async def test_find_nearby_restaurants_rating_and_stratification():
+    """Vérifie que les restaurants ont une note et sont distribués au-delà du voisinage immédiat."""
+    from backend.app.services.places import find_nearby_restaurants
+    rests = await find_nearby_restaurants(45.732413, 4.8413486, radius_meters=2000, limit=35)
+    assert len(rests) > 0
+    assert len(rests) <= 35
+    for r in rests:
+        assert "rating" in r
+        assert r["rating"] is not None
+        assert r["rating"] >= 3.5
+        assert r["rating_count"] >= 10
+    if len(rests) >= 10:
+        max_dist = max(r["distance_meters"] for r in rests)
+        assert max_dist > 600
+

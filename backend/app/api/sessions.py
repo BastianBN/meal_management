@@ -18,29 +18,42 @@ logger = logging.getLogger(__name__)
 
 
 async def scrape_restaurant_worker(sem: asyncio.Semaphore, r_data: dict, city_context: str):
-    from backend.app.services.menu_scraper import build_google_maps_url
+    from backend.app.services.menu_scraper import build_google_maps_url, scrape_restaurant_menu
     r_data["google_maps_url"] = build_google_maps_url(r_data["name"], r_data.get("address") or city_context)
+
+    # Si pas de site web OSM, éviter les requêtes DuckDuckGo lentes en rafale
+    web_url_to_try = r_data.get("website_url")
+    if not web_url_to_try and not r_data.get("menu_url"):
+        r_data["menu_summary"] = "Carte et formules consultables sur place ou sur la fiche Google."
+        r_data["lunch_formulas"] = []
+        return
 
     async with sem:
         try:
             web_url, menu_url, summary, formulas, g_maps_url = await asyncio.wait_for(
                 scrape_restaurant_menu(
                     name=r_data["name"],
-                    website_url=r_data.get("website_url"),
+                    website_url=web_url_to_try,
                     city_or_address=city_context
                 ),
-                timeout=6.0
+                timeout=4.0
             )
-            r_data["website_url"] = web_url
-            r_data["menu_url"] = menu_url
-            r_data["menu_summary"] = summary
-            r_data["lunch_formulas"] = formulas
+            if web_url:
+                r_data["website_url"] = web_url
+            if menu_url:
+                r_data["menu_url"] = menu_url
+            if summary:
+                r_data["menu_summary"] = summary
+            if formulas:
+                r_data["lunch_formulas"] = formulas
             if g_maps_url:
                 r_data["google_maps_url"] = g_maps_url
         except Exception as exc:
             logger.debug(f"Timeout ou erreur pour {r_data.get('name')}: {exc}")
-            r_data["menu_summary"] = "Carte et formules disponibles sur place."
-            r_data["lunch_formulas"] = []
+            if not r_data.get("menu_summary"):
+                r_data["menu_summary"] = "Carte et formules disponibles sur place."
+            if not r_data.get("lunch_formulas"):
+                r_data["lunch_formulas"] = []
 
 
 @router.post("", response_model=SessionResponse, status_code=status.HTTP_201_CREATED)
@@ -48,7 +61,7 @@ async def create_session(payload: SessionCreate, db: AsyncSession = Depends(get_
     """
     Crée une nouvelle session de vote pour le midi :
     1. Géocode l'adresse de départ via Nominatim.
-    2. Récupère les restaurants dans le rayon de marche via Overpass.
+    2. Récupère les restaurants dans le rayon de marche via Overpass (avec tri par note et échantillonnage par distance).
     3. Scrape automatiquement les menus et formules midi sur leurs sites.
     4. Enregistre la session et génère l'URL de partage.
     """
@@ -58,8 +71,9 @@ async def create_session(payload: SessionCreate, db: AsyncSession = Depends(get_
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))
 
     radius = payload.radius_meters or 800
+    limit = payload.limit or 35
     try:
-        raw_restaurants = await find_nearby_restaurants(lat, lon, radius_meters=radius)
+        raw_restaurants = await find_nearby_restaurants(lat, lon, radius_meters=radius, limit=limit)
     except Exception as exc:
         logger.error(f"Erreur lors de la recherche des restaurants: {exc}")
         raise HTTPException(
@@ -73,8 +87,8 @@ async def create_session(payload: SessionCreate, db: AsyncSession = Depends(get_
             detail="Aucun restaurant trouvé à proximité de cette adresse pour ce rayon de marche. Veuillez augmenter la durée de marche ou préciser l'adresse."
         )
 
-    # Scraping concurrent des menus avec sémaphore (max 4 requêtes simultanées)
-    sem = asyncio.Semaphore(4)
+    # Scraping concurrent des menus avec sémaphore (max 6 requêtes simultanées)
+    sem = asyncio.Semaphore(6)
     tasks = [
         scrape_restaurant_worker(sem, r, full_address)
         for r in raw_restaurants
@@ -108,9 +122,12 @@ async def create_session(payload: SessionCreate, db: AsyncSession = Depends(get_
             google_maps_url=r.get("google_maps_url"),
             menu_summary=r.get("menu_summary"),
             lunch_formulas=r.get("lunch_formulas", []),
-            osm_id=r.get("osm_id")
+            osm_id=r.get("osm_id"),
+            rating=r.get("rating"),
+            rating_count=r.get("rating_count")
         )
         db.add(rest_model)
+
 
     await db.commit()
     await db.refresh(new_session)

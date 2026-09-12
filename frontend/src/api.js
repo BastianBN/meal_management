@@ -2,15 +2,17 @@ const API_BASE_URL = import.meta.env.VITE_API_BASE_URL
   ? import.meta.env.VITE_API_BASE_URL.replace(/\/$/, '') 
   : '';
 
-export async function createSession(departureAddress, radiusMeters = 800) {
+export async function createSession(departureAddress, radiusMeters = 800, limit = 35) {
   const res = await fetch(`${API_BASE_URL}/api/sessions`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
       departure_address: departureAddress,
       radius_meters: Number(radiusMeters),
+      limit: Number(limit),
     }),
   });
+
 
   if (!res.ok) {
     const errorData = await res.json().catch(() => ({}));

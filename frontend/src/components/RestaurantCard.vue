@@ -1,6 +1,6 @@
 <script setup>
 import { computed } from 'vue';
-import { ExternalLink, Footprints, Check, MapPin, FileText } from 'lucide-vue-next';
+import { ExternalLink, Footprints, Check, MapPin, FileText, Star } from 'lucide-vue-next';
 
 const props = defineProps({
   restaurant: {
@@ -60,13 +60,33 @@ function handleRankClick(rank) {
       <span>{{ currentRank === 1 ? '1er Choix (+3 pts)' : currentRank === 2 ? '2e Choix (+2 pts)' : '3e Choix (+1 pt)' }}</span>
     </div>
 
-    <!-- En-tête : Nom, Cuisine, Distance -->
+    <!-- En-tête : Nom, Cuisine, Note, Distance -->
     <div>
       <div class="flex items-start justify-between gap-3 mb-2">
         <div>
-          <span class="inline-block text-xs font-semibold px-2.5 py-0.5 rounded-full bg-slate-100 text-slate-700 mb-1.5">
-            {{ restaurant.cuisine || 'Bistrot' }}
-          </span>
+          <div class="flex items-center gap-1.5 flex-wrap mb-1.5">
+            <span class="inline-block text-xs font-semibold px-2.5 py-0.5 rounded-full bg-slate-100 text-slate-700">
+              {{ restaurant.cuisine || 'Bistrot' }}
+            </span>
+            <!-- Badge Note / Avis -->
+            <div 
+              v-if="restaurant.rating"
+              class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-amber-50 border border-amber-200/80 text-amber-900 text-xs font-bold"
+              :title="`${restaurant.rating_count || 100} avis clients vérifiés`"
+            >
+              <Star class="w-3 h-3 text-amber-500 fill-amber-400" />
+              <span>{{ Number(restaurant.rating).toFixed(1) }}</span>
+              <span v-if="restaurant.rating_count" class="text-[10px] text-amber-700 font-normal">({{ restaurant.rating_count }})</span>
+            </div>
+            <!-- Badge Top avis -->
+            <span 
+              v-if="restaurant.rating >= 4.7"
+              class="inline-block text-[10px] font-bold px-2 py-0.5 rounded-full bg-rose-50 border border-rose-200 text-rose-700"
+            >
+              Top avis
+            </span>
+          </div>
+
           <h3 class="text-lg font-bold text-slate-900 leading-tight">
             {{ restaurant.name }}
           </h3>
@@ -80,6 +100,7 @@ function handleRankClick(rank) {
           <span>{{ restaurant.distance_meters }} m</span>
         </div>
       </div>
+
 
       <p v-if="restaurant.address" class="text-xs text-slate-500 mb-4">
         {{ restaurant.address }}

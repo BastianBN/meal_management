@@ -1,20 +1,28 @@
 <script setup>
 import { ref, computed, watch } from 'vue';
 import { createSession } from '../api';
-import { MapPin, Navigation, Utensils, ArrowRight, Loader2, AlertCircle, Footprints, Clock } from 'lucide-vue-next';
+import { MapPin, Navigation, Utensils, ArrowRight, Loader2, AlertCircle, Footprints, Clock, Star } from 'lucide-vue-next';
 
 const emit = defineEmits(['sessionCreated']);
 
 const departureAddress = ref('');
 const walkMinutes = ref(15);
+const maxRestaurants = ref(35);
 const WALKING_SPEED_M_PER_MIN = 100; // Allure dynamique ~6 km/h (100 m/min)
 const radiusMeters = computed(() => Math.round(walkMinutes.value * WALKING_SPEED_M_PER_MIN));
 const isLoading = ref(false);
 const loadingStep = ref('');
 const errorMessage = ref('');
 
+// Si l'utilisateur choisit un très grand rayon (>=25 min), suggérer 50 restaurants automatiquement
+watch(walkMinutes, (newMins) => {
+  if (newMins >= 25 && maxRestaurants.value === 20) {
+    maxRestaurants.value = 50;
+  }
+});
+
 // Efface l'erreur dès que l'utilisateur modifie l'adresse ou la durée
-watch([departureAddress, walkMinutes], () => {
+watch([departureAddress, walkMinutes, maxRestaurants], () => {
   if (errorMessage.value) errorMessage.value = '';
 });
 
@@ -35,10 +43,10 @@ async function handleCreateSession() {
 
   isLoading.value = true;
   errorMessage.value = '';
-  loadingStep.value = "Recherche des restaurants et extraction des formules du midi...";
+  loadingStep.value = "Recherche des restaurants les mieux notés et extraction des formules...";
 
   try {
-    const session = await createSession(address, radiusMeters.value);
+    const session = await createSession(address, radiusMeters.value, maxRestaurants.value);
     emit('sessionCreated', session);
   } catch (err) {
     errorMessage.value = err.message || "Une erreur est survenue lors de la création de la session.";
@@ -46,6 +54,7 @@ async function handleCreateSession() {
     isLoading.value = false;
   }
 }
+
 </script>
 
 <template>
@@ -140,6 +149,46 @@ async function handleCreateSession() {
             Recherche tous les restaurants situés dans un rayon d'environ <strong class="text-slate-700 font-semibold">{{ radiusMeters >= 1000 ? (radiusMeters / 1000).toFixed(1).replace('.', ',') + ' km' : radiusMeters + ' mètres' }}</strong> (allure dynamique ~6 km/h).
           </p>
         </div>
+
+        <!-- Limite de restaurants & Filtrage par note -->
+        <div class="bg-slate-50/80 rounded-xl p-4 sm:p-5 border border-slate-200/80">
+          <div class="flex items-center justify-between gap-2 mb-2">
+            <label class="text-sm font-semibold text-slate-900 flex items-center gap-2">
+              <Star class="w-4 h-4 text-amber-500 fill-amber-500" />
+              <span>Nombre de restaurants à retenir</span>
+            </label>
+            <span class="text-xs font-bold px-2.5 py-0.5 rounded-full bg-amber-50 border border-amber-200 text-amber-800">
+              Sélection par note ⭐
+            </span>
+          </div>
+
+          <div class="grid grid-cols-3 gap-2 mt-2">
+            <button
+              v-for="opt in [
+                { count: 20, label: '20 restos', desc: 'Sélection rapide' },
+                { count: 35, label: '35 restos', desc: 'Équilibré (Recommandé)' },
+                { count: 50, label: '50 restos', desc: 'Grand choix étendu' },
+              ]"
+              :key="opt.count"
+              type="button"
+              :disabled="isLoading"
+              @click="maxRestaurants = opt.count"
+              :class="[
+                maxRestaurants === opt.count
+                  ? 'bg-amber-500/10 border-amber-500 text-amber-950 font-bold ring-1 ring-amber-500/40 shadow-xs'
+                  : 'bg-white border-slate-200 text-slate-600 hover:border-slate-300 hover:bg-slate-100/50',
+                'cursor-pointer transition p-2.5 rounded-xl border text-left flex flex-col justify-center'
+              ]"
+            >
+              <span class="text-xs font-bold">{{ opt.label }}</span>
+              <span class="text-[10px] text-slate-500 font-normal mt-0.5">{{ opt.desc }}</span>
+            </button>
+          </div>
+          <p class="mt-2.5 text-xs text-slate-500 leading-relaxed">
+            Pour les grands rayons de marche, l'algorithme sélectionne les restaurants <strong>les mieux notés</strong> en couvrant l'ensemble des distances (proches, intermédiaires et destination).
+          </p>
+        </div>
+
 
 
         <!-- Message d'erreur éventuel -->
