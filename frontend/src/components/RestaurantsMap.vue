@@ -48,25 +48,31 @@ function createDepartureIcon() {
 }
 
 function createRestaurantIcon(restaurant, rank) {
-  let bgColor = '#191C22';
+  const isCarte = typeof document !== 'undefined' && document.documentElement.classList.contains('theme-carte');
+  
+  let bgColor = isCarte ? '#2A1F18' : '#181C24';
   let badgeText = `${restaurant.walking_time_min}m`;
-  let ringColor = 'rgba(0, 0, 0, 0.4)';
+  let ringColor = isCarte ? 'rgba(70, 45, 20, 0.35)' : 'rgba(0, 0, 0, 0.7)';
+  let borderColor = isCarte ? '#C5A880' : '#475569';
   let scale = '1';
 
   if (rank === 1) {
-    bgColor = '#DC2626';
+    bgColor = isCarte ? '#8B1515' : '#DC2626';
     badgeText = '1er';
-    ringColor = 'rgba(220, 38, 38, 0.5)';
+    ringColor = isCarte ? 'rgba(139, 21, 21, 0.5)' : 'rgba(220, 38, 38, 0.6)';
+    borderColor = '#FFFFFF';
     scale = '1.15';
   } else if (rank === 2) {
-    bgColor = '#D97706';
+    bgColor = isCarte ? '#B45309' : '#D97706';
     badgeText = '2e';
-    ringColor = 'rgba(217, 119, 6, 0.5)';
+    ringColor = isCarte ? 'rgba(180, 83, 9, 0.5)' : 'rgba(217, 119, 6, 0.6)';
+    borderColor = '#FFFFFF';
     scale = '1.1';
   } else if (rank === 3) {
-    bgColor = '#64748B';
+    bgColor = isCarte ? '#475569' : '#64748B';
     badgeText = '3e';
-    ringColor = 'rgba(100, 116, 139, 0.5)';
+    ringColor = isCarte ? 'rgba(71, 85, 105, 0.5)' : 'rgba(100, 116, 139, 0.6)';
+    borderColor = '#FFFFFF';
     scale = '1.05';
   }
 
@@ -74,49 +80,59 @@ function createRestaurantIcon(restaurant, rank) {
     className: 'custom-restaurant-pin',
     html: `
       <div style="transform: scale(${scale}); transform-origin: bottom center; transition: all 0.2s ease;">
-        <div style="background: ${bgColor}; color: white; padding: 4px 8px; border-radius: 9999px; font-size: 11px; font-weight: 600; border: 2px solid #383F4C; box-shadow: 0 4px 10px ${ringColor}; display: flex; align-items: center; gap: 3px; white-space: nowrap; cursor: pointer;">
+        <div style="background: ${bgColor}; color: white; padding: 4px 9px; border-radius: 9999px; font-size: 11px; font-weight: 700; border: 2px solid ${borderColor}; box-shadow: 0 4px 12px ${ringColor}; display: flex; align-items: center; gap: 4px; white-space: nowrap; cursor: pointer; font-family: inherit;">
           <span>🍽️</span>
           <span>${badgeText}</span>
         </div>
         <div style="width: 0; height: 0; border-left: 5px solid transparent; border-right: 5px solid transparent; border-top: 6px solid ${bgColor}; margin: 0 auto; margin-top: -1px;"></div>
       </div>
     `,
-    iconSize: [44, 32],
-    iconAnchor: [22, 32],
-    popupAnchor: [0, -32],
+    iconSize: [46, 34],
+    iconAnchor: [23, 34],
+    popupAnchor: [0, -34],
   });
 }
 
 function buildPopupHtml(r) {
+  const isCarte = typeof document !== 'undefined' && document.documentElement.classList.contains('theme-carte');
   const currentRank = getRank(r.id);
+
+  const cardBg = isCarte ? '#FFFDF9' : '#181C24';
+  const textMain = isCarte ? '#1F1A15' : '#F8FAFC';
+  const textMuted = isCarte ? '#6B5747' : '#CBD5E1';
+  const borderCol = isCarte ? '#DBCFBE' : '#363E4D';
+  const accentBrass = isCarte ? '#B45309' : '#D97706';
+  const btnInactiveBg = isCarte ? '#F2ECE1' : '#202530';
+  const btnInactiveText = isCarte ? '#1F1A15' : '#CBD5E1';
+
   const siteBtn = r.website_url 
-    ? `<a href="${r.website_url}" target="_blank" rel="noopener" style="display: inline-block; font-size: 11px; color: #F59E0B; font-weight: 500; text-decoration: underline; margin-right: 8px;">Site officiel</a>`
+    ? `<a href="${r.website_url}" target="_blank" rel="noopener" style="display: inline-block; font-size: 11px; color: ${accentBrass}; font-weight: 600; text-decoration: underline; margin-right: 8px;">Site officiel</a>`
     : '';
   const gmapsBtn = r.google_maps_url
-    ? `<a href="${r.google_maps_url}" target="_blank" rel="noopener" style="display: inline-block; font-size: 11px; color: #94A3B8; font-weight: 500; text-decoration: underline;">Fiche Google & Avis</a>`
+    ? `<a href="${r.google_maps_url}" target="_blank" rel="noopener" style="display: inline-block; font-size: 11px; color: ${textMuted}; font-weight: 500; text-decoration: underline;">Fiche Google & Avis</a>`
     : '';
 
   return `
-    <div style="padding: 14px; min-width: 240px; max-width: 300px; font-family: inherit; background: #191C22; color: #F8FAFC; border-radius: 12px; border: 1px solid #383F4C; box-shadow: 0 10px 25px rgba(0,0,0,0.5);">
-      <div style="font-size: 10px; font-weight: 700; color: #F59E0B; text-transform: uppercase; margin-bottom: 2px; letter-spacing: 0.5px;">
+    <div style="padding: 14px; min-width: 250px; max-width: 320px; font-family: inherit; background: ${cardBg}; color: ${textMain}; border-radius: 14px; border: 1px solid ${borderCol}; box-shadow: 0 10px 30px rgba(0,0,0,0.35);">
+      <div style="font-size: 10px; font-weight: 700; color: ${accentBrass}; text-transform: uppercase; margin-bottom: 3px; letter-spacing: 0.5px;">
         ${r.cuisine || 'Restaurant'} • ${r.distance_meters} m (~${r.walking_time_min} min)
       </div>
-      <div style="font-size: 17px; font-family: 'Cormorant Garamond', Georgia, serif; font-weight: 600; color: #F8FAFC; margin-bottom: 6px; line-height: 1.2;">
+      <div style="font-size: 18px; font-family: 'Cormorant Garamond', Georgia, serif; font-weight: 700; color: ${textMain}; margin-bottom: 6px; line-height: 1.2;">
         ${r.name}
       </div>
-      ${r.menu_summary ? `<div style="font-size: 11px; color: #CBD5E1; margin-bottom: 8px; line-height: 1.3;">${r.menu_summary}</div>` : ''}
+      ${r.menu_summary ? `<div style="font-size: 11px; color: ${textMuted}; margin-bottom: 8px; line-height: 1.35;">${r.menu_summary}</div>` : ''}
       <div style="margin-bottom: 10px;">
         ${siteBtn}
         ${gmapsBtn}
       </div>
-      <div style="border-top: 1px solid #383F4C; padding-top: 8px; display: flex; gap: 4px;">
-        <button onclick="window.__vote_restaurant(${r.id}, 1)" style="flex: 1; padding: 6px 4px; font-size: 10px; font-weight: 600; border-radius: 8px; border: 1px solid ${currentRank === 1 ? '#B91C1C' : '#DC2626'}; background: ${currentRank === 1 ? '#DC2626' : '#242933'}; color: ${currentRank === 1 ? '#ffffff' : '#FCA5A5'}; cursor: pointer;">
+      <div style="border-top: 1px solid ${borderCol}; padding-top: 10px; display: flex; gap: 4px;">
+        <button onclick="window.__vote_restaurant(${r.id}, 1)" style="flex: 1; padding: 7px 4px; font-size: 11px; font-weight: 700; font-family: inherit; border-radius: 8px; border: 1px solid ${currentRank === 1 ? '#8B1515' : borderCol}; background: ${currentRank === 1 ? '#8B1515' : btnInactiveBg}; color: ${currentRank === 1 ? '#ffffff' : btnInactiveText}; cursor: pointer; transition: all 0.15s;">
           1er (3 pts)
         </button>
-        <button onclick="window.__vote_restaurant(${r.id}, 2)" style="flex: 1; padding: 6px 4px; font-size: 10px; font-weight: 600; border-radius: 8px; border: 1px solid ${currentRank === 2 ? '#B45309' : '#D97706'}; background: ${currentRank === 2 ? '#D97706' : '#242933'}; color: ${currentRank === 2 ? '#ffffff' : '#FDE68A'}; cursor: pointer;">
+        <button onclick="window.__vote_restaurant(${r.id}, 2)" style="flex: 1; padding: 7px 4px; font-size: 11px; font-weight: 700; font-family: inherit; border-radius: 8px; border: 1px solid ${currentRank === 2 ? '#B45309' : borderCol}; background: ${currentRank === 2 ? '#B45309' : btnInactiveBg}; color: ${currentRank === 2 ? '#ffffff' : btnInactiveText}; cursor: pointer; transition: all 0.15s;">
           2e (2 pts)
         </button>
-        <button onclick="window.__vote_restaurant(${r.id}, 3)" style="flex: 1; padding: 6px 4px; font-size: 10px; font-weight: 600; border-radius: 8px; border: 1px solid ${currentRank === 3 ? '#475569' : '#64748B'}; background: ${currentRank === 3 ? '#64748B' : '#242933'}; color: ${currentRank === 3 ? '#ffffff' : '#CBD5E1'}; cursor: pointer;">
+        <button onclick="window.__vote_restaurant(${r.id}, 3)" style="flex: 1; padding: 7px 4px; font-size: 11px; font-weight: 700; font-family: inherit; border-radius: 8px; border: 1px solid ${currentRank === 3 ? '#475569' : borderCol}; background: ${currentRank === 3 ? '#475569' : btnInactiveBg}; color: ${currentRank === 3 ? '#ffffff' : btnInactiveText}; cursor: pointer; transition: all 0.15s;">
           3e (1 pt)
         </button>
       </div>
@@ -150,10 +166,10 @@ function updateMarkers() {
     }
     radiusCircle = L.circle([props.departure.latitude, props.departure.longitude], {
       radius: props.departure.radius_meters,
-      color: '#ea580c',
+      color: '#B45309',
       weight: 1.5,
       opacity: 0.6,
-      fillColor: '#ea580c',
+      fillColor: '#B45309',
       fillOpacity: 0.05,
       dashArray: '6, 6',
     }).addTo(map);
@@ -185,6 +201,8 @@ function updateMarkers() {
   }
 }
 
+let themeObserver = null;
+
 onMounted(() => {
   // Exposer la méthode globale pour les boutons du popup Leaflet
   window.__vote_restaurant = (restaurantId, rank) => {
@@ -207,9 +225,19 @@ onMounted(() => {
   markersLayer = L.featureGroup().addTo(map);
 
   updateMarkers();
+
+  // Observer les changements de thème (classe html)
+  themeObserver = new MutationObserver(() => {
+    updateMarkers();
+  });
+  themeObserver.observe(document.documentElement, { attributes: true, attributeFilter: ['class'] });
 });
 
 onUnmounted(() => {
+  if (themeObserver) {
+    themeObserver.disconnect();
+    themeObserver = null;
+  }
   if (window.__vote_restaurant) {
     delete window.__vote_restaurant;
   }
@@ -229,20 +257,20 @@ watch(
 </script>
 
 <template>
-  <div class="rounded-2xl border border-[#383F4C] overflow-hidden shadow-xl bg-[#191C22]">
-    <div class="p-3.5 bg-[#20252E] border-b border-[#383F4C] flex items-center justify-between text-xs text-[#CBD5E1]">
+  <div class="rounded-3xl border border-[var(--border-main)] overflow-hidden shadow-xl bg-[var(--bg-surface)]">
+    <div class="p-4 bg-[var(--bg-surface-subtle)] border-b border-[var(--border-main)] flex items-center justify-between text-xs text-[var(--text-muted)]">
       <div class="flex items-center gap-3">
-        <span class="flex items-center gap-1.5 font-serif text-base font-normal text-[#F8FAFC]">
-          <span>🗺️</span> Carte des adresses
+        <span class="flex items-center gap-1.5 font-serif text-base font-bold text-[var(--text-main)]">
+          <span>🗺️</span> Carte des Tables & Arpentage
         </span>
-        <span class="text-[#64748B]">•</span>
-        <span class="text-[#94A3B8]">Rayon de marche : {{ departure.radius_meters }} m</span>
+        <span class="text-[var(--text-faint)]">•</span>
+        <span class="font-serif">Rayon : {{ departure.radius_meters }} m</span>
       </div>
       <div class="flex items-center gap-2">
-        <span class="inline-flex items-center gap-1 font-medium text-white bg-[#DC2626] px-2.5 py-0.5 rounded-md border border-[#B91C1C] shadow-xs">
+        <span class="inline-flex items-center gap-1 font-medium text-white bg-[var(--accent-red)] px-2.5 py-0.5 rounded-full shadow-2xs font-serif text-xs">
           <span class="w-1.5 h-1.5 rounded-full bg-white"></span> 1er choix
         </span>
-        <span class="hidden sm:inline text-[#94A3B8]">Cliquez sur un marqueur pour voter</span>
+        <span class="hidden sm:inline text-[var(--text-faint)] font-serif italic">Cliquez sur une épingle pour voter</span>
       </div>
     </div>
     <div ref="mapContainer" class="w-full h-80 sm:h-96 z-10"></div>

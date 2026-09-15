@@ -194,80 +194,94 @@ async function handleVoteSubmit() {
 </script>
 
 <template>
-  <div class="space-y-6">
-    <!-- En-tête de Session (Adresse & Rayon) -->
-    <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-[#FFFFFF] rounded-2xl border border-[#E2D9CF] p-5 sm:p-6 shadow-sm">
-      <div>
-        <div class="flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider text-[#DC2626] mb-1 font-sans">
-          <MapPin class="w-3.5 h-3.5 text-[#DC2626] shrink-0" />
-          <span>Point de départ</span>
+  <div class="space-y-8">
+    <!-- En-tête de Session (Grand Fronton Brasserie & Point de Ralliement) -->
+    <div class="bistro-grand-frame rounded-3xl p-6 sm:p-9 relative">
+      <!-- 4 Coins Laiton Vénérable -->
+      <div class="brass-corner-bracket brass-corner-tl"></div>
+      <div class="brass-corner-bracket brass-corner-tr"></div>
+      <div class="brass-corner-bracket brass-corner-bl"></div>
+      <div class="brass-corner-bracket brass-corner-br"></div>
+
+      <div class="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
+        <div>
+          <div class="flex items-center gap-2 text-xs font-serif font-bold text-[var(--accent-brass)] mb-1.5 uppercase tracking-wider">
+            <span>⚜</span>
+            <span>Service du Midi • Point de Ralliement</span>
+            <span>⚜</span>
+          </div>
+          <h2 class="font-display sm:font-serif text-3xl sm:text-4xl lg:text-5xl font-normal text-[var(--text-main)] tracking-wide leading-tight">
+            {{ session.departure_address }}
+          </h2>
+          <div class="text-xs text-[var(--text-muted)] mt-3 flex items-center gap-3 flex-wrap font-serif">
+            <span class="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-[var(--bg-surface-inset)] border border-[var(--border-subtle)] text-[var(--text-main)] text-sm shadow-2xs">
+              <Footprints class="w-4 h-4 text-[var(--accent-red)]" />
+              Périmètre : <strong class="text-[var(--text-main)] font-semibold">{{ session.radius_meters >= 1000 ? (session.radius_meters / 1000).toFixed(1).replace('.', ',') + ' km' : session.radius_meters + ' m' }}</strong> (~{{ Math.round(session.radius_meters / 100) }} min à pied)
+            </span>
+            <span class="text-[var(--text-faint)]">•</span>
+            <span class="font-medium text-sm text-[var(--text-main)]">{{ restaurants.length }} tables répertoriées</span>
+          </div>
         </div>
-        <h2 class="font-serif text-2xl sm:text-3xl font-normal text-[#191C22] tracking-wide leading-snug">
-          {{ session.departure_address }}
-        </h2>
-        <p class="text-xs text-[#64748B] mt-1.5 flex items-center gap-2 flex-wrap font-sans">
-          <span class="inline-flex items-center gap-1.5 font-medium text-[#191C22] bg-[#F8F5F2] px-2.5 py-0.5 rounded-md border border-[#E2D9CF]">
-            <Footprints class="w-3.5 h-3.5 text-[#D97706]" />
-            Périmètre : {{ session.radius_meters >= 1000 ? (session.radius_meters / 1000).toFixed(1).replace('.', ',') + ' km' : session.radius_meters + ' m' }} (~{{ Math.round(session.radius_meters / 100) }} min à pied)
-          </span>
-          <span class="text-[#CBD5E1]">•</span>
-          <span class="font-medium text-[#475569]">{{ restaurants.length }} adresses trouvées</span>
-        </p>
-      </div>
 
-      <!-- Boutons Partager & Bascule Carte -->
-      <div class="flex items-center gap-2 shrink-0 font-sans">
-        <button
-          type="button"
-          @click="showMap = !showMap"
-          class="inline-flex items-center gap-1.5 px-3.5 py-2.5 rounded-xl border border-[#E2D9CF] hover:border-[#191C22] bg-[#FFFFFF] hover:bg-[#F8F5F2] text-[#475569] hover:text-[#191C22] text-xs font-medium transition cursor-pointer shadow-xs"
-        >
-          <MapIcon v-if="!showMap" class="w-4 h-4 text-[#64748B]" />
-          <List v-else class="w-4 h-4 text-[#64748B]" />
-          <span>{{ showMap ? 'Masquer la carte' : 'Afficher la carte' }}</span>
-        </button>
+        <!-- Boutons Partager & Bascule Carte -->
+        <div class="flex items-center gap-3 shrink-0">
+          <button
+            type="button"
+            @click="showMap = !showMap"
+            class="inline-flex items-center gap-2 px-4 py-2.5 rounded-2xl border border-[var(--border-main)] hover:border-[var(--accent-brass)] bg-[var(--bg-surface-inset)] hover:bg-[var(--bg-surface)] text-[var(--text-main)] text-xs font-serif font-semibold transition cursor-pointer shadow-xs"
+          >
+            <MapIcon v-if="!showMap" class="w-4 h-4 text-[var(--accent-brass)]" />
+            <List v-else class="w-4 h-4 text-[var(--accent-brass)]" />
+            <span>{{ showMap ? 'Masquer la carte' : 'Afficher la carte' }}</span>
+          </button>
 
-        <button
-          type="button"
-          @click="copyShareLink"
-          class="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-xl border border-[#FECACA] hover:border-[#DC2626] bg-[#FEF2F2] hover:bg-[#FEE2E2] text-[#DC2626] text-xs font-medium transition cursor-pointer shadow-xs"
-        >
-          <CheckCircle2 v-if="copySuccess" class="w-4 h-4 text-[#16A34A]" />
-          <Share2 v-else class="w-4 h-4 text-[#DC2626]" />
-          <span>{{ copySuccess ? 'Lien copié !' : 'Partager l\'ardoise' }}</span>
-        </button>
+          <button
+            type="button"
+            @click="copyShareLink"
+            class="inline-flex items-center gap-2 px-4 py-2.5 rounded-2xl border border-[var(--accent-red-border)] hover:border-[var(--accent-red)] bg-[var(--accent-red-soft)] hover:bg-[var(--accent-red-soft)]/80 text-[var(--accent-red)] text-xs font-serif font-semibold transition cursor-pointer shadow-xs"
+          >
+            <CheckCircle2 v-if="copySuccess" class="w-4 h-4 text-emerald-600" />
+            <Share2 v-else class="w-4 h-4 text-[var(--accent-red)]" />
+            <span>{{ copySuccess ? 'Lien copié !' : 'Inviter à la table' }}</span>
+          </button>
+        </div>
       </div>
     </div>
 
-    <!-- Carte interactive Leaflet OpenStreetMap avec les épingles -->
+    <!-- Carte interactive Leaflet OpenStreetMap avec cadre façon plan d'architecte -->
     <div v-show="showMap" class="transition-all duration-300">
-      <RestaurantsMap
-        :departure="{
-          address: session.departure_address,
-          latitude: session.latitude,
-          longitude: session.longitude,
-          radius_meters: session.radius_meters
-        }"
-        :restaurants="filteredRestaurants"
-        :selected-rankings="{
-          firstChoiceId,
-          secondChoiceId,
-          thirdChoiceId
-        }"
-        @toggle-rank="handleToggleRank"
-      />
+      <div class="bistro-card-frame rounded-3xl overflow-hidden shadow-lg p-2 sm:p-3">
+        <RestaurantsMap
+          :departure="{
+            address: session.departure_address,
+            latitude: session.latitude,
+            longitude: session.longitude,
+            radius_meters: session.radius_meters
+          }"
+          :restaurants="filteredRestaurants"
+          :selected-rankings="{
+            firstChoiceId,
+            secondChoiceId,
+            thirdChoiceId
+          }"
+          @toggle-rank="handleToggleRank"
+        />
+      </div>
     </div>
 
-    <!-- Barre d'action fixe : L'Ardoise de Vote flottante -->
-    <div class="bg-[#191C22]/95 backdrop-blur-md rounded-2xl border border-[#383F4C] p-4 sm:p-5 sticky top-4 z-20 shadow-xl shadow-black/25 text-[#F8FAFC]">
-      <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4 font-sans">
-        <!-- Champ nom du votant -->
+    <!-- Barre d'action fixe : Le Bon de Commande du Garçon (Waiter's Docket) -->
+    <div class="waiter-docket rounded-3xl p-5 sm:p-6 sticky top-4 z-20 shadow-2xl backdrop-blur-md bg-[var(--bg-surface)]/98 border-2 border-[var(--border-main)]">
+      <!-- Pince métallique dorée en haut -->
+      <div class="waiter-clip"></div>
+
+      <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-5 pt-2">
+        <!-- Champ nom du convive -->
         <div class="w-full lg:w-72 shrink-0">
-          <label for="voter-name" class="block text-xs font-semibold uppercase tracking-wider text-[#F8FAFC] mb-1">
-            Votre prénom ou table <span class="text-[#DC2626]">*</span>
+          <label for="voter-name" class="block font-serif text-sm font-bold text-[var(--text-main)] mb-1.5 tracking-wide">
+            Votre prénom ou table <span class="text-[var(--accent-red)]">*</span>
           </label>
-          <div class="relative rounded-xl">
-            <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3 text-[#94A3B8]">
+          <div class="relative rounded-2xl">
+            <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3.5 text-[var(--text-faint)]">
               <User class="h-4 w-4" />
             </div>
             <input
@@ -276,48 +290,48 @@ async function handleVoteSubmit() {
               type="text"
               required
               placeholder="ex : Marc, Camille..."
-              class="block w-full rounded-xl border border-[#383F4C] bg-[#22262E] pl-9 pr-3 py-2 text-sm font-normal text-[#F8FAFC] placeholder:text-[#94A3B8] focus:bg-[#2A2F39] focus:border-[#DC2626] focus:ring-1 focus:ring-[#DC2626]/30 focus:outline-none transition"
+              class="block w-full rounded-2xl border border-[var(--border-main)] bg-[var(--bg-surface-inset)] pl-10 pr-3 py-2.5 text-sm font-normal text-[var(--text-main)] placeholder:text-[var(--text-faint)] focus:bg-[var(--bg-surface)] focus:border-[var(--accent-brass)] focus:ring-2 focus:ring-[var(--accent-brass)]/20 focus:outline-none transition"
             />
           </div>
         </div>
 
-        <!-- Récapitulatif visuel des 3 choix (Trio Rouge, Laiton, Zinc) -->
-        <div class="flex-1 flex flex-wrap items-center gap-2 text-xs">
-          <!-- Choix 1 : Rouge Bistrot -->
+        <!-- Récapitulatif visuel des 3 choix (Trio Rouge Bordeaux, Laiton, Zinc) -->
+        <div class="flex-1 flex flex-wrap items-center gap-2.5 text-xs font-serif">
+          <!-- Choix 1 : Rouge Bordeaux -->
           <div 
             :class="[
-              firstChoiceId ? 'bg-[#2E1819] border-[#DC2626] text-[#FCA5A5] font-medium' : 'bg-[#22262E] border-dashed border-[#383F4C] text-[#64748B]',
-              'px-3 py-2 rounded-xl border flex items-center gap-2 transition'
+              firstChoiceId ? 'bg-[var(--accent-red-soft)] border-[var(--accent-red)] text-[var(--accent-red)] font-bold shadow-xs' : 'bg-[var(--bg-surface-inset)] border-dashed border-[var(--border-main)] text-[var(--text-faint)]',
+              'px-3.5 py-2.5 rounded-2xl border flex items-center gap-2 transition'
             ]"
           >
-            <span class="w-5 h-5 rounded-full bg-[#DC2626] text-white flex items-center justify-center font-medium text-[10px] shadow-xs">1</span>
-            <span class="truncate max-w-[130px] sm:max-w-[170px] font-serif text-sm">{{ firstChoiceName || '1er choix (+3 pts)' }}</span>
+            <span class="w-5 h-5 rounded-full bg-[var(--accent-red)] text-white flex items-center justify-center font-sans font-bold text-[10px] shadow-xs">1</span>
+            <span class="truncate max-w-[130px] sm:max-w-[170px] text-sm">{{ firstChoiceName || '1er choix (+3 pts)' }}</span>
           </div>
 
           <!-- Choix 2 : Laiton Doré -->
           <div 
             :class="[
-              secondChoiceId ? 'bg-[#2B2317] border-[#D97706] text-[#FDE68A] font-medium' : 'bg-[#22262E] border-dashed border-[#383F4C] text-[#64748B]',
-              'px-3 py-2 rounded-xl border flex items-center gap-2 transition'
+              secondChoiceId ? 'bg-[var(--accent-brass-soft)] border-[var(--accent-brass)] text-[var(--accent-brass)] font-bold shadow-xs' : 'bg-[var(--bg-surface-inset)] border-dashed border-[var(--border-main)] text-[var(--text-faint)]',
+              'px-3.5 py-2.5 rounded-2xl border flex items-center gap-2 transition'
             ]"
           >
-            <span class="w-5 h-5 rounded-full bg-[#D97706] text-white flex items-center justify-center font-medium text-[10px] shadow-xs">2</span>
-            <span class="truncate max-w-[130px] sm:max-w-[170px] font-serif text-sm">{{ secondChoiceName || '2e choix (+2 pts)' }}</span>
+            <span class="w-5 h-5 rounded-full bg-[var(--accent-brass)] text-white flex items-center justify-center font-sans font-bold text-[10px] shadow-xs">2</span>
+            <span class="truncate max-w-[130px] sm:max-w-[170px] text-sm">{{ secondChoiceName || '2e choix (+2 pts)' }}</span>
           </div>
 
           <!-- Choix 3 : Zinc Étain -->
           <div 
             :class="[
-              thirdChoiceId ? 'bg-[#242933] border-[#64748B] text-[#CBD5E1] font-medium' : 'bg-[#22262E] border-dashed border-[#383F4C] text-[#64748B]',
-              'px-3 py-2 rounded-xl border flex items-center gap-2 transition'
+              thirdChoiceId ? 'bg-[var(--accent-zinc-soft)] border-[var(--accent-zinc)] text-[var(--accent-zinc)] font-bold shadow-xs' : 'bg-[var(--bg-surface-inset)] border-dashed border-[var(--border-main)] text-[var(--text-faint)]',
+              'px-3.5 py-2.5 rounded-2xl border flex items-center gap-2 transition'
             ]"
           >
-            <span class="w-5 h-5 rounded-full bg-[#64748B] text-white flex items-center justify-center font-medium text-[10px] shadow-xs">3</span>
-            <span class="truncate max-w-[130px] sm:max-w-[170px] font-serif text-sm">{{ thirdChoiceName || '3e choix (+1 pt)' }}</span>
+            <span class="w-5 h-5 rounded-full bg-[var(--accent-zinc)] text-white flex items-center justify-center font-sans font-bold text-[10px] shadow-xs">3</span>
+            <span class="truncate max-w-[130px] sm:max-w-[170px] text-sm">{{ thirdChoiceName || '3e choix (+1 pt)' }}</span>
           </div>
         </div>
 
-        <!-- Bouton de validation Rouge Bistrot -->
+        <!-- Bouton de validation (Sceau de Cire si valide) -->
         <div class="shrink-0 flex flex-col items-stretch lg:items-end">
           <button
             type="button"
@@ -325,80 +339,80 @@ async function handleVoteSubmit() {
             @click="handleVoteSubmit"
             :class="[
               canSubmit
-                ? 'bg-[#DC2626] hover:bg-[#B91C1C] active:bg-[#991B1B] text-white font-medium shadow-sm'
-                : 'bg-[#22262E] text-[#64748B] cursor-not-allowed border border-[#383F4C]',
-              'px-6 py-3 rounded-xl text-sm transition flex items-center justify-center gap-2 cursor-pointer'
+                ? 'wax-seal-btn font-serif font-bold shadow-lg cursor-pointer scale-[1.02]'
+                : 'bg-[var(--bg-surface-inset)] text-[var(--text-faint)] cursor-not-allowed border border-[var(--border-main)] font-serif',
+              'px-6 py-3 rounded-2xl text-sm transition flex items-center justify-center gap-2'
             ]"
           >
             <Lock class="w-4 h-4 shrink-0" />
-            <span>{{ isSubmitting ? 'Transmission...' : submitButtonLabel }}</span>
+            <span class="text-sm sm:text-base tracking-wide">{{ isSubmitting ? 'Transmission au chef...' : submitButtonLabel }}</span>
           </button>
-          <span class="text-[11px] text-[#94A3B8] mt-1 text-center lg:text-right font-normal">
-            Choix définitif • Transmis à la cuisine
+          <span class="text-[10px] text-[var(--text-faint)] mt-1.5 text-center lg:text-right font-serif italic">
+            Scellé au registre • Transmission directe
           </span>
         </div>
       </div>
 
       <!-- Erreur éventuelle -->
-      <div v-if="errorMessage" class="mt-3 p-3 rounded-xl bg-[#2E1819] border border-[#DC2626] text-[#FCA5A5] text-xs flex items-center gap-2 font-medium">
+      <div v-if="errorMessage" class="mt-3 p-3 rounded-xl bg-[var(--accent-red-soft)] border border-[var(--accent-red-border)] text-[var(--accent-red)] text-xs flex items-center gap-2 font-medium">
         <AlertCircle class="w-4 h-4 shrink-0" />
         <span>{{ errorMessage }}</span>
       </div>
     </div>
 
     <!-- Barre de filtrage & tri brasserie -->
-    <div class="bg-[#FFFFFF] rounded-2xl border border-[#E2D9CF] p-4 sm:p-5 space-y-3 shadow-sm font-sans">
+    <div class="bistro-card-frame rounded-2xl p-4 sm:p-5 space-y-3 shadow-sm">
       <div class="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
         <!-- Recherche textuelle -->
         <div class="relative flex-1">
-          <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3.5 text-[#94A3B8]">
+          <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3.5 text-[var(--text-faint)]">
             <Search class="w-4 h-4" />
           </div>
           <input
             v-model="searchQuery"
             type="text"
             placeholder="Rechercher une table, cuisine ou rue..."
-            class="block w-full rounded-xl border border-[#E2D9CF] bg-[#F8F5F2] pl-10 pr-3 py-2 text-sm font-normal text-[#191C22] placeholder:text-[#94A3B8] focus:bg-[#FFFFFF] focus:border-[#DC2626] focus:ring-1 focus:ring-[#DC2626]/20 focus:outline-none transition"
+            class="block w-full rounded-xl border border-[var(--border-main)] bg-[var(--bg-surface-inset)] pl-10 pr-3 py-2 text-sm font-normal text-[var(--text-main)] placeholder:text-[var(--text-faint)] focus:bg-[var(--bg-surface)] focus:border-[var(--accent-brass)] focus:ring-1 focus:ring-[var(--accent-brass)]/20 focus:outline-none transition"
           />
         </div>
 
         <!-- Bascule de Tri : Note vs Distance -->
-        <div class="flex items-center gap-1.5 shrink-0 bg-[#E7DED4] p-1 rounded-xl border border-[#D5CBC0]">
+        <div class="flex items-center gap-1.5 shrink-0 bg-[var(--bg-surface-inset)] p-1 rounded-xl border border-[var(--border-main)]">
           <button
             type="button"
             @click="sortBy = 'rating'"
             :class="[
-              sortBy === 'rating' ? 'bg-[#191C22] text-[#F8FAFC] font-medium border border-[#383F4C] shadow-xs' : 'text-[#64748B] hover:text-[#191C22]',
-              'px-3 py-1.5 rounded-lg text-xs transition flex items-center gap-1.5 cursor-pointer'
+              sortBy === 'rating' ? 'bg-[var(--bg-surface)] text-[var(--text-main)] font-semibold border border-[var(--border-main)] shadow-xs' : 'text-[var(--text-faint)] hover:text-[var(--text-main)]',
+              'px-3.5 py-1.5 rounded-lg text-xs font-serif transition flex items-center gap-1.5 cursor-pointer'
             ]"
           >
-            <Star class="w-3.5 h-3.5 text-[#D97706] fill-[#D97706]" />
+            <Star class="w-3.5 h-3.5 text-[var(--accent-brass)] fill-[var(--accent-brass)]" />
             <span>Mieux notées ⭐</span>
           </button>
           <button
             type="button"
             @click="sortBy = 'distance'"
             :class="[
-              sortBy === 'distance' ? 'bg-[#191C22] text-[#F8FAFC] font-medium border border-[#383F4C] shadow-xs' : 'text-[#64748B] hover:text-[#191C22]',
-              'px-3 py-1.5 rounded-lg text-xs transition flex items-center gap-1.5 cursor-pointer'
+              sortBy === 'distance' ? 'bg-[var(--bg-surface)] text-[var(--text-main)] font-semibold border border-[var(--border-main)] shadow-xs' : 'text-[var(--text-faint)] hover:text-[var(--text-main)]',
+              'px-3.5 py-1.5 rounded-lg text-xs font-serif transition flex items-center gap-1.5 cursor-pointer'
             ]"
           >
-            <Footprints class="w-3.5 h-3.5 text-[#D97706]" />
+            <Footprints class="w-3.5 h-3.5 text-[var(--accent-brass)]" />
             <span>Plus proches</span>
           </button>
         </div>
       </div>
 
       <!-- Filtres secondaires : Cuisines, Formules, Compteur -->
-      <div class="flex flex-wrap items-center justify-between gap-3 pt-3 border-t border-[#E2D9CF] text-xs">
+      <div class="flex flex-wrap items-center justify-between gap-3 pt-3 border-t border-[var(--border-subtle)] text-xs">
         <div class="flex flex-wrap items-center gap-2">
           <!-- Filtre Cuisine -->
-          <div class="flex items-center gap-1.5 text-[#475569] font-medium">
-            <Filter class="w-3.5 h-3.5 text-[#64748B]" />
-            <span>Cuisine :</span>
+          <div class="flex items-center gap-1.5 text-[var(--text-muted)] font-serif text-sm">
+            <Filter class="w-3.5 h-3.5 text-[var(--accent-brass)]" />
+            <span>Spécialité :</span>
             <select
               v-model="selectedCuisine"
-              class="rounded-lg border border-[#E2D9CF] bg-[#F8F5F2] px-2.5 py-1 text-xs font-medium text-[#191C22] focus:border-[#DC2626] focus:outline-none cursor-pointer"
+              class="rounded-lg border border-[var(--border-main)] bg-[var(--bg-surface-inset)] px-2.5 py-1 text-xs font-medium text-[var(--text-main)] focus:border-[var(--accent-brass)] focus:outline-none cursor-pointer"
             >
               <option value="ALL">Toutes les cuisines ({{ restaurants.length }})</option>
               <option v-for="c in availableCuisines" :key="c" :value="c">{{ c }}</option>
@@ -411,48 +425,48 @@ async function handleVoteSubmit() {
             @click="onlyWithMenu = !onlyWithMenu"
             :class="[
               onlyWithMenu 
-                ? 'bg-[#191C22] text-[#F8FAFC] border border-[#383F4C] font-medium shadow-xs' 
-                : 'bg-[#F8F5F2] text-[#475569] border border-[#E2D9CF] hover:bg-[#FFFFFF]',
-              'px-3 py-1 rounded-lg text-xs transition cursor-pointer flex items-center gap-1.5'
+                ? 'bg-[var(--accent-brass)] text-white border border-[var(--accent-brass)] font-medium shadow-xs' 
+                : 'bg-[var(--bg-surface-inset)] text-[var(--text-muted)] border border-[var(--border-main)] hover:bg-[var(--bg-surface)]',
+              'px-3 py-1 rounded-lg text-xs font-serif transition cursor-pointer flex items-center gap-1.5'
             ]"
           >
-            <span>Avec carte / formules du jour</span>
+            <span>📜 Avec carte / formules du jour</span>
           </button>
         </div>
 
-        <span class="text-[#64748B] font-normal text-xs">
-          <strong class="text-[#191C22] font-medium">{{ filteredRestaurants.length }}</strong> sur {{ restaurants.length }} adresses affichées
+        <span class="text-[var(--text-faint)] font-serif text-sm">
+          <strong class="text-[var(--text-main)] font-semibold">{{ filteredRestaurants.length }}</strong> sur {{ restaurants.length }} adresses
         </span>
       </div>
     </div>
 
-    <!-- Grille des ardoises de restaurants -->
+    <!-- Grille des tables de restaurant -->
     <div>
       <div class="flex items-center justify-between mb-4">
         <div>
-          <h3 class="font-serif text-3xl font-normal text-[#191C22] tracking-wide">
+          <h3 class="font-serif text-3xl sm:text-4xl font-normal text-[var(--text-main)] tracking-wide">
             Les Tables du Quartier
           </h3>
-          <p class="text-xs text-[#64748B] mt-0.5 font-sans">
-            Attribuez vos 3 préférences avec les boutons 1er (+3 pts), 2e (+2 pts) ou 3e (+1 pt)
+          <p class="text-xs text-[var(--text-muted)] mt-0.5 font-serif italic">
+            Attribuez vos 3 dégustations prioritaires (1er à 3 pts, 2e à 2 pts, 3e à 1 pt)
           </p>
         </div>
       </div>
 
       <!-- État vide si filtre trop restrictif -->
-      <div v-if="filteredRestaurants.length === 0" class="rounded-2xl border border-[#E2D9CF] bg-[#FFFFFF] p-8 text-center text-[#475569] space-y-2 shadow-sm font-sans">
-        <p class="font-serif text-xl font-normal text-[#191C22]">Aucune table ne correspond à vos filtres.</p>
-        <p class="text-xs text-[#64748B]">Essayez de réinitialiser la recherche ou de sélectionner "Toutes les cuisines".</p>
+      <div v-if="filteredRestaurants.length === 0" class="bistro-card-frame rounded-2xl p-8 text-center text-[var(--text-muted)] space-y-2 shadow-sm">
+        <p class="font-serif text-2xl font-normal text-[var(--text-main)]">Aucune table ne correspond à vos filtres.</p>
+        <p class="text-xs">Essayez de réinitialiser la recherche ou de sélectionner "Toutes les cuisines".</p>
         <button
           type="button"
           @click="searchQuery = ''; selectedCuisine = 'ALL'; onlyWithMenu = false;"
-          class="mt-2 inline-flex items-center px-3 py-1.5 rounded-lg bg-[#F8F5F2] border border-[#E2D9CF] text-xs font-medium text-[#191C22] hover:bg-[#FFFFFF] cursor-pointer shadow-xs"
+          class="mt-2 inline-flex items-center px-4 py-2 rounded-xl bg-[var(--bg-surface-inset)] border border-[var(--border-main)] text-xs font-serif font-medium text-[var(--text-main)] hover:bg-[var(--bg-surface)] cursor-pointer shadow-xs"
         >
           Réinitialiser les filtres
         </button>
       </div>
 
-      <div v-else class="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div v-else class="grid grid-cols-1 md:grid-cols-2 gap-5">
         <RestaurantCard
           v-for="r in filteredRestaurants"
           :key="r.id"
