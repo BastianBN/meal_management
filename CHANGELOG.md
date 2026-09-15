@@ -1,3 +1,10 @@
+# [1.2.0](https://github.com/BastianBN/meal_management/compare/v1.1.0...v1.2.0) (2026-09-15)
+
+
+### Features
+
+* **ui:** add booking count and participant list to results and normalize copy ([d201d81](https://github.com/BastianBN/meal_management/commit/d201d81ab413254fd9e09930b839af75c5505014))
+
 # [1.1.0](https://github.com/BastianBN/meal_management/compare/v1.0.0...v1.1.0) (2026-09-15)
 
 
