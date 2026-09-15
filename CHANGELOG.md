@@ -1,3 +1,10 @@
+# [1.1.0](https://github.com/BastianBN/meal_management/compare/v1.0.0...v1.1.0) (2026-09-15)
+
+
+### Features
+
+* **ui:** implement grand french bistro themes (la carte and ardoise) with open book layout and brass details ([c299d58](https://github.com/BastianBN/meal_management/commit/c299d581fd1bc4906cc9b9edb48fe4d15b6cc54e))
+
 # 1.0.0 (2026-09-15)
 
 
