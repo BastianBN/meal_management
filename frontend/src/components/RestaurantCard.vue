@@ -53,10 +53,10 @@ function handleRankClick(rank) {
         currentRank === 1 ? 'bg-[var(--accent-red)] text-white border-2 border-white/40 shadow-lg' :
         currentRank === 2 ? 'bg-[var(--accent-brass)] text-white border-2 border-white/40 shadow-lg' :
         'bg-[var(--accent-zinc)] text-white border-2 border-white/40 shadow-lg',
-        'absolute -top-3.5 right-6 px-3.5 py-1 rounded-full text-xs font-serif tracking-wider uppercase font-bold flex items-center gap-1.5 z-10'
+        'absolute -top-3.5 right-6 px-4 py-1 rounded-full text-xs sm:text-sm font-serif tracking-wider uppercase font-bold flex items-center gap-1.5 z-10'
       ]"
     >
-      <Check class="w-3.5 h-3.5 stroke-[2.5]" />
+      <Check class="w-4 h-4 stroke-[2.5]" />
       <span>{{ currentRank === 1 ? '1er Choix (+3 pts)' : currentRank === 2 ? '2e Choix (+2 pts)' : '3e Choix (+1 pt)' }}</span>
     </div>
 
@@ -65,32 +65,32 @@ function handleRankClick(rank) {
       <!-- Ligne supérieure : Spécialité & Allure de marche -->
       <div class="flex items-center justify-between gap-2 flex-wrap mb-2.5">
         <div class="flex items-center gap-2 flex-wrap">
-          <span class="inline-block text-xs font-serif italic px-3 py-0.5 rounded-full bg-[var(--bg-surface-inset)] text-[var(--text-muted)] border border-[var(--border-subtle)]">
+          <span class="inline-block text-xs sm:text-sm font-serif italic px-3.5 py-1 rounded-full bg-[var(--bg-surface-inset)] text-[var(--text-muted)] border border-[var(--border-subtle)]">
             ❧ {{ restaurant.cuisine || 'Bistrot de quartier' }} ☙
           </span>
 
           <!-- Badge Note & Avis -->
           <div 
             v-if="restaurant.rating"
-            class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-[var(--accent-brass-soft)] text-[var(--accent-brass)] text-xs font-medium border border-[var(--accent-brass-border)]"
+            class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[var(--accent-brass-soft)] text-[var(--accent-brass)] text-sm font-medium border border-[var(--accent-brass-border)]"
             :title="`${restaurant.rating_count || 100} avis clients vérifiés`"
           >
-            <Star class="w-3 h-3 text-[var(--accent-brass)] fill-[var(--accent-brass)]" />
-            <span class="font-serif font-bold text-sm leading-none">{{ Number(restaurant.rating).toFixed(1) }}</span>
-            <span v-if="restaurant.rating_count" class="text-[10px] opacity-75 font-normal font-sans">({{ restaurant.rating_count }})</span>
+            <Star class="w-3.5 h-3.5 text-[var(--accent-brass)] fill-[var(--accent-brass)]" />
+            <span class="font-serif font-bold text-base leading-none">{{ Number(restaurant.rating).toFixed(1) }}</span>
+            <span v-if="restaurant.rating_count" class="text-xs opacity-80 font-normal font-sans">({{ restaurant.rating_count }})</span>
           </div>
 
           <span 
             v-if="restaurant.rating >= 4.7"
-            class="inline-block text-[10px] font-serif uppercase tracking-widest font-bold px-2.5 py-0.5 rounded-full bg-[var(--accent-red-soft)] text-[var(--accent-red)] border border-[var(--accent-red-border)]"
+            class="inline-block text-xs font-serif uppercase tracking-wider font-bold px-3 py-1 rounded-full bg-[var(--accent-red-soft)] text-[var(--accent-red)] border border-[var(--accent-red-border)]"
           >
             Coup de cœur
           </span>
         </div>
 
         <!-- Temps de marche avec compas -->
-        <div class="inline-flex items-center gap-1.5 text-xs text-[var(--text-muted)] shrink-0 font-serif">
-          <Footprints class="w-3.5 h-3.5 text-[var(--accent-brass)]" />
+        <div class="inline-flex items-center gap-1.5 text-sm text-[var(--text-muted)] shrink-0 font-serif">
+          <Footprints class="w-4 h-4 text-[var(--accent-brass)]" />
           <span class="font-bold text-[var(--text-main)]">{{ restaurant.walking_time_min }} min</span>
           <span class="text-[var(--text-faint)]">•</span>
           <span>{{ restaurant.distance_meters }} m</span>
@@ -102,7 +102,7 @@ function handleRankClick(rank) {
         {{ restaurant.name }}
       </h3>
 
-      <p v-if="restaurant.address" class="text-xs text-[var(--text-faint)] mb-4 line-clamp-1 font-serif">
+      <p v-if="restaurant.address" class="text-sm text-[var(--text-muted)] mb-4 line-clamp-1 font-serif">
         {{ restaurant.address }}
       </p>
 
@@ -112,20 +112,20 @@ function handleRankClick(rank) {
           <div 
             v-for="(f, idx) in restaurant.lunch_formulas" 
             :key="idx"
-            class="p-3.5 rounded-2xl bg-[var(--bg-surface-subtle)] border border-[var(--border-subtle)] text-xs"
+            class="p-4 rounded-2xl bg-[var(--bg-surface-subtle)] border border-[var(--border-subtle)] text-sm"
           >
             <div class="menu-leader-line">
-              <span class="font-serif text-sm sm:text-base font-semibold text-[var(--text-main)] tracking-wide">{{ f.name }}</span>
+              <span class="font-serif text-base sm:text-lg font-semibold text-[var(--text-main)] tracking-wide">{{ f.name }}</span>
               <span class="menu-leader-dots"></span>
-              <span class="font-serif text-sm sm:text-base font-bold text-[var(--accent-brass)] shrink-0 bg-[var(--bg-surface)] px-2.5 py-0.5 rounded-lg border border-[var(--border-subtle)] shadow-2xs">{{ f.price }}</span>
+              <span class="font-serif text-base sm:text-lg font-bold text-[var(--accent-brass)] shrink-0 bg-[var(--bg-surface)] px-3 py-0.5 rounded-lg border border-[var(--border-subtle)] shadow-2xs">{{ f.price }}</span>
             </div>
-            <p v-if="f.description" class="text-[var(--text-muted)] mt-1.5 text-[11px] font-serif italic leading-relaxed">
+            <p v-if="f.description" class="text-[var(--text-muted)] mt-1.5 text-xs sm:text-sm font-serif italic leading-relaxed">
               {{ f.description }}
             </p>
           </div>
         </div>
 
-        <div v-else-if="restaurant.menu_summary" class="p-3.5 rounded-2xl bg-[var(--bg-surface-subtle)] border border-[var(--border-subtle)] text-xs text-[var(--text-muted)] font-serif italic leading-relaxed">
+        <div v-else-if="restaurant.menu_summary" class="p-4 rounded-2xl bg-[var(--bg-surface-subtle)] border border-[var(--border-subtle)] text-xs sm:text-sm text-[var(--text-muted)] font-serif italic leading-relaxed">
           {{ restaurant.menu_summary }}
         </div>
       </div>
@@ -134,18 +134,18 @@ function handleRankClick(rank) {
     <!-- Section inférieure : Liens de découverte + Trio de Jetons de vote -->
     <div class="space-y-3.5 pt-3.5 border-t border-[var(--border-subtle)]">
       <!-- Ligne 1 : Liens externes (Site officiel, Carte en ligne, Google Maps) -->
-      <div class="flex flex-wrap items-center gap-2 text-xs">
+      <div class="flex flex-wrap items-center gap-2.5 text-sm">
         <!-- Badge Carte en ligne -->
         <a 
           v-if="restaurant.menu_url"
           :href="restaurant.menu_url"
           target="_blank"
           rel="noopener noreferrer"
-          class="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl bg-[var(--bg-surface-inset)] text-[var(--accent-brass)] border border-[var(--border-main)] font-medium hover:border-[var(--accent-brass)] transition"
+          class="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-[var(--bg-surface-inset)] text-[var(--accent-brass)] border border-[var(--border-main)] font-medium hover:border-[var(--accent-brass)] transition"
         >
-          <FileText v-if="isPdfMenu" class="w-3.5 h-3.5" />
-          <ExternalLink v-else class="w-3.5 h-3.5" />
-          <span class="font-serif text-xs">{{ isPdfMenu ? 'Carte PDF' : 'Carte en ligne' }}</span>
+          <FileText v-if="isPdfMenu" class="w-4 h-4" />
+          <ExternalLink v-else class="w-4 h-4" />
+          <span class="font-serif text-xs sm:text-sm font-medium">{{ isPdfMenu ? 'Carte PDF' : 'Carte en ligne' }}</span>
         </a>
 
         <!-- Fiche Google Maps -->
@@ -154,11 +154,11 @@ function handleRankClick(rank) {
           :href="restaurant.google_maps_url"
           target="_blank"
           rel="noopener noreferrer"
-          class="inline-flex items-center gap-1 px-3 py-1 rounded-xl bg-[var(--bg-surface-inset)] text-[var(--text-muted)] hover:text-[var(--text-main)] border border-[var(--border-main)] font-medium transition"
+          class="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-[var(--bg-surface-inset)] text-[var(--text-muted)] hover:text-[var(--text-main)] border border-[var(--border-main)] font-medium transition"
           title="Consulter la fiche Google Maps avec avis et photos des plats"
         >
-          <MapPin class="w-3.5 h-3.5 text-[var(--text-faint)]" />
-          <span class="font-serif text-xs">Avis Google</span>
+          <MapPin class="w-4 h-4 text-[var(--text-faint)]" />
+          <span class="font-serif text-xs sm:text-sm font-medium">Avis Google</span>
         </a>
 
         <!-- Site officiel -->
@@ -167,15 +167,15 @@ function handleRankClick(rank) {
           :href="restaurant.website_url"
           target="_blank"
           rel="noopener noreferrer"
-          class="inline-flex items-center gap-1 px-3 py-1 rounded-xl bg-[var(--bg-surface-inset)] text-[var(--text-muted)] hover:text-[var(--text-main)] border border-[var(--border-main)] font-medium transition"
+          class="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-[var(--bg-surface-inset)] text-[var(--text-muted)] hover:text-[var(--text-main)] border border-[var(--border-main)] font-medium transition"
         >
-          <span class="font-serif text-xs">Site officiel</span>
-          <ExternalLink class="w-3 h-3 text-[var(--text-faint)]" />
+          <span class="font-serif text-xs sm:text-sm font-medium">Site officiel</span>
+          <ExternalLink class="w-3.5 h-3.5 text-[var(--text-faint)]" />
         </a>
       </div>
 
       <!-- Ligne 2 : Trio de Jetons de Bistrot pour le vote (1er Rouge Bordeaux, 2e Laiton, 3e Zinc) -->
-      <div class="grid grid-cols-3 gap-2 w-full">
+      <div class="grid grid-cols-3 gap-2.5 w-full">
         <!-- Jeton 1 -->
         <button
           type="button"
@@ -183,15 +183,15 @@ function handleRankClick(rank) {
           @click="handleRankClick(1)"
           :class="[
             currentRank === 1 
-              ? 'bg-[var(--accent-red)] text-white font-serif text-sm font-bold border-2 border-white/50 shadow-md scale-[1.02]' 
+              ? 'bg-[var(--accent-red)] text-white font-serif font-bold border-2 border-white/50 shadow-md scale-[1.02]' 
               : 'bg-[var(--bg-surface-inset)] hover:bg-[var(--accent-red-soft)] text-[var(--text-main)] hover:text-[var(--accent-red)] border border-[var(--border-main)] hover:border-[var(--accent-red)]',
-            'w-full py-2.5 px-1 rounded-xl text-xs transition btn-interaction flex items-center justify-center gap-1.5 cursor-pointer select-none'
+            'w-full py-3 px-2 rounded-xl transition btn-interaction flex items-center justify-center gap-1.5 cursor-pointer select-none'
           ]"
           title="1er Choix (attribue 3 points)"
         >
-          <span class="w-4 h-4 rounded-full bg-white/20 flex items-center justify-center text-[10px] font-sans font-bold">1</span>
-          <span class="font-serif font-bold">3 pts</span>
-          <Check v-if="currentRank === 1" class="w-3 h-3 stroke-[3]" />
+          <span class="w-5 h-5 rounded-full bg-white/20 flex items-center justify-center text-xs font-sans font-bold">1</span>
+          <span class="font-serif font-bold text-sm sm:text-base">3 pts</span>
+          <Check v-if="currentRank === 1" class="w-4 h-4 stroke-[3]" />
         </button>
 
         <!-- Jeton 2 -->
@@ -201,15 +201,15 @@ function handleRankClick(rank) {
           @click="handleRankClick(2)"
           :class="[
             currentRank === 2 
-              ? 'bg-[var(--accent-brass)] text-white font-serif text-sm font-bold border-2 border-white/50 shadow-md scale-[1.02]' 
+              ? 'bg-[var(--accent-brass)] text-white font-serif font-bold border-2 border-white/50 shadow-md scale-[1.02]' 
               : 'bg-[var(--bg-surface-inset)] hover:bg-[var(--accent-brass-soft)] text-[var(--text-main)] hover:text-[var(--accent-brass)] border border-[var(--border-main)] hover:border-[var(--accent-brass)]',
-            'w-full py-2.5 px-1 rounded-xl text-xs transition btn-interaction flex items-center justify-center gap-1.5 cursor-pointer select-none'
+            'w-full py-3 px-2 rounded-xl transition btn-interaction flex items-center justify-center gap-1.5 cursor-pointer select-none'
           ]"
           title="2e Choix (attribue 2 points)"
         >
-          <span class="w-4 h-4 rounded-full bg-white/20 flex items-center justify-center text-[10px] font-sans font-bold">2</span>
-          <span class="font-serif font-bold">2 pts</span>
-          <Check v-if="currentRank === 2" class="w-3 h-3 stroke-[3]" />
+          <span class="w-5 h-5 rounded-full bg-white/20 flex items-center justify-center text-xs font-sans font-bold">2</span>
+          <span class="font-serif font-bold text-sm sm:text-base">2 pts</span>
+          <Check v-if="currentRank === 2" class="w-4 h-4 stroke-[3]" />
         </button>
 
         <!-- Jeton 3 -->
@@ -219,15 +219,15 @@ function handleRankClick(rank) {
           @click="handleRankClick(3)"
           :class="[
             currentRank === 3 
-              ? 'bg-[var(--accent-zinc)] text-white font-serif text-sm font-bold border-2 border-white/50 shadow-md scale-[1.02]' 
+              ? 'bg-[var(--accent-zinc)] text-white font-serif font-bold border-2 border-white/50 shadow-md scale-[1.02]' 
               : 'bg-[var(--bg-surface-inset)] hover:bg-[var(--accent-zinc-soft)] text-[var(--text-main)] hover:text-[var(--accent-zinc)] border border-[var(--border-main)] hover:border-[var(--accent-zinc)]',
-            'w-full py-2.5 px-1 rounded-xl text-xs transition btn-interaction flex items-center justify-center gap-1.5 cursor-pointer select-none'
+            'w-full py-3 px-2 rounded-xl transition btn-interaction flex items-center justify-center gap-1.5 cursor-pointer select-none'
           ]"
           title="3e Choix (attribue 1 point)"
         >
-          <span class="w-4 h-4 rounded-full bg-white/20 flex items-center justify-center text-[10px] font-sans font-bold">3</span>
-          <span class="font-serif font-bold">1 pt</span>
-          <Check v-if="currentRank === 3" class="w-3 h-3 stroke-[3]" />
+          <span class="w-5 h-5 rounded-full bg-white/20 flex items-center justify-center text-xs font-sans font-bold">3</span>
+          <span class="font-serif font-bold text-sm sm:text-base">1 pt</span>
+          <Check v-if="currentRank === 3" class="w-4 h-4 stroke-[3]" />
         </button>
       </div>
     </div>

@@ -258,19 +258,19 @@ watch(
 
 <template>
   <div class="rounded-3xl border border-[var(--border-main)] overflow-hidden shadow-xl bg-[var(--bg-surface)]">
-    <div class="p-4 bg-[var(--bg-surface-subtle)] border-b border-[var(--border-main)] flex items-center justify-between text-xs text-[var(--text-muted)]">
+    <div class="p-4 sm:p-5 bg-[var(--bg-surface-subtle)] border-b border-[var(--border-main)] flex items-center justify-between text-sm text-[var(--text-muted)]">
       <div class="flex items-center gap-3">
-        <span class="flex items-center gap-1.5 font-serif text-base font-bold text-[var(--text-main)]">
+        <span class="flex items-center gap-1.5 font-serif text-lg font-bold text-[var(--text-main)]">
           <span>🗺️</span> Carte des restaurants
         </span>
         <span class="text-[var(--text-faint)]">•</span>
-        <span class="font-serif">Rayon : {{ departure.radius_meters }} m</span>
+        <span class="font-serif text-sm sm:text-base">Rayon : {{ departure.radius_meters }} m</span>
       </div>
       <div class="flex items-center gap-2">
-        <span class="inline-flex items-center gap-1 font-medium text-white bg-[var(--accent-red)] px-2.5 py-0.5 rounded-full shadow-2xs font-serif text-xs">
+        <span class="inline-flex items-center gap-1.5 font-medium text-white bg-[var(--accent-red)] px-3 py-1 rounded-full shadow-2xs font-serif text-xs sm:text-sm">
           <span class="w-1.5 h-1.5 rounded-full bg-white"></span> 1er choix
         </span>
-        <span class="hidden sm:inline text-[var(--text-faint)] font-serif italic">Cliquez sur une épingle pour voter</span>
+        <span class="hidden sm:inline text-[var(--text-faint)] font-serif text-sm italic">Cliquez sur une épingle pour voter</span>
       </div>
     </div>
     <div ref="mapContainer" class="w-full h-80 sm:h-96 z-10"></div>

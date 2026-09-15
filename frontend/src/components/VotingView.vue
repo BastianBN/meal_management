@@ -205,7 +205,7 @@ async function handleVoteSubmit() {
 
       <div class="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
         <div>
-          <div class="flex items-center gap-2 text-xs font-serif font-bold text-[var(--accent-brass)] mb-1.5 uppercase tracking-wider">
+          <div class="flex items-center gap-2 text-sm font-serif font-bold text-[var(--accent-brass)] mb-1.5 uppercase tracking-wider">
             <span>🍽️</span>
             <span>Point de départ</span>
             <span>🍽️</span>
@@ -213,13 +213,13 @@ async function handleVoteSubmit() {
           <h2 class="font-display sm:font-serif text-3xl sm:text-4xl lg:text-5xl font-normal text-[var(--text-main)] tracking-wide leading-tight">
             {{ session.departure_address }}
           </h2>
-          <div class="text-xs text-[var(--text-muted)] mt-3 flex items-center gap-3 flex-wrap font-serif">
-            <span class="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-[var(--bg-surface-inset)] border border-[var(--border-subtle)] text-[var(--text-main)] text-sm shadow-2xs">
+          <div class="text-sm text-[var(--text-muted)] mt-3 flex items-center gap-3 flex-wrap font-serif">
+            <span class="inline-flex items-center gap-1.5 px-4 py-2 rounded-full bg-[var(--bg-surface-inset)] border border-[var(--border-subtle)] text-[var(--text-main)] text-sm sm:text-base shadow-2xs">
               <Footprints class="w-4 h-4 text-[var(--accent-red)]" />
               Périmètre : <strong class="text-[var(--text-main)] font-semibold">{{ session.radius_meters >= 1000 ? (session.radius_meters / 1000).toFixed(1).replace('.', ',') + ' km' : session.radius_meters + ' m' }}</strong> (~{{ Math.round(session.radius_meters / 100) }} min à pied)
             </span>
             <span class="text-[var(--text-faint)]">•</span>
-            <span class="font-medium text-sm text-[var(--text-main)]">{{ restaurants.length }} restaurants trouvés</span>
+            <span class="font-medium text-sm sm:text-base text-[var(--text-main)]">{{ restaurants.length }} restaurants trouvés</span>
           </div>
         </div>
 
@@ -228,7 +228,7 @@ async function handleVoteSubmit() {
           <button
             type="button"
             @click="showMap = !showMap"
-            class="inline-flex items-center gap-2 px-4 py-2.5 rounded-2xl border border-[var(--border-main)] hover:border-[var(--accent-brass)] bg-[var(--bg-surface-inset)] hover:bg-[var(--bg-surface)] text-[var(--text-main)] text-xs font-serif font-semibold transition cursor-pointer shadow-xs"
+            class="inline-flex items-center gap-2 px-4 py-2.5 rounded-2xl border border-[var(--border-main)] hover:border-[var(--accent-brass)] bg-[var(--bg-surface-inset)] hover:bg-[var(--bg-surface)] text-[var(--text-main)] text-sm font-serif font-semibold transition cursor-pointer shadow-xs"
           >
             <MapIcon v-if="!showMap" class="w-4 h-4 text-[var(--accent-brass)]" />
             <List v-else class="w-4 h-4 text-[var(--accent-brass)]" />
@@ -238,7 +238,7 @@ async function handleVoteSubmit() {
           <button
             type="button"
             @click="copyShareLink"
-            class="inline-flex items-center gap-2 px-4 py-2.5 rounded-2xl border border-[var(--accent-red-border)] hover:border-[var(--accent-red)] bg-[var(--accent-red-soft)] hover:bg-[var(--accent-red-soft)]/80 text-[var(--accent-red)] text-xs font-serif font-semibold transition cursor-pointer shadow-xs"
+            class="inline-flex items-center gap-2 px-4 py-2.5 rounded-2xl border border-[var(--accent-red-border)] hover:border-[var(--accent-red)] bg-[var(--accent-red-soft)] hover:bg-[var(--accent-red-soft)]/80 text-[var(--accent-red)] text-sm font-serif font-semibold transition cursor-pointer shadow-xs"
           >
             <CheckCircle2 v-if="copySuccess" class="w-4 h-4 text-emerald-600" />
             <Share2 v-else class="w-4 h-4 text-[var(--accent-red)]" />
@@ -277,7 +277,7 @@ async function handleVoteSubmit() {
       <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-5 pt-2">
         <!-- Champ nom du convive -->
         <div class="w-full lg:w-72 shrink-0">
-          <label for="voter-name" class="block font-serif text-sm font-bold text-[var(--text-main)] mb-1.5 tracking-wide">
+          <label for="voter-name" class="block font-serif text-base font-bold text-[var(--text-main)] mb-1.5 tracking-wide">
             Votre prénom <span class="text-[var(--accent-red)]">*</span>
           </label>
           <div class="relative rounded-2xl">
@@ -290,13 +290,13 @@ async function handleVoteSubmit() {
               type="text"
               required
               placeholder="ex : Marc, Camille..."
-              class="block w-full rounded-2xl border border-[var(--border-main)] bg-[var(--bg-surface-inset)] pl-10 pr-3 py-2.5 text-sm font-normal text-[var(--text-main)] placeholder:text-[var(--text-faint)] focus:bg-[var(--bg-surface)] focus:border-[var(--accent-brass)] focus:ring-2 focus:ring-[var(--accent-brass)]/20 focus:outline-none transition"
+              class="block w-full rounded-2xl border border-[var(--border-main)] bg-[var(--bg-surface-inset)] pl-10 pr-3 py-2.5 text-base font-normal text-[var(--text-main)] placeholder:text-[var(--text-faint)] focus:bg-[var(--bg-surface)] focus:border-[var(--accent-brass)] focus:ring-2 focus:ring-[var(--accent-brass)]/20 focus:outline-none transition"
             />
           </div>
         </div>
 
         <!-- Récapitulatif visuel des 3 choix (Trio Rouge Bordeaux, Laiton, Zinc) -->
-        <div class="flex-1 flex flex-wrap items-center gap-2.5 text-xs font-serif">
+        <div class="flex-1 flex flex-wrap items-center gap-2.5 text-sm font-serif">
           <!-- Choix 1 : Rouge Bordeaux -->
           <div 
             :class="[
@@ -304,8 +304,8 @@ async function handleVoteSubmit() {
               'px-3.5 py-2.5 rounded-2xl border flex items-center gap-2 transition'
             ]"
           >
-            <span class="w-5 h-5 rounded-full bg-[var(--accent-red)] text-white flex items-center justify-center font-sans font-bold text-[10px] shadow-xs">1</span>
-            <span class="truncate max-w-[130px] sm:max-w-[170px] text-sm">{{ firstChoiceName || '1er choix (+3 pts)' }}</span>
+            <span class="w-5 h-5 rounded-full bg-[var(--accent-red)] text-white flex items-center justify-center font-sans font-bold text-xs shadow-xs">1</span>
+            <span class="truncate max-w-[130px] sm:max-w-[170px] text-sm sm:text-base font-medium">{{ firstChoiceName || '1er choix (+3 pts)' }}</span>
           </div>
 
           <!-- Choix 2 : Laiton Doré -->
@@ -315,8 +315,8 @@ async function handleVoteSubmit() {
               'px-3.5 py-2.5 rounded-2xl border flex items-center gap-2 transition'
             ]"
           >
-            <span class="w-5 h-5 rounded-full bg-[var(--accent-brass)] text-white flex items-center justify-center font-sans font-bold text-[10px] shadow-xs">2</span>
-            <span class="truncate max-w-[130px] sm:max-w-[170px] text-sm">{{ secondChoiceName || '2e choix (+2 pts)' }}</span>
+            <span class="w-5 h-5 rounded-full bg-[var(--accent-brass)] text-white flex items-center justify-center font-sans font-bold text-xs shadow-xs">2</span>
+            <span class="truncate max-w-[130px] sm:max-w-[170px] text-sm sm:text-base font-medium">{{ secondChoiceName || '2e choix (+2 pts)' }}</span>
           </div>
 
           <!-- Choix 3 : Zinc Étain -->
@@ -326,8 +326,8 @@ async function handleVoteSubmit() {
               'px-3.5 py-2.5 rounded-2xl border flex items-center gap-2 transition'
             ]"
           >
-            <span class="w-5 h-5 rounded-full bg-[var(--accent-zinc)] text-white flex items-center justify-center font-sans font-bold text-[10px] shadow-xs">3</span>
-            <span class="truncate max-w-[130px] sm:max-w-[170px] text-sm">{{ thirdChoiceName || '3e choix (+1 pt)' }}</span>
+            <span class="w-5 h-5 rounded-full bg-[var(--accent-zinc)] text-white flex items-center justify-center font-sans font-bold text-xs shadow-xs">3</span>
+            <span class="truncate max-w-[130px] sm:max-w-[170px] text-sm sm:text-base font-medium">{{ thirdChoiceName || '3e choix (+1 pt)' }}</span>
           </div>
         </div>
 
@@ -341,20 +341,20 @@ async function handleVoteSubmit() {
               canSubmit
                 ? 'wax-seal-btn font-serif font-bold shadow-lg cursor-pointer scale-[1.02]'
                 : 'bg-[var(--bg-surface-inset)] text-[var(--text-faint)] cursor-not-allowed border border-[var(--border-main)] font-serif',
-              'px-6 py-3 rounded-2xl text-sm transition flex items-center justify-center gap-2'
+              'px-6 py-3.5 rounded-2xl text-base transition flex items-center justify-center gap-2'
             ]"
           >
             <Lock class="w-4 h-4 shrink-0" />
-            <span class="text-sm sm:text-base tracking-wide">{{ isSubmitting ? 'Envoi du vote...' : submitButtonLabel }}</span>
+            <span class="text-base sm:text-lg tracking-wide">{{ isSubmitting ? 'Envoi du vote...' : submitButtonLabel }}</span>
           </button>
-          <span class="text-[10px] text-[var(--text-faint)] mt-1.5 text-center lg:text-right font-serif italic">
+          <span class="text-xs sm:text-sm text-[var(--text-faint)] mt-1.5 text-center lg:text-right font-serif italic">
             Vote comptabilisé en direct • 1 vote par personne
           </span>
         </div>
       </div>
 
       <!-- Erreur éventuelle -->
-      <div v-if="errorMessage" class="mt-3 p-3 rounded-xl bg-[var(--accent-red-soft)] border border-[var(--accent-red-border)] text-[var(--accent-red)] text-xs flex items-center gap-2 font-medium">
+      <div v-if="errorMessage" class="mt-3 p-3 rounded-xl bg-[var(--accent-red-soft)] border border-[var(--accent-red-border)] text-[var(--accent-red)] text-sm flex items-center gap-2 font-medium">
         <AlertCircle class="w-4 h-4 shrink-0" />
         <span>{{ errorMessage }}</span>
       </div>
@@ -372,7 +372,7 @@ async function handleVoteSubmit() {
             v-model="searchQuery"
             type="text"
             placeholder="Rechercher un restaurant, cuisine ou rue..."
-            class="block w-full rounded-xl border border-[var(--border-main)] bg-[var(--bg-surface-inset)] pl-10 pr-3 py-2 text-sm font-normal text-[var(--text-main)] placeholder:text-[var(--text-faint)] focus:bg-[var(--bg-surface)] focus:border-[var(--accent-brass)] focus:ring-1 focus:ring-[var(--accent-brass)]/20 focus:outline-none transition"
+            class="block w-full rounded-xl border border-[var(--border-main)] bg-[var(--bg-surface-inset)] pl-10 pr-3 py-2.5 text-base font-normal text-[var(--text-main)] placeholder:text-[var(--text-faint)] focus:bg-[var(--bg-surface)] focus:border-[var(--accent-brass)] focus:ring-1 focus:ring-[var(--accent-brass)]/20 focus:outline-none transition"
           />
         </div>
 
@@ -383,10 +383,10 @@ async function handleVoteSubmit() {
             @click="sortBy = 'rating'"
             :class="[
               sortBy === 'rating' ? 'bg-[var(--bg-surface)] text-[var(--text-main)] font-semibold border border-[var(--border-main)] shadow-xs' : 'text-[var(--text-faint)] hover:text-[var(--text-main)]',
-              'px-3.5 py-1.5 rounded-lg text-xs font-serif transition flex items-center gap-1.5 cursor-pointer'
+              'px-4 py-2 rounded-lg text-sm font-serif transition flex items-center gap-1.5 cursor-pointer'
             ]"
           >
-            <Star class="w-3.5 h-3.5 text-[var(--accent-brass)] fill-[var(--accent-brass)]" />
+            <Star class="w-4 h-4 text-[var(--accent-brass)] fill-[var(--accent-brass)]" />
             <span>Mieux notées ⭐</span>
           </button>
           <button
@@ -394,25 +394,25 @@ async function handleVoteSubmit() {
             @click="sortBy = 'distance'"
             :class="[
               sortBy === 'distance' ? 'bg-[var(--bg-surface)] text-[var(--text-main)] font-semibold border border-[var(--border-main)] shadow-xs' : 'text-[var(--text-faint)] hover:text-[var(--text-main)]',
-              'px-3.5 py-1.5 rounded-lg text-xs font-serif transition flex items-center gap-1.5 cursor-pointer'
+              'px-4 py-2 rounded-lg text-sm font-serif transition flex items-center gap-1.5 cursor-pointer'
             ]"
           >
-            <Footprints class="w-3.5 h-3.5 text-[var(--accent-brass)]" />
+            <Footprints class="w-4 h-4 text-[var(--accent-brass)]" />
             <span>Plus proches</span>
           </button>
         </div>
       </div>
 
       <!-- Filtres secondaires : Cuisines, Formules, Compteur -->
-      <div class="flex flex-wrap items-center justify-between gap-3 pt-3 border-t border-[var(--border-subtle)] text-xs">
-        <div class="flex flex-wrap items-center gap-2">
+      <div class="flex flex-wrap items-center justify-between gap-3 pt-3 border-t border-[var(--border-subtle)] text-sm">
+        <div class="flex flex-wrap items-center gap-2.5">
           <!-- Filtre Cuisine -->
-          <div class="flex items-center gap-1.5 text-[var(--text-muted)] font-serif text-sm">
-            <Filter class="w-3.5 h-3.5 text-[var(--accent-brass)]" />
+          <div class="flex items-center gap-1.5 text-[var(--text-muted)] font-serif text-base">
+            <Filter class="w-4 h-4 text-[var(--accent-brass)]" />
             <span>Spécialité :</span>
             <select
               v-model="selectedCuisine"
-              class="rounded-lg border border-[var(--border-main)] bg-[var(--bg-surface-inset)] px-2.5 py-1 text-xs font-medium text-[var(--text-main)] focus:border-[var(--accent-brass)] focus:outline-none cursor-pointer"
+              class="rounded-lg border border-[var(--border-main)] bg-[var(--bg-surface-inset)] px-3 py-1.5 text-sm font-medium text-[var(--text-main)] focus:border-[var(--accent-brass)] focus:outline-none cursor-pointer"
             >
               <option value="ALL">Toutes les cuisines ({{ restaurants.length }})</option>
               <option v-for="c in availableCuisines" :key="c" :value="c">{{ c }}</option>
@@ -427,14 +427,14 @@ async function handleVoteSubmit() {
               onlyWithMenu 
                 ? 'bg-[var(--accent-brass)] text-white border border-[var(--accent-brass)] font-medium shadow-xs' 
                 : 'bg-[var(--bg-surface-inset)] text-[var(--text-muted)] border border-[var(--border-main)] hover:bg-[var(--bg-surface)]',
-              'px-3 py-1 rounded-lg text-xs font-serif transition cursor-pointer flex items-center gap-1.5'
+              'px-3.5 py-1.5 rounded-lg text-sm font-serif transition cursor-pointer flex items-center gap-1.5'
             ]"
           >
             <span>📜 Avec carte / menu du jour</span>
           </button>
         </div>
 
-        <span class="text-[var(--text-faint)] font-serif text-sm">
+        <span class="text-[var(--text-faint)] font-serif text-base">
           <strong class="text-[var(--text-main)] font-semibold">{{ filteredRestaurants.length }}</strong> sur {{ restaurants.length }} adresses
         </span>
       </div>
@@ -447,7 +447,7 @@ async function handleVoteSubmit() {
           <h3 class="font-serif text-3xl sm:text-4xl font-normal text-[var(--text-main)] tracking-wide">
             Restaurants à proximité
           </h3>
-          <p class="text-xs text-[var(--text-muted)] mt-0.5 font-serif italic">
+          <p class="text-sm sm:text-base text-[var(--text-muted)] mt-1 font-serif italic">
             Choisissez vos 3 restaurants favoris (1er : 3 pts, 2e : 2 pts, 3e : 1 pt)
           </p>
         </div>
@@ -456,11 +456,11 @@ async function handleVoteSubmit() {
       <!-- État vide si filtre trop restrictif -->
       <div v-if="filteredRestaurants.length === 0" class="bistro-card-frame rounded-2xl p-8 text-center text-[var(--text-muted)] space-y-2 shadow-sm">
         <p class="font-serif text-2xl font-normal text-[var(--text-main)]">Aucun restaurant ne correspond à vos filtres.</p>
-        <p class="text-xs">Essayez de réinitialiser la recherche ou de sélectionner "Toutes les cuisines".</p>
+        <p class="text-sm">Essayez de réinitialiser la recherche ou de sélectionner "Toutes les cuisines".</p>
         <button
           type="button"
           @click="searchQuery = ''; selectedCuisine = 'ALL'; onlyWithMenu = false;"
-          class="mt-2 inline-flex items-center px-4 py-2 rounded-xl bg-[var(--bg-surface-inset)] border border-[var(--border-main)] text-xs font-serif font-medium text-[var(--text-main)] hover:bg-[var(--bg-surface)] cursor-pointer shadow-xs"
+          class="mt-2 inline-flex items-center px-4 py-2 rounded-xl bg-[var(--bg-surface-inset)] border border-[var(--border-main)] text-sm font-serif font-medium text-[var(--text-main)] hover:bg-[var(--bg-surface)] cursor-pointer shadow-xs"
         >
           Réinitialiser les filtres
         </button>

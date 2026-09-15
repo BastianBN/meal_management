@@ -197,7 +197,7 @@ onUnmounted(() => {
               ]"
             >
               <span>☀️</span>
-              <span class="hidden md:inline font-serif text-sm">La Carte</span>
+              <span class="hidden md:inline font-serif text-base">La Carte</span>
             </button>
             <button
               type="button"
@@ -207,21 +207,21 @@ onUnmounted(() => {
                 currentTheme === 'ardoise'
                   ? 'bg-[var(--bg-surface)] text-[var(--text-main)] shadow-xs border border-[var(--border-main)] font-semibold'
                   : 'text-[var(--text-faint)] hover:text-[var(--text-main)]',
-                'px-3 py-1.5 rounded-lg text-xs flex items-center gap-1.5 transition cursor-pointer'
+                'px-3.5 py-1.5 rounded-lg text-sm flex items-center gap-1.5 transition cursor-pointer'
               ]"
             >
               <span>🌙</span>
-              <span class="hidden md:inline font-serif text-sm">L'Ardoise</span>
+              <span class="hidden md:inline font-serif text-base">L'Ardoise</span>
             </button>
           </div>
 
           <button
             v-if="currentSession"
             @click="resetToHome"
-            class="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl border border-[var(--border-main)] hover:border-[var(--accent-red)] text-xs font-medium text-[var(--text-main)] bg-[var(--bg-surface)] hover:bg-[var(--bg-surface-subtle)] transition cursor-pointer shadow-xs"
+            class="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl border border-[var(--border-main)] hover:border-[var(--accent-red)] text-sm font-medium text-[var(--text-main)] bg-[var(--bg-surface)] hover:bg-[var(--bg-surface-subtle)] transition cursor-pointer shadow-xs"
           >
-            <Plus class="w-3.5 h-3.5 text-[var(--accent-red)]" />
-            <span class="hidden sm:inline font-serif text-sm">Nouveau vote</span>
+            <Plus class="w-4 h-4 text-[var(--accent-red)]" />
+            <span class="hidden sm:inline font-serif text-base">Nouveau vote</span>
           </button>
         </div>
       </div>
@@ -232,7 +232,7 @@ onUnmounted(() => {
       <!-- Chargement initial -->
       <div v-if="isLoading" class="text-center py-20">
         <Loader2 class="w-8 h-8 animate-spin text-[var(--accent-red)] mx-auto mb-3" />
-        <p class="text-xs tracking-wider uppercase text-[var(--text-faint)] font-serif text-base">Chargement de la session...</p>
+        <p class="text-sm tracking-wider uppercase text-[var(--text-faint)] font-serif text-base sm:text-lg">Chargement de la session...</p>
       </div>
 
       <!-- Erreur de chargement de la session -->
@@ -240,11 +240,11 @@ onUnmounted(() => {
         <div class="w-12 h-12 rounded-full bg-[var(--accent-red-soft)] text-[var(--accent-red)] mx-auto flex items-center justify-center mb-3 border border-[var(--accent-red-border)]">
           <AlertCircle class="w-5 h-5" />
         </div>
-        <h3 class="font-serif text-2xl font-normal text-[var(--text-main)] mb-2">Session introuvable</h3>
-        <p class="text-sm text-[var(--text-muted)] mb-6">{{ loadError }}</p>
+        <h3 class="font-serif text-2xl sm:text-3xl font-normal text-[var(--text-main)] mb-2">Session introuvable</h3>
+        <p class="text-sm sm:text-base text-[var(--text-muted)] mb-6">{{ loadError }}</p>
         <button
           @click="resetToHome"
-          class="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-[var(--accent-red)] text-white text-sm font-medium hover:bg-[var(--accent-red-hover)] transition cursor-pointer shadow-sm"
+          class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-[var(--accent-red)] text-white text-base font-medium hover:bg-[var(--accent-red-hover)] transition cursor-pointer shadow-sm"
         >
           <ArrowLeft class="w-4 h-4" />
           <span>Créer un nouveau vote</span>
@@ -267,9 +267,9 @@ onUnmounted(() => {
               @click="activeTab = 'vote'"
               :class="[
                 activeTab === 'vote'
-                  ? 'bg-[var(--bg-surface)] text-[var(--text-main)] font-medium border border-[var(--border-main)] shadow-md'
+                  ? 'bg-[var(--bg-surface)] text-[var(--text-main)] font-semibold border border-[var(--border-main)] shadow-md'
                   : 'text-[var(--text-faint)] hover:text-[var(--text-main)]',
-                'px-6 py-2 rounded-xl text-xs sm:text-sm font-serif transition cursor-pointer tracking-wide'
+                'px-6 py-2.5 rounded-xl text-sm sm:text-base font-serif transition cursor-pointer tracking-wide'
               ]"
             >
               🍽️ Découvrir & Voter
@@ -279,9 +279,9 @@ onUnmounted(() => {
               @click="activeTab = 'results'"
               :class="[
                 activeTab === 'results'
-                  ? 'bg-[var(--bg-surface)] text-[var(--text-main)] font-medium border border-[var(--border-main)] shadow-md'
+                  ? 'bg-[var(--bg-surface)] text-[var(--text-main)] font-semibold border border-[var(--border-main)] shadow-md'
                   : 'text-[var(--text-faint)] hover:text-[var(--text-main)]',
-                'px-6 py-2 rounded-xl text-xs sm:text-sm font-serif transition cursor-pointer tracking-wide'
+                'px-6 py-2.5 rounded-xl text-sm sm:text-base font-serif transition cursor-pointer tracking-wide'
               ]"
             >
               🏆 Résultats des votes
@@ -290,7 +290,7 @@ onUnmounted(() => {
         </div>
 
         <!-- Message d'information si déjà voté -->
-        <div v-if="hasVoted" class="bistro-card-frame rounded-2xl p-4 sm:p-5 text-[var(--text-main)] text-xs sm:text-sm flex items-center justify-between gap-3 shadow-md">
+        <div v-if="hasVoted" class="bistro-card-frame rounded-2xl p-4 sm:p-5 text-[var(--text-main)] text-sm sm:text-base flex items-center justify-between gap-3 shadow-md">
           <div class="flex items-center gap-3">
             <div class="w-8 h-8 rounded-full bg-[var(--accent-red-soft)] text-[var(--accent-red)] flex items-center justify-center shrink-0 border border-[var(--accent-red-border)]">
               ✓
@@ -319,14 +319,14 @@ onUnmounted(() => {
     </main>
 
     <!-- Pied de page brasserie & tradition gastronomique -->
-    <footer class="mt-auto border-t border-[var(--border-main)] py-8 text-center text-xs text-[var(--text-faint)] bg-[var(--bg-surface-subtle)]/60">
+    <footer class="mt-auto border-t border-[var(--border-main)] py-8 text-center text-sm text-[var(--text-faint)] bg-[var(--bg-surface-subtle)]/60">
       <div class="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-3">
         <div class="flex items-center gap-2">
-          <span class="font-serif text-sm text-[var(--text-main)]">Meal Manager</span>
+          <span class="font-serif text-base text-[var(--text-main)]">Meal Manager</span>
           <span>• Données cartographiques © </span>
           <a href="https://www.openstreetmap.org" target="_blank" rel="noopener" class="underline hover:text-[var(--accent-red)]">OpenStreetMap</a>
         </div>
-        <div class="tracking-wider uppercase text-[11px] font-medium text-[var(--text-muted)] flex items-center gap-2">
+        <div class="tracking-wider uppercase text-xs sm:text-sm font-medium text-[var(--text-muted)] flex items-center gap-2">
           <span>❧</span>
           <span>Système de vote pondéré : 1er (3 pts) • 2e (2 pts) • 3e (1 pt)</span>
           <span>☙</span>
