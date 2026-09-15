@@ -4,12 +4,12 @@
   "description": "Plateforme collaborative de vote de restaurant du midi avec découverte OpenStreetMap et extraction de formules",
   "main": "run.py",
   "scripts": {
-    "dev": "python run.py --dev",
+    "dev": "uv run python run.py --dev",
     "dev:frontend": "npm run dev --prefix frontend",
     "build:frontend": "npm run build --prefix frontend",
     "dev:backend": "uv run uvicorn backend.app.main:app --reload --port 8000",
     "test:backend": "uv run pytest",
-    "start": "python run.py"
+    "start": "uv run python run.py"
   },
   "repository": {
     "type": "git",
