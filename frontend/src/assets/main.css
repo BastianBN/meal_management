@@ -2,32 +2,32 @@
 @import "leaflet/dist/leaflet.css";
 
 @theme {
-  --color-washi: #F7F4EE;
-  --color-washi-surface: #FFFDF9;
-  --color-washi-card: #FAF8F5;
-  --color-border-ink: #E8E3DA;
-  --color-border-subtle: #EFEBE3;
-  --color-border-strong: #DDD7CD;
+  --color-washi: #F6EDE2;
+  --color-washi-surface: #FFFCF7;
+  --color-washi-card: #FAF2E8;
+  --color-border-ink: #E5D6C5;
+  --color-border-subtle: #EFE4D6;
+  --color-border-strong: #DAC7B2;
 
-  --color-ink: #292524;
-  --color-ink-secondary: #57534E;
-  --color-ink-muted: #78716C;
-  --color-ink-faint: #A8A29E;
+  --color-ink: #2C2019;
+  --color-ink-secondary: #5D4B3E;
+  --color-ink-muted: #857263;
+  --color-ink-faint: #AC9B8D;
 
-  --color-hanko: #B85B43;
-  --color-hanko-hover: #9E4C36;
-  --color-hanko-soft: #FBF4F1;
-  --color-hanko-border: #E8C7BE;
+  --color-hanko: #C2542D;
+  --color-hanko-hover: #A64320;
+  --color-hanko-soft: #FAF0E8;
+  --color-hanko-border: #ECCDBE;
 
-  --color-matcha: #5C6F5A;
-  --color-matcha-hover: #4A5B48;
-  --color-matcha-soft: #F3F6F2;
-  --color-matcha-border: #CBD8C8;
+  --color-matcha: #586F54;
+  --color-matcha-hover: #465A42;
+  --color-matcha-soft: #F0F5EE;
+  --color-matcha-border: #C8D7C4;
 
-  --color-pebble: #82786D;
-  --color-pebble-hover: #6E655B;
-  --color-pebble-soft: #F7F5F2;
-  --color-pebble-border: #DDD7CD;
+  --color-pebble: #7E6C5C;
+  --color-pebble-hover: #685749;
+  --color-pebble-soft: #F4EDE5;
+  --color-pebble-border: #DBCFBF;
 
   --font-sans: "Plus Jakarta Sans", -apple-system, BlinkMacSystemFont, sans-serif;
   --font-serif: "Shippori Mincho", "Noto Serif JP", serif;
@@ -35,15 +35,26 @@
 
 @layer base {
   ::selection {
-    background-color: #B85B43;
+    background-color: #C2542D;
     color: #ffffff;
   }
 
+  html {
+    min-height: 100%;
+    background-color: #F6EDE2;
+  }
+
   body {
-    background-color: #F7F4EE;
-    color: #292524;
-    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.035'/%3E%3C/svg%3E");
+    min-height: 100vh;
+    background-color: #F6EDE2;
+    color: #2C2019;
+    /* Délicat halo ambré/terracotta chaleureux + grain de papier washi texturé à couverture totale */
+    background-image: 
+      radial-gradient(ellipse at 50% -5%, rgba(212, 103, 58, 0.09) 0%, rgba(246, 237, 226, 0) 70%),
+      url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='matrix' values='0.75 0 0 0 0.12  0 0.55 0 0 0.09  0 0 0.35 0 0.05  0 0 0 0.055 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
     background-repeat: repeat;
+    background-attachment: fixed;
+    background-size: auto, 180px 180px;
     font-feature-settings: "cv02", "cv03", "cv04", "cv11";
   }
 }
@@ -57,14 +68,14 @@
   transform: scale(0.985);
 }
 
-/* Personnalisation popup Leaflet Wabi-Sabi */
+/* Personnalisation popup Leaflet Wabi-Sabi chaleureux */
 .leaflet-popup-content-wrapper {
   border-radius: 0.75rem;
-  box-shadow: 0 4px 16px rgba(41, 37, 36, 0.08);
-  border: 1px solid #E8E3DA;
+  box-shadow: 0 4px 20px rgba(44, 32, 25, 0.1);
+  border: 1px solid #E5D6C5;
   padding: 0;
   overflow: hidden;
-  background: #FFFDF9;
+  background: #FFFCF7;
 }
 
 .leaflet-popup-content {
@@ -74,21 +85,21 @@
 }
 
 .leaflet-popup-tip {
-  background: #FFFDF9;
-  box-shadow: 0 4px 16px rgba(41, 37, 36, 0.08);
+  background: #FFFCF7;
+  box-shadow: 0 4px 20px rgba(44, 32, 25, 0.1);
 }
 
-/* Slider de durée de marche Wabi-Sabi (trait calligraphique & galet minéral) */
+/* Slider de durée de marche Wabi-Sabi chaleureux */
 .slider-custom {
   -webkit-appearance: none;
   appearance: none;
   width: 100%;
   height: 4px;
-  background: #E8E3DA;
+  background: #E5D6C5;
   border-radius: 9999px;
   outline: none;
   transition: background 0.2s;
-  accent-color: #B85B43;
+  accent-color: #C2542D;
 }
 
 .slider-custom::-webkit-slider-thumb {
@@ -97,31 +108,32 @@
   width: 18px;
   height: 18px;
   border-radius: 50%;
-  background: #292524;
+  background: #2C2019;
   cursor: pointer;
-  border: 2px solid #FFFDF9;
-  box-shadow: 0 2px 5px rgba(41, 37, 36, 0.2);
+  border: 2px solid #FFFCF7;
+  box-shadow: 0 2px 5px rgba(44, 32, 25, 0.25);
   transition: transform 0.2s ease, background 0.2s ease;
 }
 
 .slider-custom::-webkit-slider-thumb:hover {
   transform: scale(1.15);
-  background: #B85B43;
+  background: #C2542D;
 }
 
 .slider-custom::-moz-range-thumb {
   width: 18px;
   height: 18px;
   border-radius: 50%;
-  background: #292524;
+  background: #2C2019;
   cursor: pointer;
-  border: 2px solid #FFFDF9;
-  box-shadow: 0 2px 5px rgba(41, 37, 36, 0.2);
+  border: 2px solid #FFFCF7;
+  box-shadow: 0 2px 5px rgba(44, 32, 25, 0.25);
   transition: transform 0.2s ease, background 0.2s ease;
 }
 
 .slider-custom::-moz-range-thumb:hover {
   transform: scale(1.15);
-  background: #B85B43;
+  background: #C2542D;
 }
+
 

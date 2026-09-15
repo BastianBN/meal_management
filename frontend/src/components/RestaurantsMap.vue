@@ -48,25 +48,25 @@ function createDepartureIcon() {
 }
 
 function createRestaurantIcon(restaurant, rank) {
-  let bgColor = '#292524';
+  let bgColor = '#2C2019';
   let badgeText = `${restaurant.walking_time_min}m`;
-  let ringColor = 'rgba(41, 37, 36, 0.15)';
+  let ringColor = 'rgba(44, 32, 25, 0.15)';
   let scale = '1';
 
   if (rank === 1) {
-    bgColor = '#B85B43';
+    bgColor = '#C2542D';
     badgeText = '1er';
-    ringColor = 'rgba(184, 91, 67, 0.3)';
+    ringColor = 'rgba(194, 84, 45, 0.35)';
     scale = '1.15';
   } else if (rank === 2) {
-    bgColor = '#5C6F5A';
+    bgColor = '#586F54';
     badgeText = '2e';
-    ringColor = 'rgba(92, 111, 90, 0.3)';
+    ringColor = 'rgba(88, 111, 84, 0.35)';
     scale = '1.1';
   } else if (rank === 3) {
-    bgColor = '#82786D';
+    bgColor = '#7E6C5C';
     badgeText = '3e';
-    ringColor = 'rgba(130, 120, 109, 0.3)';
+    ringColor = 'rgba(126, 108, 92, 0.35)';
     scale = '1.05';
   }
 
@@ -74,7 +74,7 @@ function createRestaurantIcon(restaurant, rank) {
     className: 'custom-restaurant-pin',
     html: `
       <div style="transform: scale(${scale}); transform-origin: bottom center; transition: all 0.2s ease;">
-        <div style="background: ${bgColor}; color: white; padding: 4px 8px; border-radius: 9999px; font-size: 11px; font-weight: 500; border: 2px solid #FFFDF9; box-shadow: 0 2px 6px ${ringColor}; display: flex; align-items: center; gap: 3px; white-space: nowrap; cursor: pointer;">
+        <div style="background: ${bgColor}; color: white; padding: 4px 8px; border-radius: 9999px; font-size: 11px; font-weight: 500; border: 2px solid #FFFCF7; box-shadow: 0 2px 6px ${ringColor}; display: flex; align-items: center; gap: 3px; white-space: nowrap; cursor: pointer;">
           <span>🍽️</span>
           <span>${badgeText}</span>
         </div>
@@ -90,33 +90,33 @@ function createRestaurantIcon(restaurant, rank) {
 function buildPopupHtml(r) {
   const currentRank = getRank(r.id);
   const siteBtn = r.website_url 
-    ? `<a href="${r.website_url}" target="_blank" rel="noopener" style="display: inline-block; font-size: 11px; color: #B85B43; font-weight: 500; text-decoration: underline; margin-right: 8px;">Site officiel</a>`
+    ? `<a href="${r.website_url}" target="_blank" rel="noopener" style="display: inline-block; font-size: 11px; color: #C2542D; font-weight: 500; text-decoration: underline; margin-right: 8px;">Site officiel</a>`
     : '';
   const gmapsBtn = r.google_maps_url
-    ? `<a href="${r.google_maps_url}" target="_blank" rel="noopener" style="display: inline-block; font-size: 11px; color: #78716C; font-weight: 500; text-decoration: underline;">Fiche Google & Avis</a>`
+    ? `<a href="${r.google_maps_url}" target="_blank" rel="noopener" style="display: inline-block; font-size: 11px; color: #857263; font-weight: 500; text-decoration: underline;">Fiche Google & Avis</a>`
     : '';
 
   return `
-    <div style="padding: 14px; min-width: 230px; max-width: 290px; font-family: inherit; background: #FFFDF9; border-radius: 12px;">
-      <div style="font-size: 10px; font-weight: 600; color: #B85B43; text-transform: uppercase; margin-bottom: 2px; letter-spacing: 0.5px;">
+    <div style="padding: 14px; min-width: 230px; max-width: 290px; font-family: inherit; background: #FFFCF7; border-radius: 12px;">
+      <div style="font-size: 10px; font-weight: 600; color: #C2542D; text-transform: uppercase; margin-bottom: 2px; letter-spacing: 0.5px;">
         ${r.cuisine || 'Restaurant'} • ${r.distance_meters} m (~${r.walking_time_min} min)
       </div>
-      <div style="font-size: 16px; font-family: 'Shippori Mincho', serif; font-weight: 600; color: #292524; margin-bottom: 6px; line-height: 1.2;">
+      <div style="font-size: 16px; font-family: 'Shippori Mincho', serif; font-weight: 600; color: #2C2019; margin-bottom: 6px; line-height: 1.2;">
         ${r.name}
       </div>
-      ${r.menu_summary ? `<div style="font-size: 11px; color: #57534E; margin-bottom: 8px; line-height: 1.3;">${r.menu_summary}</div>` : ''}
+      ${r.menu_summary ? `<div style="font-size: 11px; color: #5D4B3E; margin-bottom: 8px; line-height: 1.3;">${r.menu_summary}</div>` : ''}
       <div style="margin-bottom: 10px;">
         ${siteBtn}
         ${gmapsBtn}
       </div>
-      <div style="border-top: 1px solid #E8E3DA; padding-top: 8px; display: flex; gap: 4px;">
-        <button onclick="window.__vote_restaurant(${r.id}, 1)" style="flex: 1; padding: 5px 6px; font-size: 10px; font-weight: 500; border-radius: 8px; border: 1px solid #E8C7BE; background: ${currentRank === 1 ? '#B85B43' : '#FBF4F1'}; color: ${currentRank === 1 ? '#ffffff' : '#7C2D12'}; cursor: pointer;">
+      <div style="border-top: 1px solid #E5D6C5; padding-top: 8px; display: flex; gap: 4px;">
+        <button onclick="window.__vote_restaurant(${r.id}, 1)" style="flex: 1; padding: 5px 6px; font-size: 10px; font-weight: 500; border-radius: 8px; border: 1px solid #ECCDBE; background: ${currentRank === 1 ? '#C2542D' : '#FAF0E8'}; color: ${currentRank === 1 ? '#ffffff' : '#7C2D12'}; cursor: pointer;">
           1er (3 pts)
         </button>
-        <button onclick="window.__vote_restaurant(${r.id}, 2)" style="flex: 1; padding: 5px 6px; font-size: 10px; font-weight: 500; border-radius: 8px; border: 1px solid #CBD8C8; background: ${currentRank === 2 ? '#5C6F5A' : '#F3F6F2'}; color: ${currentRank === 2 ? '#ffffff' : '#2F3D2C'}; cursor: pointer;">
+        <button onclick="window.__vote_restaurant(${r.id}, 2)" style="flex: 1; padding: 5px 6px; font-size: 10px; font-weight: 500; border-radius: 8px; border: 1px solid #C8D7C4; background: ${currentRank === 2 ? '#586F54' : '#F0F5EE'}; color: ${currentRank === 2 ? '#ffffff' : '#2F3D2C'}; cursor: pointer;">
           2e (2 pts)
         </button>
-        <button onclick="window.__vote_restaurant(${r.id}, 3)" style="flex: 1; padding: 5px 6px; font-size: 10px; font-weight: 500; border-radius: 8px; border: 1px solid #DDD7CD; background: ${currentRank === 3 ? '#82786D' : '#F7F5F2'}; color: ${currentRank === 3 ? '#ffffff' : '#4A433A'}; cursor: pointer;">
+        <button onclick="window.__vote_restaurant(${r.id}, 3)" style="flex: 1; padding: 5px 6px; font-size: 10px; font-weight: 500; border-radius: 8px; border: 1px solid #DBCFBF; background: ${currentRank === 3 ? '#7E6C5C' : '#F4EDE5'}; color: ${currentRank === 3 ? '#ffffff' : '#4A433A'}; cursor: pointer;">
           3e (1 pt)
         </button>
       </div>
