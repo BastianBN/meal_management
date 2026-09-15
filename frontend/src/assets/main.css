@@ -2,57 +2,69 @@
 @import "leaflet/dist/leaflet.css";
 
 @theme {
-  --color-brand-50: #fff7ed;
-  --color-brand-100: #ffedd5;
-  --color-brand-200: #fed7aa;
-  --color-brand-500: #ea580c;
-  --color-brand-600: #c2410c;
-  --color-brand-700: #9a3412;
-  --color-brand-800: #7c2d12;
-  --color-brand-900: #431407;
+  --color-washi: #F7F4EE;
+  --color-washi-surface: #FFFDF9;
+  --color-washi-card: #FAF8F5;
+  --color-border-ink: #E8E3DA;
+  --color-border-subtle: #EFEBE3;
+  --color-border-strong: #DDD7CD;
 
-  --color-canvas: #FAF7F2;
-  --color-canvas-subtle: #F3EFEA;
-  --color-surface: #FFFFFF;
-  --color-border-warm: #E7E2D9;
-  --color-border-strong: #D5CEC2;
-
-  --color-ink: #1C1917;
+  --color-ink: #292524;
   --color-ink-secondary: #57534E;
   --color-ink-muted: #78716C;
+  --color-ink-faint: #A8A29E;
+
+  --color-hanko: #B85B43;
+  --color-hanko-hover: #9E4C36;
+  --color-hanko-soft: #FBF4F1;
+  --color-hanko-border: #E8C7BE;
+
+  --color-matcha: #5C6F5A;
+  --color-matcha-hover: #4A5B48;
+  --color-matcha-soft: #F3F6F2;
+  --color-matcha-border: #CBD8C8;
+
+  --color-pebble: #82786D;
+  --color-pebble-hover: #6E655B;
+  --color-pebble-soft: #F7F5F2;
+  --color-pebble-border: #DDD7CD;
 
   --font-sans: "Plus Jakarta Sans", -apple-system, BlinkMacSystemFont, sans-serif;
-  --font-serif: "Fraunces", Georgia, serif;
+  --font-serif: "Shippori Mincho", "Noto Serif JP", serif;
 }
-
 
 @layer base {
   ::selection {
-    background-color: #ea580c;
+    background-color: #B85B43;
     color: #ffffff;
   }
 
   body {
+    background-color: #F7F4EE;
+    color: #292524;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.035'/%3E%3C/svg%3E");
+    background-repeat: repeat;
     font-feature-settings: "cv02", "cv03", "cv04", "cv11";
   }
 }
 
 /* Transitions discrètes et réactives */
 .btn-interaction {
-  transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: all 0.2s cubic-bezier(0.25, 1, 0.5, 1);
 }
 
 .btn-interaction:active {
-  transform: scale(0.98);
+  transform: scale(0.985);
 }
 
-/* Personnalisation popup Leaflet */
+/* Personnalisation popup Leaflet Wabi-Sabi */
 .leaflet-popup-content-wrapper {
-  border-radius: 1rem;
-  box-shadow: 0 10px 25px -5px rgba(15, 23, 42, 0.15);
-  border: 1px solid #e2e8f0;
+  border-radius: 0.75rem;
+  box-shadow: 0 4px 16px rgba(41, 37, 36, 0.08);
+  border: 1px solid #E8E3DA;
   padding: 0;
   overflow: hidden;
+  background: #FFFDF9;
 }
 
 .leaflet-popup-content {
@@ -61,49 +73,55 @@
   font-family: inherit;
 }
 
-/* Slider de durée de marche */
+.leaflet-popup-tip {
+  background: #FFFDF9;
+  box-shadow: 0 4px 16px rgba(41, 37, 36, 0.08);
+}
+
+/* Slider de durée de marche Wabi-Sabi (trait calligraphique & galet minéral) */
 .slider-custom {
   -webkit-appearance: none;
   appearance: none;
   width: 100%;
-  height: 8px;
-  background: #e2e8f0;
+  height: 4px;
+  background: #E8E3DA;
   border-radius: 9999px;
   outline: none;
   transition: background 0.2s;
-  accent-color: #ea580c;
+  accent-color: #B85B43;
 }
 
 .slider-custom::-webkit-slider-thumb {
   -webkit-appearance: none;
   appearance: none;
-  width: 22px;
-  height: 22px;
+  width: 18px;
+  height: 18px;
   border-radius: 50%;
-  background: #ea580c;
+  background: #292524;
   cursor: pointer;
-  border: 3px solid #ffffff;
-  box-shadow: 0 2px 6px rgba(234, 88, 12, 0.35);
-  transition: transform 0.15s ease, box-shadow 0.15s ease;
+  border: 2px solid #FFFDF9;
+  box-shadow: 0 2px 5px rgba(41, 37, 36, 0.2);
+  transition: transform 0.2s ease, background 0.2s ease;
 }
 
 .slider-custom::-webkit-slider-thumb:hover {
   transform: scale(1.15);
-  box-shadow: 0 4px 10px rgba(234, 88, 12, 0.5);
+  background: #B85B43;
 }
 
 .slider-custom::-moz-range-thumb {
-  width: 22px;
-  height: 22px;
+  width: 18px;
+  height: 18px;
   border-radius: 50%;
-  background: #ea580c;
+  background: #292524;
   cursor: pointer;
-  border: 3px solid #ffffff;
-  box-shadow: 0 2px 6px rgba(234, 88, 12, 0.35);
-  transition: transform 0.15s ease, box-shadow 0.15s ease;
+  border: 2px solid #FFFDF9;
+  box-shadow: 0 2px 5px rgba(41, 37, 36, 0.2);
+  transition: transform 0.2s ease, background 0.2s ease;
 }
 
 .slider-custom::-moz-range-thumb:hover {
   transform: scale(1.15);
-  box-shadow: 0 4px 10px rgba(234, 88, 12, 0.5);
+  background: #B85B43;
 }
+
