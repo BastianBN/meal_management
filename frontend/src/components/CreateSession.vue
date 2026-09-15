@@ -59,29 +59,29 @@ async function handleCreateSession() {
 
 <template>
   <div class="max-w-2xl mx-auto px-4 py-8 sm:py-14">
-    <!-- En-tête éditorial poétique -->
+    <!-- En-tête brasserie & bistrot -->
     <div class="text-center mb-10">
-      <div class="inline-flex items-center justify-center w-10 h-10 rounded-xl bg-[#FFFCF7] text-[#C2542D] mb-4 border border-[#E5D6C5]">
-        <Utensils class="w-4 h-4" />
+      <div class="inline-flex items-center justify-center w-12 h-12 rounded-xl bg-[#191C22] text-[#D97706] mb-4 border border-[#383F4C] shadow-sm">
+        <Utensils class="w-5 h-5" />
       </div>
-      <h1 class="font-serif text-3xl sm:text-5xl font-normal tracking-wide text-[#2C2019] mb-3 leading-tight">
+      <h1 class="font-serif text-4xl sm:text-5xl font-normal tracking-wide text-[#191C22] mb-3 leading-tight">
         Où déjeunons-nous ce midi ?
       </h1>
-      <p class="text-sm sm:text-base text-[#857263] max-w-md mx-auto leading-relaxed">
-        Découvrez les cartes, formules du jour et avis autour du bureau, et choisissez ensemble en toute sérénité.
+      <p class="text-sm sm:text-base text-[#64748B] max-w-md mx-auto leading-relaxed">
+        Découvrez les cartes, formules du jour et tables recommandées autour du bureau, et votez tous ensemble.
       </p>
     </div>
 
-    <!-- Carte formulaire en papier washi chaleureux -->
-    <div class="bg-[#FFFCF7] rounded-2xl border border-[#E5D6C5] p-6 sm:p-9 space-y-6">
+    <!-- Carte formulaire bistrot épuré -->
+    <div class="bg-[#FFFFFF] rounded-2xl border border-[#E2D9CF] p-6 sm:p-9 space-y-6 shadow-sm">
       <form @submit.prevent="handleCreateSession" class="space-y-6">
         <!-- Champ Adresse -->
         <div>
-          <label for="address-input" class="block text-xs font-semibold uppercase tracking-wider text-[#2C2019] mb-2">
-            Adresse de départ
+          <label for="address-input" class="block text-xs font-semibold uppercase tracking-wider text-[#191C22] mb-2 font-sans">
+            Adresse ou quartier de départ
           </label>
           <div class="relative rounded-xl">
-            <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3.5 text-[#AC9B8D]">
+            <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3.5 text-[#94A3B8]">
               <MapPin class="h-4 w-4" />
             </div>
             <input
@@ -91,25 +91,25 @@ async function handleCreateSession() {
               required
               :disabled="isLoading"
               placeholder="ex : 12 rue de la Paix, Paris ou 31 allée Christine Pascal, Lyon"
-              class="block w-full rounded-xl border border-[#E5D6C5] bg-[#FAF2E8] pl-10 pr-4 py-3 text-[#2C2019] placeholder:text-[#AC9B8D] focus:border-[#C2542D] focus:bg-[#FFFCF7] focus:ring-1 focus:ring-[#C2542D]/20 focus:outline-none text-sm transition font-normal"
+              class="block w-full rounded-xl border border-[#E2D9CF] bg-[#F8F5F2] pl-10 pr-4 py-3 text-[#191C22] placeholder:text-[#94A3B8] focus:border-[#DC2626] focus:bg-[#FFFFFF] focus:ring-1 focus:ring-[#DC2626]/20 focus:outline-none text-sm transition font-normal"
             />
           </div>
-          <p class="mt-1.5 text-xs text-[#857263]">
-            Tous les restaurants accessibles à pied seront repérés autour de cette adresse.
+          <p class="mt-1.5 text-xs text-[#64748B]">
+            Tous les bistrots et restaurants accessibles à pied seront repérés autour de cette adresse.
           </p>
         </div>
 
         <!-- Slider Durée de marche maximale -->
-        <div class="bg-[#FAF2E8] rounded-xl p-4 sm:p-5 border border-[#E5D6C5]">
+        <div class="bg-[#F8F5F2] rounded-xl p-4 sm:p-5 border border-[#E2D9CF]">
           <div class="flex items-center justify-between gap-2 mb-3">
-            <label for="walk-slider" class="text-xs font-semibold uppercase tracking-wider text-[#2C2019] flex items-center gap-2">
-              <Footprints class="w-3.5 h-3.5 text-[#C2542D]" />
-              <span>Temps de marche maximal</span>
+            <label for="walk-slider" class="text-xs font-semibold uppercase tracking-wider text-[#191C22] flex items-center gap-2 font-sans">
+              <Footprints class="w-3.5 h-3.5 text-[#DC2626]" />
+              <span>Périmètre de marche</span>
             </label>
-            <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#FFFCF7] border border-[#E5D6C5] text-[#2C2019] font-medium text-xs">
-              <Clock class="w-3.5 h-3.5 text-[#C2542D]" />
-              <span>{{ walkMinutes }} min</span>
-              <span class="text-xs text-[#857263]">(~{{ radiusMeters >= 1000 ? (radiusMeters / 1000).toFixed(1).replace('.', ',') + ' km' : radiusMeters + ' m' }})</span>
+            <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#FFFFFF] border border-[#E2D9CF] text-[#191C22] font-medium text-xs shadow-xs">
+              <Clock class="w-3.5 h-3.5 text-[#D97706]" />
+              <span class="font-semibold">{{ walkMinutes }} min</span>
+              <span class="text-xs text-[#64748B]">(~{{ radiusMeters >= 1000 ? (radiusMeters / 1000).toFixed(1).replace('.', ',') + ' km' : radiusMeters + ' m' }})</span>
             </div>
           </div>
 
@@ -136,39 +136,39 @@ async function handleCreateSession() {
               @click="walkMinutes = preset.minutes"
               :class="[
                 walkMinutes === preset.minutes
-                  ? 'text-[#C2542D] font-medium bg-[#FFFCF7] border border-[#C2542D]'
-                  : 'text-[#857263] hover:text-[#2C2019] hover:bg-[#FFFCF7]',
+                  ? 'text-[#F8FAFC] font-medium bg-[#191C22] border border-[#383F4C] shadow-xs'
+                  : 'text-[#64748B] hover:text-[#191C22] hover:bg-[#FFFFFF]',
                 'cursor-pointer transition px-2.5 py-1 rounded-lg flex items-center gap-1'
               ]"
             >
               <span>{{ preset.label }}</span>
-              <span class="text-[10px] text-[#AC9B8D] font-normal hidden sm:inline">({{ preset.meters }})</span>
+              <span class="text-[10px] text-[#94A3B8] font-normal hidden sm:inline">({{ preset.meters }})</span>
             </button>
           </div>
 
-          <p class="mt-3 text-xs text-[#857263]">
-            Rayon de marche : environ <strong class="text-[#2C2019] font-medium">{{ radiusMeters >= 1000 ? (radiusMeters / 1000).toFixed(1).replace('.', ',') + ' km' : radiusMeters + ' mètres' }}</strong> (allure dynamique ~6 km/h).
+          <p class="mt-3 text-xs text-[#64748B]">
+            Rayon de marche : environ <strong class="text-[#191C22] font-medium">{{ radiusMeters >= 1000 ? (radiusMeters / 1000).toFixed(1).replace('.', ',') + ' km' : radiusMeters + ' mètres' }}</strong> (allure dynamique ~6 km/h).
           </p>
         </div>
 
         <!-- Limite de restaurants & Filtrage par note -->
-        <div class="bg-[#FAF2E8] rounded-xl p-4 sm:p-5 border border-[#E5D6C5]">
+        <div class="bg-[#F8F5F2] rounded-xl p-4 sm:p-5 border border-[#E2D9CF]">
           <div class="flex items-center justify-between gap-2 mb-2">
-            <label class="text-xs font-semibold uppercase tracking-wider text-[#2C2019] flex items-center gap-2">
-              <Star class="w-3.5 h-3.5 text-amber-600 fill-amber-500" />
-              <span>Sélection de restaurants</span>
+            <label class="text-xs font-semibold uppercase tracking-wider text-[#191C22] flex items-center gap-2 font-sans">
+              <Star class="w-3.5 h-3.5 text-[#D97706] fill-[#D97706]" />
+              <span>Sélection d'adresses</span>
             </label>
-            <span class="text-[11px] font-medium px-2 py-0.5 rounded-full bg-[#FEF3C7] text-[#78350F] border border-[#F59E0B]/30">
-              Triés par note ⭐
+            <span class="text-[11px] font-medium px-2 py-0.5 rounded-full bg-[#FFFBEB] text-[#92400E] border border-[#FDE68A]">
+              Triées par note ⭐
             </span>
           </div>
 
           <div class="grid grid-cols-3 gap-2 mt-2">
             <button
               v-for="opt in [
-                { count: 20, label: '20 restos', desc: 'Sélection rapide' },
-                { count: 35, label: '35 restos', desc: 'Recommandé' },
-                { count: 50, label: '50 restos', desc: 'Grand choix étendu' },
+                { count: 20, label: '20 tables', desc: 'Sélection rapide' },
+                { count: 35, label: '35 tables', desc: 'Recommandé' },
+                { count: 50, label: '50 tables', desc: 'Grand choix étendu' },
               ]"
               :key="opt.count"
               type="button"
@@ -176,41 +176,48 @@ async function handleCreateSession() {
               @click="maxRestaurants = opt.count"
               :class="[
                 maxRestaurants === opt.count
-                  ? 'bg-[#FFFCF7] border border-[#C2542D] text-[#C2542D] font-medium'
-                  : 'bg-[#FAF2E8] border border-[#E5D6C5] text-[#5D4B3E] hover:border-[#DAC7B2] hover:bg-[#FFFCF7]',
+                  ? 'bg-[#191C22] border border-[#383F4C] text-[#F8FAFC] font-medium shadow-xs'
+                  : 'bg-[#FFFFFF] border border-[#E2D9CF] text-[#475569] hover:border-[#CBD5E1] hover:bg-[#F8F5F2]',
                 'cursor-pointer transition p-2.5 rounded-xl text-left flex flex-col justify-center'
               ]"
             >
               <span class="text-xs font-medium">{{ opt.label }}</span>
-              <span class="text-[10px] text-[#857263] font-normal mt-0.5">{{ opt.desc }}</span>
+              <span 
+                :class="[
+                  maxRestaurants === opt.count ? 'text-[#94A3B8]' : 'text-[#64748B]',
+                  'text-[10px] font-normal mt-0.5'
+                ]"
+              >
+                {{ opt.desc }}
+              </span>
             </button>
           </div>
-          <p class="mt-2.5 text-xs text-[#857263] leading-relaxed">
-            Pour les grands trajets, les restaurants les <strong>mieux notés</strong> sont répartis sur tout le parcours (proche, mi-chemin et destination).
+          <p class="mt-2.5 text-xs text-[#64748B] leading-relaxed">
+            Pour les grands trajets, les tables les <strong>mieux notées</strong> sont réparties équitablement sur tout le parcours.
           </p>
         </div>
 
         <!-- Message d'erreur éventuel -->
-        <div v-if="errorMessage" class="rounded-xl bg-[#FAF0E8] border border-[#ECCDBE] p-4 flex items-start gap-3 text-[#C2542D] text-sm">
+        <div v-if="errorMessage" class="rounded-xl bg-[#FEF2F2] border border-[#FECACA] p-4 flex items-start gap-3 text-[#DC2626] text-sm">
           <AlertCircle class="w-4 h-4 shrink-0 mt-0.5" />
           <div class="space-y-1">
             <p class="font-medium">{{ errorMessage }}</p>
-            <p class="text-xs text-[#857263]">Conseil : essayez d'augmenter le temps de marche avec le curseur ci-dessus ou de préciser la ville.</p>
+            <p class="text-xs text-[#64748B]">Conseil : essayez d'augmenter le temps de marche avec le curseur ci-dessus ou de préciser la ville.</p>
           </div>
         </div>
 
-        <!-- Bouton d'action principal -->
+        <!-- Bouton d'action principal Rouge Bistrot -->
         <button
           type="submit"
           :disabled="isLoading"
-          class="w-full inline-flex items-center justify-center gap-2 rounded-xl bg-[#C2542D] hover:bg-[#A64320] px-6 py-3.5 text-sm sm:text-base font-medium text-white tracking-wide disabled:opacity-70 transition cursor-pointer"
+          class="w-full inline-flex items-center justify-center gap-2 rounded-xl bg-[#DC2626] hover:bg-[#B91C1C] px-6 py-3.5 text-sm sm:text-base font-medium text-white tracking-wide disabled:opacity-70 transition cursor-pointer shadow-sm"
         >
           <template v-if="isLoading">
             <Loader2 class="w-4 h-4 animate-spin" />
             <span>{{ loadingStep }}</span>
           </template>
           <template v-else>
-            <span>Créer la session de vote</span>
+            <span>Dresser l'ardoise de vote</span>
             <ArrowRight class="w-4 h-4" />
           </template>
         </button>
@@ -219,17 +226,17 @@ async function handleCreateSession() {
 
     <!-- Récapitulatif simple et sobre -->
     <div class="mt-12 grid grid-cols-1 sm:grid-cols-3 gap-4 text-center">
-      <div class="p-4 rounded-xl bg-[#FFFCF7]/80 border border-[#E5D6C5]">
-        <span class="block text-[10px] font-semibold text-[#857263] uppercase tracking-widest mb-1">1. Invitez</span>
-        <p class="text-xs text-[#5D4B3E]">Partagez le lien avec vos collègues ou amis.</p>
+      <div class="p-4 rounded-xl bg-[#FFFFFF]/80 border border-[#E2D9CF] shadow-2xs">
+        <span class="block text-[10px] font-semibold text-[#64748B] uppercase tracking-widest mb-1 font-sans">1. Invitez</span>
+        <p class="text-xs text-[#475569]">Partagez l'ardoise avec vos collègues de table.</p>
       </div>
-      <div class="p-4 rounded-xl bg-[#FFFCF7]/80 border border-[#E5D6C5]">
-        <span class="block text-[10px] font-semibold text-[#857263] uppercase tracking-widest mb-1">2. Votez</span>
-        <p class="text-xs text-[#5D4B3E]">Classez vos 3 préférences (3, 2 et 1 point).</p>
+      <div class="p-4 rounded-xl bg-[#FFFFFF]/80 border border-[#E2D9CF] shadow-2xs">
+        <span class="block text-[10px] font-semibold text-[#64748B] uppercase tracking-widest mb-1 font-sans">2. Choisissez</span>
+        <p class="text-xs text-[#475569]">Attribuez vos 3 préférences (3, 2 et 1 point).</p>
       </div>
-      <div class="p-4 rounded-xl bg-[#FFFCF7]/80 border border-[#E5D6C5]">
-        <span class="block text-[10px] font-semibold text-[#857263] uppercase tracking-widest mb-1">3. Résultats</span>
-        <p class="text-xs text-[#5D4B3E]">Découvrez en direct le vainqueur du déjeuner.</p>
+      <div class="p-4 rounded-xl bg-[#FFFFFF]/80 border border-[#E2D9CF] shadow-2xs">
+        <span class="block text-[10px] font-semibold text-[#64748B] uppercase tracking-widest mb-1 font-sans">3. À table !</span>
+        <p class="text-xs text-[#475569]">Découvrez la table gagnante en direct.</p>
       </div>
     </div>
   </div>

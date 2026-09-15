@@ -48,25 +48,25 @@ function createDepartureIcon() {
 }
 
 function createRestaurantIcon(restaurant, rank) {
-  let bgColor = '#2C2019';
+  let bgColor = '#191C22';
   let badgeText = `${restaurant.walking_time_min}m`;
-  let ringColor = 'rgba(44, 32, 25, 0.15)';
+  let ringColor = 'rgba(0, 0, 0, 0.4)';
   let scale = '1';
 
   if (rank === 1) {
-    bgColor = '#C2542D';
+    bgColor = '#DC2626';
     badgeText = '1er';
-    ringColor = 'rgba(194, 84, 45, 0.35)';
+    ringColor = 'rgba(220, 38, 38, 0.5)';
     scale = '1.15';
   } else if (rank === 2) {
-    bgColor = '#586F54';
+    bgColor = '#D97706';
     badgeText = '2e';
-    ringColor = 'rgba(88, 111, 84, 0.35)';
+    ringColor = 'rgba(217, 119, 6, 0.5)';
     scale = '1.1';
   } else if (rank === 3) {
-    bgColor = '#7E6C5C';
+    bgColor = '#64748B';
     badgeText = '3e';
-    ringColor = 'rgba(126, 108, 92, 0.35)';
+    ringColor = 'rgba(100, 116, 139, 0.5)';
     scale = '1.05';
   }
 
@@ -74,7 +74,7 @@ function createRestaurantIcon(restaurant, rank) {
     className: 'custom-restaurant-pin',
     html: `
       <div style="transform: scale(${scale}); transform-origin: bottom center; transition: all 0.2s ease;">
-        <div style="background: ${bgColor}; color: white; padding: 4px 8px; border-radius: 9999px; font-size: 11px; font-weight: 500; border: 2px solid #FFFCF7; box-shadow: 0 2px 6px ${ringColor}; display: flex; align-items: center; gap: 3px; white-space: nowrap; cursor: pointer;">
+        <div style="background: ${bgColor}; color: white; padding: 4px 8px; border-radius: 9999px; font-size: 11px; font-weight: 600; border: 2px solid #383F4C; box-shadow: 0 4px 10px ${ringColor}; display: flex; align-items: center; gap: 3px; white-space: nowrap; cursor: pointer;">
           <span>🍽️</span>
           <span>${badgeText}</span>
         </div>
@@ -90,33 +90,33 @@ function createRestaurantIcon(restaurant, rank) {
 function buildPopupHtml(r) {
   const currentRank = getRank(r.id);
   const siteBtn = r.website_url 
-    ? `<a href="${r.website_url}" target="_blank" rel="noopener" style="display: inline-block; font-size: 11px; color: #C2542D; font-weight: 500; text-decoration: underline; margin-right: 8px;">Site officiel</a>`
+    ? `<a href="${r.website_url}" target="_blank" rel="noopener" style="display: inline-block; font-size: 11px; color: #F59E0B; font-weight: 500; text-decoration: underline; margin-right: 8px;">Site officiel</a>`
     : '';
   const gmapsBtn = r.google_maps_url
-    ? `<a href="${r.google_maps_url}" target="_blank" rel="noopener" style="display: inline-block; font-size: 11px; color: #857263; font-weight: 500; text-decoration: underline;">Fiche Google & Avis</a>`
+    ? `<a href="${r.google_maps_url}" target="_blank" rel="noopener" style="display: inline-block; font-size: 11px; color: #94A3B8; font-weight: 500; text-decoration: underline;">Fiche Google & Avis</a>`
     : '';
 
   return `
-    <div style="padding: 14px; min-width: 230px; max-width: 290px; font-family: inherit; background: #FFFCF7; border-radius: 12px;">
-      <div style="font-size: 10px; font-weight: 600; color: #C2542D; text-transform: uppercase; margin-bottom: 2px; letter-spacing: 0.5px;">
+    <div style="padding: 14px; min-width: 240px; max-width: 300px; font-family: inherit; background: #191C22; color: #F8FAFC; border-radius: 12px; border: 1px solid #383F4C; box-shadow: 0 10px 25px rgba(0,0,0,0.5);">
+      <div style="font-size: 10px; font-weight: 700; color: #F59E0B; text-transform: uppercase; margin-bottom: 2px; letter-spacing: 0.5px;">
         ${r.cuisine || 'Restaurant'} • ${r.distance_meters} m (~${r.walking_time_min} min)
       </div>
-      <div style="font-size: 16px; font-family: 'Shippori Mincho', serif; font-weight: 600; color: #2C2019; margin-bottom: 6px; line-height: 1.2;">
+      <div style="font-size: 17px; font-family: 'Cormorant Garamond', Georgia, serif; font-weight: 600; color: #F8FAFC; margin-bottom: 6px; line-height: 1.2;">
         ${r.name}
       </div>
-      ${r.menu_summary ? `<div style="font-size: 11px; color: #5D4B3E; margin-bottom: 8px; line-height: 1.3;">${r.menu_summary}</div>` : ''}
+      ${r.menu_summary ? `<div style="font-size: 11px; color: #CBD5E1; margin-bottom: 8px; line-height: 1.3;">${r.menu_summary}</div>` : ''}
       <div style="margin-bottom: 10px;">
         ${siteBtn}
         ${gmapsBtn}
       </div>
-      <div style="border-top: 1px solid #E5D6C5; padding-top: 8px; display: flex; gap: 4px;">
-        <button onclick="window.__vote_restaurant(${r.id}, 1)" style="flex: 1; padding: 5px 6px; font-size: 10px; font-weight: 500; border-radius: 8px; border: 1px solid #ECCDBE; background: ${currentRank === 1 ? '#C2542D' : '#FAF0E8'}; color: ${currentRank === 1 ? '#ffffff' : '#7C2D12'}; cursor: pointer;">
+      <div style="border-top: 1px solid #383F4C; padding-top: 8px; display: flex; gap: 4px;">
+        <button onclick="window.__vote_restaurant(${r.id}, 1)" style="flex: 1; padding: 6px 4px; font-size: 10px; font-weight: 600; border-radius: 8px; border: 1px solid ${currentRank === 1 ? '#B91C1C' : '#DC2626'}; background: ${currentRank === 1 ? '#DC2626' : '#242933'}; color: ${currentRank === 1 ? '#ffffff' : '#FCA5A5'}; cursor: pointer;">
           1er (3 pts)
         </button>
-        <button onclick="window.__vote_restaurant(${r.id}, 2)" style="flex: 1; padding: 5px 6px; font-size: 10px; font-weight: 500; border-radius: 8px; border: 1px solid #C8D7C4; background: ${currentRank === 2 ? '#586F54' : '#F0F5EE'}; color: ${currentRank === 2 ? '#ffffff' : '#2F3D2C'}; cursor: pointer;">
+        <button onclick="window.__vote_restaurant(${r.id}, 2)" style="flex: 1; padding: 6px 4px; font-size: 10px; font-weight: 600; border-radius: 8px; border: 1px solid ${currentRank === 2 ? '#B45309' : '#D97706'}; background: ${currentRank === 2 ? '#D97706' : '#242933'}; color: ${currentRank === 2 ? '#ffffff' : '#FDE68A'}; cursor: pointer;">
           2e (2 pts)
         </button>
-        <button onclick="window.__vote_restaurant(${r.id}, 3)" style="flex: 1; padding: 5px 6px; font-size: 10px; font-weight: 500; border-radius: 8px; border: 1px solid #DBCFBF; background: ${currentRank === 3 ? '#7E6C5C' : '#F4EDE5'}; color: ${currentRank === 3 ? '#ffffff' : '#4A433A'}; cursor: pointer;">
+        <button onclick="window.__vote_restaurant(${r.id}, 3)" style="flex: 1; padding: 6px 4px; font-size: 10px; font-weight: 600; border-radius: 8px; border: 1px solid ${currentRank === 3 ? '#475569' : '#64748B'}; background: ${currentRank === 3 ? '#64748B' : '#242933'}; color: ${currentRank === 3 ? '#ffffff' : '#CBD5E1'}; cursor: pointer;">
           3e (1 pt)
         </button>
       </div>
@@ -229,20 +229,20 @@ watch(
 </script>
 
 <template>
-  <div class="rounded-2xl border border-slate-200 overflow-hidden shadow-xs bg-white">
-    <div class="p-3 bg-slate-50 border-b border-slate-200/80 flex items-center justify-between text-xs text-slate-600">
+  <div class="rounded-2xl border border-[#383F4C] overflow-hidden shadow-xl bg-[#191C22]">
+    <div class="p-3.5 bg-[#20252E] border-b border-[#383F4C] flex items-center justify-between text-xs text-[#CBD5E1]">
       <div class="flex items-center gap-3">
-        <span class="flex items-center gap-1.5 font-semibold text-slate-900">
-          <span>🗺️</span> Carte des restaurants
+        <span class="flex items-center gap-1.5 font-serif text-base font-normal text-[#F8FAFC]">
+          <span>🗺️</span> Carte des adresses
         </span>
-        <span class="text-slate-400">•</span>
-        <span>Rayon de marche : {{ departure.radius_meters }} m</span>
+        <span class="text-[#64748B]">•</span>
+        <span class="text-[#94A3B8]">Rayon de marche : {{ departure.radius_meters }} m</span>
       </div>
       <div class="flex items-center gap-2">
-        <span class="inline-flex items-center gap-1 font-medium text-amber-700 bg-amber-50 px-2 py-0.5 rounded-md border border-amber-200/60">
-          <span class="w-2 h-2 rounded-full bg-amber-500"></span> 1er choix
+        <span class="inline-flex items-center gap-1 font-medium text-white bg-[#DC2626] px-2.5 py-0.5 rounded-md border border-[#B91C1C] shadow-xs">
+          <span class="w-1.5 h-1.5 rounded-full bg-white"></span> 1er choix
         </span>
-        <span class="hidden sm:inline text-slate-400">Cliquez sur un marqueur pour voter</span>
+        <span class="hidden sm:inline text-[#94A3B8]">Cliquez sur un marqueur pour voter</span>
       </div>
     </div>
     <div ref="mapContainer" class="w-full h-80 sm:h-96 z-10"></div>

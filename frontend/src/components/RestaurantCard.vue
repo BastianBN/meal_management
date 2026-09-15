@@ -39,111 +39,111 @@ function handleRankClick(rank) {
 <template>
   <div 
     :class="[
-      'rounded-2xl border p-5 sm:p-6 transition-all duration-200 relative flex flex-col justify-between bg-[#FFFCF7]',
-      currentRank === 1 ? 'border-[#C2542D] ring-1 ring-[#C2542D]/30 bg-[#FFFAF5]' :
-      currentRank === 2 ? 'border-[#586F54] ring-1 ring-[#586F54]/30 bg-[#FAFBF8]' :
-      currentRank === 3 ? 'border-[#7E6C5C] ring-1 ring-[#7E6C5C]/30 bg-[#FBF9F6]' :
-      'border-[#E5D6C5] hover:border-[#DAC7B2]'
+      'rounded-2xl border p-5 sm:p-6 transition-all duration-200 relative flex flex-col justify-between bg-[#191C22] shadow-sm',
+      currentRank === 1 ? 'border-[#DC2626] ring-1 ring-[#DC2626]/40 shadow-md shadow-[#DC2626]/10' :
+      currentRank === 2 ? 'border-[#D97706] ring-1 ring-[#D97706]/40 shadow-md shadow-[#D97706]/10' :
+      currentRank === 3 ? 'border-[#64748B] ring-1 ring-[#64748B]/40 shadow-md shadow-[#64748B]/10' :
+      'border-[#383F4C] hover:border-[#4A5364]'
     ]"
   >
-    <!-- Badge de choix actif sur la carte -->
+    <!-- Badge de choix actif sur l'ardoise -->
     <div 
       v-if="currentRank"
       :class="[
-        currentRank === 1 ? 'bg-[#C2542D] text-white' :
-        currentRank === 2 ? 'bg-[#586F54] text-white' :
-        'bg-[#7E6C5C] text-white',
-        'absolute -top-3 right-5 px-3 py-0.5 rounded-full text-xs font-medium flex items-center gap-1.5'
+        currentRank === 1 ? 'bg-[#DC2626] text-white border border-[#B91C1C]' :
+        currentRank === 2 ? 'bg-[#D97706] text-white border border-[#B45309]' :
+        'bg-[#64748B] text-white border border-[#475569]',
+        'absolute -top-3 right-5 px-3 py-0.5 rounded-full text-xs font-medium flex items-center gap-1.5 shadow-sm font-sans'
       ]"
     >
       <Check class="w-3.5 h-3.5 stroke-[2.5]" />
       <span>{{ currentRank === 1 ? '1er Choix (+3 pts)' : currentRank === 2 ? '2e Choix (+2 pts)' : '3e Choix (+1 pt)' }}</span>
     </div>
 
-    <!-- Section principale de la carte -->
+    <!-- Section principale de l'ardoise -->
     <div>
       <!-- Ligne supérieure : Cuisine, Note & Distance -->
       <div class="flex items-center justify-between gap-2 flex-wrap mb-2">
         <div class="flex items-center gap-1.5 flex-wrap">
-          <span class="inline-block text-[11px] font-medium px-2.5 py-0.5 rounded-md bg-[#FAF2E8] text-[#5D4B3E] border border-[#E5D6C5]">
+          <span class="inline-block text-[11px] font-medium px-2.5 py-0.5 rounded-md bg-[#22262E] text-[#CBD5E1] border border-[#383F4C] font-sans">
             {{ restaurant.cuisine || 'Bistrot' }}
           </span>
 
           <!-- Badge Note / Avis -->
           <div 
             v-if="restaurant.rating"
-            class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-[#FEF3C7] text-[#78350F] text-xs font-medium border border-[#F59E0B]/30"
+            class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-[#2A2315] text-[#FDE68A] text-xs font-medium border border-[#D97706]/40 font-sans"
             :title="`${restaurant.rating_count || 100} avis clients vérifiés`"
           >
-            <Star class="w-3 h-3 text-amber-600 fill-amber-500" />
+            <Star class="w-3 h-3 text-[#D97706] fill-[#D97706]" />
             <span>{{ Number(restaurant.rating).toFixed(1) }}</span>
-            <span v-if="restaurant.rating_count" class="text-[10px] text-[#78350F]/70 font-normal">({{ restaurant.rating_count }})</span>
+            <span v-if="restaurant.rating_count" class="text-[10px] text-[#FDE68A]/70 font-normal">({{ restaurant.rating_count }})</span>
           </div>
 
           <span 
             v-if="restaurant.rating >= 4.7"
-            class="inline-block text-[10px] font-medium px-2 py-0.5 rounded-md bg-[#FAF0E8] text-[#C2542D] border border-[#ECCDBE]"
+            class="inline-block text-[10px] font-medium px-2 py-0.5 rounded-md bg-[#2E1819] text-[#FCA5A5] border border-[#DC2626]/40 font-sans"
           >
             Coup de cœur
           </span>
         </div>
 
         <!-- Temps de marche -->
-        <div class="inline-flex items-center gap-1 text-xs font-medium text-[#857263] shrink-0">
-          <Footprints class="w-3.5 h-3.5 text-[#C2542D]" />
-          <span class="font-medium text-[#2C2019]">{{ restaurant.walking_time_min }} min</span>
-          <span class="text-[#DAC7B2]">•</span>
+        <div class="inline-flex items-center gap-1 text-xs font-medium text-[#94A3B8] shrink-0 font-sans">
+          <Footprints class="w-3.5 h-3.5 text-[#D97706]" />
+          <span class="font-medium text-[#F8FAFC]">{{ restaurant.walking_time_min }} min</span>
+          <span class="text-[#475569]">•</span>
           <span>{{ restaurant.distance_meters }} m</span>
         </div>
       </div>
 
-      <!-- Titre du restaurant en police poétique Shippori Mincho -->
-      <h3 class="font-serif text-xl sm:text-2xl font-normal text-[#2C2019] tracking-wide leading-snug mb-1">
+      <!-- Titre du restaurant en police Cormorant Garamond façon écriture craie -->
+      <h3 class="font-serif text-2xl sm:text-3xl font-normal text-[#F8FAFC] tracking-wide leading-snug mb-1">
         {{ restaurant.name }}
       </h3>
 
-      <p v-if="restaurant.address" class="text-xs text-[#857263] mb-4 line-clamp-1">
+      <p v-if="restaurant.address" class="text-xs text-[#94A3B8] mb-4 line-clamp-1 font-sans">
         {{ restaurant.address }}
       </p>
 
-      <!-- Formules du midi extraites -->
+      <!-- Formules du midi façon ardoise des suggestions -->
       <div class="mt-2 mb-4">
         <div v-if="hasFormulas" class="space-y-2">
           <div 
             v-for="(f, idx) in restaurant.lunch_formulas" 
             :key="idx"
-            class="p-3 rounded-xl bg-[#FAF2E8] border border-[#EFE4D6] text-xs"
+            class="p-3 rounded-xl bg-[#22262E] border border-[#2F3642] text-xs"
           >
-            <div class="flex items-center justify-between gap-2 text-[#2C2019]">
-              <span class="font-medium">{{ f.name }}</span>
-              <span class="text-[#C2542D] font-semibold shrink-0 bg-[#FFFCF7] px-2 py-0.5 rounded-md border border-[#E5D6C5]">{{ f.price }}</span>
+            <div class="flex items-center justify-between gap-2 text-[#F8FAFC]">
+              <span class="font-medium font-serif text-sm tracking-wide text-[#F1EADF]">{{ f.name }}</span>
+              <span class="text-[#FDE68A] font-medium shrink-0 bg-[#191C22] px-2 py-0.5 rounded-md border border-[#383F4C] font-sans">{{ f.price }}</span>
             </div>
-            <p v-if="f.description" class="text-[#857263] mt-1 text-[11px] leading-relaxed">
+            <p v-if="f.description" class="text-[#94A3B8] mt-1 text-[11px] leading-relaxed font-sans">
               {{ f.description }}
             </p>
           </div>
         </div>
 
-        <div v-else-if="restaurant.menu_summary" class="p-3 rounded-xl bg-[#FAF2E8] border border-[#EFE4D6] text-xs text-[#5D4B3E]">
+        <div v-else-if="restaurant.menu_summary" class="p-3 rounded-xl bg-[#22262E] border border-[#2F3642] text-xs text-[#CBD5E1] font-sans">
           {{ restaurant.menu_summary }}
         </div>
       </div>
     </div>
 
-    <!-- Section inférieure : Liens de découverte + Boutons de vote -->
-    <div class="space-y-3 pt-3 border-t border-[#EFE4D6]">
+    <!-- Section inférieure : Liens de découverte + Boutons de vote Trio Bistrot -->
+    <div class="space-y-3 pt-3 border-t border-[#2A2F39]">
       <!-- Ligne 1 : Liens externes (Site officiel, Carte en ligne, Google Maps) -->
-      <div class="flex flex-wrap items-center gap-2 text-xs">
-        <!-- Badge Carte en ligne (mise en avant si disponible) -->
+      <div class="flex flex-wrap items-center gap-2 text-xs font-sans">
+        <!-- Badge Carte en ligne -->
         <a 
           v-if="restaurant.menu_url"
           :href="restaurant.menu_url"
           target="_blank"
           rel="noopener noreferrer"
-          class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-[#F0F5EE] text-[#364A32] border border-[#C8D7C4] font-medium hover:bg-[#E3ECE0] transition"
+          class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-[#1E293B] text-[#93C5FD] border border-[#3B82F6]/30 font-medium hover:bg-[#283548] transition"
         >
-          <FileText v-if="isPdfMenu" class="w-3.5 h-3.5 text-[#586F54]" />
-          <ExternalLink v-else class="w-3.5 h-3.5 text-[#586F54]" />
+          <FileText v-if="isPdfMenu" class="w-3.5 h-3.5 text-[#60A5FA]" />
+          <ExternalLink v-else class="w-3.5 h-3.5 text-[#60A5FA]" />
           <span>{{ isPdfMenu ? 'Carte PDF' : 'Carte en ligne' }}</span>
         </a>
 
@@ -153,10 +153,10 @@ function handleRankClick(rank) {
           :href="restaurant.google_maps_url"
           target="_blank"
           rel="noopener noreferrer"
-          class="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-[#FAF2E8] text-[#5D4B3E] hover:text-[#2C2019] hover:bg-[#F3E8DB] border border-[#E5D6C5] font-medium transition"
+          class="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-[#22262E] text-[#CBD5E1] hover:text-[#F8FAFC] hover:bg-[#2A2F39] border border-[#383F4C] font-medium transition"
           title="Consulter la fiche Google Maps avec avis et photos des plats"
         >
-          <MapPin class="w-3.5 h-3.5 text-[#857263]" />
+          <MapPin class="w-3.5 h-3.5 text-[#94A3B8]" />
           <span>Google & Avis</span>
         </a>
 
@@ -166,23 +166,23 @@ function handleRankClick(rank) {
           :href="restaurant.website_url"
           target="_blank"
           rel="noopener noreferrer"
-          class="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-[#FAF2E8] text-[#5D4B3E] hover:text-[#2C2019] hover:bg-[#F3E8DB] border border-[#E5D6C5] font-medium transition"
+          class="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-[#22262E] text-[#CBD5E1] hover:text-[#F8FAFC] hover:bg-[#2A2F39] border border-[#383F4C] font-medium transition"
         >
           <span>Site officiel</span>
-          <ExternalLink class="w-3 h-3 text-[#AC9B8D]" />
+          <ExternalLink class="w-3 h-3 text-[#94A3B8]" />
         </a>
       </div>
 
-      <!-- Ligne 2 : Boutons de classement (1er, 2e, 3e choix) garantis pleine largeur -->
-      <div class="grid grid-cols-3 gap-2 w-full">
+      <!-- Ligne 2 : Boutons de classement (1er Rouge Bistrot, 2e Laiton, 3e Zinc) -->
+      <div class="grid grid-cols-3 gap-2 w-full font-sans">
         <button
           type="button"
           :disabled="disabled"
           @click="handleRankClick(1)"
           :class="[
             currentRank === 1 
-              ? 'bg-[#C2542D] text-white font-medium border border-[#A64320]' 
-              : 'bg-[#FFFCF7] hover:bg-[#FAF0E8] text-[#2C2019] hover:text-[#C2542D] border border-[#E5D6C5] hover:border-[#ECCDBE]',
+              ? 'bg-[#DC2626] text-white font-medium border border-[#B91C1C] shadow-sm' 
+              : 'bg-[#22262E] hover:bg-[#2E1819] text-[#E2E8F0] hover:text-[#FCA5A5] border border-[#383F4C] hover:border-[#DC2626]/60',
             'w-full py-2 px-1 rounded-xl text-xs font-medium transition btn-interaction flex items-center justify-center gap-1 cursor-pointer'
           ]"
           title="1er Choix (attribue 3 points)"
@@ -197,8 +197,8 @@ function handleRankClick(rank) {
           @click="handleRankClick(2)"
           :class="[
             currentRank === 2 
-              ? 'bg-[#586F54] text-white font-medium border border-[#465A42]' 
-              : 'bg-[#FFFCF7] hover:bg-[#F0F5EE] text-[#2C2019] hover:text-[#586F54] border border-[#E5D6C5] hover:border-[#C8D7C4]',
+              ? 'bg-[#D97706] text-white font-medium border border-[#B45309] shadow-sm' 
+              : 'bg-[#22262E] hover:bg-[#2B2317] text-[#E2E8F0] hover:text-[#FDE68A] border border-[#383F4C] hover:border-[#D97706]/60',
             'w-full py-2 px-1 rounded-xl text-xs font-medium transition btn-interaction flex items-center justify-center gap-1 cursor-pointer'
           ]"
           title="2e Choix (attribue 2 points)"
@@ -213,8 +213,8 @@ function handleRankClick(rank) {
           @click="handleRankClick(3)"
           :class="[
             currentRank === 3 
-              ? 'bg-[#7E6C5C] text-white font-medium border border-[#685749]' 
-              : 'bg-[#FFFCF7] hover:bg-[#F4EDE5] text-[#2C2019] hover:text-[#7E6C5C] border border-[#E5D6C5] hover:border-[#DBCFBF]',
+              ? 'bg-[#64748B] text-white font-medium border border-[#475569] shadow-sm' 
+              : 'bg-[#22262E] hover:bg-[#242933] text-[#E2E8F0] hover:text-[#CBD5E1] border border-[#383F4C] hover:border-[#64748B]/60',
             'w-full py-2 px-1 rounded-xl text-xs font-medium transition btn-interaction flex items-center justify-center gap-1 cursor-pointer'
           ]"
           title="3e Choix (attribue 1 point)"

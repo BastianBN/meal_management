@@ -2,59 +2,63 @@
 @import "leaflet/dist/leaflet.css";
 
 @theme {
-  --color-washi: #F6EDE2;
-  --color-washi-surface: #FFFCF7;
-  --color-washi-card: #FAF2E8;
-  --color-border-ink: #E5D6C5;
-  --color-border-subtle: #EFE4D6;
-  --color-border-strong: #DAC7B2;
+  --color-bistro-bg: #F4EFEB;
+  --color-bistro-bg-card: #FFFFFF;
+  --color-bistro-border: #E2D9CF;
+  --color-bistro-border-dark: #C9BCAC;
 
-  --color-ink: #2C2019;
-  --color-ink-secondary: #5D4B3E;
-  --color-ink-muted: #857263;
-  --color-ink-faint: #AC9B8D;
+  --color-slate-card: #191C22;
+  --color-slate-surface: #22262E;
+  --color-slate-surface-light: #2A2F39;
+  --color-slate-border: #383F4C;
+  --color-slate-border-light: #4A5364;
 
-  --color-hanko: #C2542D;
-  --color-hanko-hover: #A64320;
-  --color-hanko-soft: #FAF0E8;
-  --color-hanko-border: #ECCDBE;
+  --color-chalk-white: #F8FAFC;
+  --color-chalk-cream: #F1EADF;
+  --color-chalk-muted: #94A3B8;
+  --color-chalk-faint: #64748B;
 
-  --color-matcha: #586F54;
-  --color-matcha-hover: #465A42;
-  --color-matcha-soft: #F0F5EE;
-  --color-matcha-border: #C8D7C4;
+  --color-bistro-red: #DC2626;
+  --color-bistro-red-dark: #B91C1C;
+  --color-bistro-red-soft: #FEF2F2;
+  --color-bistro-red-border: #FECACA;
 
-  --color-pebble: #7E6C5C;
-  --color-pebble-hover: #685749;
-  --color-pebble-soft: #F4EDE5;
-  --color-pebble-border: #DBCFBF;
+  --color-bistro-brass: #D97706;
+  --color-bistro-brass-dark: #B45309;
+  --color-bistro-brass-soft: #FFFBEB;
+  --color-bistro-brass-border: #FDE68A;
+
+  --color-bistro-zinc: #64748B;
+  --color-bistro-zinc-dark: #475569;
+  --color-bistro-zinc-soft: #F8FAFC;
+  --color-bistro-zinc-border: #CBD5E1;
 
   --font-sans: "Plus Jakarta Sans", -apple-system, BlinkMacSystemFont, sans-serif;
-  --font-serif: "Shippori Mincho", "Noto Serif JP", serif;
+  --font-serif: "Cormorant Garamond", Garamond, Georgia, serif;
 }
 
 @layer base {
   ::selection {
-    background-color: #C2542D;
+    background-color: #DC2626;
     color: #ffffff;
   }
 
   html {
     min-height: 100%;
-    background-color: #F6EDE2;
+    background-color: #F4EFEB;
   }
 
   body {
     min-height: 100vh;
-    background-color: #F6EDE2;
-    color: #2C2019;
-    /* Délicat halo ambré/terracotta chaleureux + grain de papier washi texturé à couverture totale */
+    background-color: #F4EFEB;
+    color: #1E232B;
+    /* Fond comptoir bois blond & zinc avec grain bistrot texturé discret et lumineux */
     background-image: 
-      radial-gradient(ellipse at 50% -5%, rgba(212, 103, 58, 0.09) 0%, rgba(246, 237, 226, 0) 70%),
-      url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='matrix' values='0.75 0 0 0 0.12  0 0.55 0 0 0.09  0 0 0.35 0 0.05  0 0 0 0.055 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+      radial-gradient(ellipse at 50% 0%, rgba(205, 140, 75, 0.08) 0%, rgba(244, 239, 235, 0) 70%),
+      url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='matrix' values='0.7 0 0 0 0.1  0 0.5 0 0 0.08  0 0 0.3 0 0.05  0 0 0 0.045 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
     background-repeat: repeat;
     background-attachment: fixed;
-    background-size: auto, 180px 180px;
+    background-size: auto, 160px 160px;
     font-feature-settings: "cv02", "cv03", "cv04", "cv11";
   }
 }
@@ -68,14 +72,15 @@
   transform: scale(0.985);
 }
 
-/* Personnalisation popup Leaflet Wabi-Sabi chaleureux */
+/* Personnalisation popup Leaflet façon ardoise bistrot */
 .leaflet-popup-content-wrapper {
   border-radius: 0.75rem;
-  box-shadow: 0 4px 20px rgba(44, 32, 25, 0.1);
-  border: 1px solid #E5D6C5;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.4);
+  border: 1px solid #383F4C;
   padding: 0;
   overflow: hidden;
-  background: #FFFCF7;
+  background: #191C22;
+  color: #F8FAFC;
 }
 
 .leaflet-popup-content {
@@ -85,55 +90,58 @@
 }
 
 .leaflet-popup-tip {
-  background: #FFFCF7;
-  box-shadow: 0 4px 20px rgba(44, 32, 25, 0.1);
+  background: #191C22;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.4);
 }
 
-/* Slider de durée de marche Wabi-Sabi chaleureux */
+/* Slider de durée de marche bistrot (laiton brossé & zinc) */
 .slider-custom {
   -webkit-appearance: none;
   appearance: none;
   width: 100%;
-  height: 4px;
-  background: #E5D6C5;
+  height: 5px;
+  background: #D5CBC0;
   border-radius: 9999px;
   outline: none;
   transition: background 0.2s;
-  accent-color: #C2542D;
+  accent-color: #DC2626;
 }
 
 .slider-custom::-webkit-slider-thumb {
   -webkit-appearance: none;
   appearance: none;
-  width: 18px;
-  height: 18px;
+  width: 20px;
+  height: 20px;
   border-radius: 50%;
-  background: #2C2019;
+  background: #191C22;
   cursor: pointer;
-  border: 2px solid #FFFCF7;
-  box-shadow: 0 2px 5px rgba(44, 32, 25, 0.25);
+  border: 2px solid #D97706;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.35);
   transition: transform 0.2s ease, background 0.2s ease;
 }
 
 .slider-custom::-webkit-slider-thumb:hover {
   transform: scale(1.15);
-  background: #C2542D;
+  background: #DC2626;
+  border-color: #F8FAFC;
 }
 
 .slider-custom::-moz-range-thumb {
-  width: 18px;
-  height: 18px;
+  width: 20px;
+  height: 20px;
   border-radius: 50%;
-  background: #2C2019;
+  background: #191C22;
   cursor: pointer;
-  border: 2px solid #FFFCF7;
-  box-shadow: 0 2px 5px rgba(44, 32, 25, 0.25);
+  border: 2px solid #D97706;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.35);
   transition: transform 0.2s ease, background 0.2s ease;
 }
 
 .slider-custom::-moz-range-thumb:hover {
   transform: scale(1.15);
-  background: #C2542D;
+  background: #DC2626;
+  border-color: #F8FAFC;
 }
+
 
 

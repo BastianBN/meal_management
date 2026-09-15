@@ -196,45 +196,45 @@ async function handleVoteSubmit() {
 <template>
   <div class="space-y-6">
     <!-- En-tête de Session (Adresse & Rayon) -->
-    <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-[#FFFCF7] rounded-2xl border border-[#E5D6C5] p-5 sm:p-6">
+    <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-[#FFFFFF] rounded-2xl border border-[#E2D9CF] p-5 sm:p-6 shadow-sm">
       <div>
-        <div class="flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider text-[#C2542D] mb-1">
-          <MapPin class="w-3.5 h-3.5 text-[#C2542D] shrink-0" />
+        <div class="flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider text-[#DC2626] mb-1 font-sans">
+          <MapPin class="w-3.5 h-3.5 text-[#DC2626] shrink-0" />
           <span>Point de départ</span>
         </div>
-        <h2 class="font-serif text-xl sm:text-2xl font-normal text-[#2C2019] tracking-wide leading-snug">
+        <h2 class="font-serif text-2xl sm:text-3xl font-normal text-[#191C22] tracking-wide leading-snug">
           {{ session.departure_address }}
         </h2>
-        <p class="text-xs text-[#857263] mt-1.5 flex items-center gap-2 flex-wrap">
-          <span class="inline-flex items-center gap-1.5 font-medium text-[#2C2019] bg-[#FAF2E8] px-2.5 py-0.5 rounded-md border border-[#E5D6C5]">
-            <Footprints class="w-3.5 h-3.5 text-[#586F54]" />
-            Rayon : {{ session.radius_meters >= 1000 ? (session.radius_meters / 1000).toFixed(1).replace('.', ',') + ' km' : session.radius_meters + ' m' }} (~{{ Math.round(session.radius_meters / 100) }} min à pied)
+        <p class="text-xs text-[#64748B] mt-1.5 flex items-center gap-2 flex-wrap font-sans">
+          <span class="inline-flex items-center gap-1.5 font-medium text-[#191C22] bg-[#F8F5F2] px-2.5 py-0.5 rounded-md border border-[#E2D9CF]">
+            <Footprints class="w-3.5 h-3.5 text-[#D97706]" />
+            Périmètre : {{ session.radius_meters >= 1000 ? (session.radius_meters / 1000).toFixed(1).replace('.', ',') + ' km' : session.radius_meters + ' m' }} (~{{ Math.round(session.radius_meters / 100) }} min à pied)
           </span>
-          <span class="text-[#DAC7B2]">•</span>
-          <span class="font-medium text-[#5D4B3E]">{{ restaurants.length }} restaurants repérés</span>
+          <span class="text-[#CBD5E1]">•</span>
+          <span class="font-medium text-[#475569]">{{ restaurants.length }} adresses trouvées</span>
         </p>
       </div>
 
       <!-- Boutons Partager & Bascule Carte -->
-      <div class="flex items-center gap-2 shrink-0">
+      <div class="flex items-center gap-2 shrink-0 font-sans">
         <button
           type="button"
           @click="showMap = !showMap"
-          class="inline-flex items-center gap-1.5 px-3.5 py-2.5 rounded-xl border border-[#E5D6C5] hover:border-[#2C2019] bg-[#FFFCF7] hover:bg-[#FAF2E8] text-[#5D4B3E] hover:text-[#2C2019] text-xs font-medium transition cursor-pointer"
+          class="inline-flex items-center gap-1.5 px-3.5 py-2.5 rounded-xl border border-[#E2D9CF] hover:border-[#191C22] bg-[#FFFFFF] hover:bg-[#F8F5F2] text-[#475569] hover:text-[#191C22] text-xs font-medium transition cursor-pointer shadow-xs"
         >
-          <MapIcon v-if="!showMap" class="w-4 h-4 text-[#857263]" />
-          <List v-else class="w-4 h-4 text-[#857263]" />
+          <MapIcon v-if="!showMap" class="w-4 h-4 text-[#64748B]" />
+          <List v-else class="w-4 h-4 text-[#64748B]" />
           <span>{{ showMap ? 'Masquer la carte' : 'Afficher la carte' }}</span>
         </button>
 
         <button
           type="button"
           @click="copyShareLink"
-          class="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-xl border border-[#ECCDBE] hover:border-[#C2542D] bg-[#FAF0E8] hover:bg-[#F5E5DC] text-[#C2542D] text-xs font-medium transition cursor-pointer"
+          class="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-xl border border-[#FECACA] hover:border-[#DC2626] bg-[#FEF2F2] hover:bg-[#FEE2E2] text-[#DC2626] text-xs font-medium transition cursor-pointer shadow-xs"
         >
-          <CheckCircle2 v-if="copySuccess" class="w-4 h-4 text-[#586F54]" />
-          <Share2 v-else class="w-4 h-4 text-[#C2542D]" />
-          <span>{{ copySuccess ? 'Lien copié !' : 'Partager le vote' }}</span>
+          <CheckCircle2 v-if="copySuccess" class="w-4 h-4 text-[#16A34A]" />
+          <Share2 v-else class="w-4 h-4 text-[#DC2626]" />
+          <span>{{ copySuccess ? 'Lien copié !' : 'Partager l\'ardoise' }}</span>
         </button>
       </div>
     </div>
@@ -258,16 +258,16 @@ async function handleVoteSubmit() {
       />
     </div>
 
-    <!-- Barre d'action fixe et bien visible pour voter -->
-    <div class="bg-[#FFFCF7]/95 backdrop-blur-md rounded-2xl border border-[#E5D6C5] p-4 sm:p-5 sticky top-4 z-20 shadow-md shadow-[#5D4B3E]/5">
-      <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+    <!-- Barre d'action fixe : L'Ardoise de Vote flottante -->
+    <div class="bg-[#191C22]/95 backdrop-blur-md rounded-2xl border border-[#383F4C] p-4 sm:p-5 sticky top-4 z-20 shadow-xl shadow-black/25 text-[#F8FAFC]">
+      <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4 font-sans">
         <!-- Champ nom du votant -->
         <div class="w-full lg:w-72 shrink-0">
-          <label for="voter-name" class="block text-xs font-semibold uppercase tracking-wider text-[#2C2019] mb-1">
-            Votre prénom ou nom <span class="text-[#C2542D]">*</span>
+          <label for="voter-name" class="block text-xs font-semibold uppercase tracking-wider text-[#F8FAFC] mb-1">
+            Votre prénom ou table <span class="text-[#DC2626]">*</span>
           </label>
           <div class="relative rounded-xl">
-            <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3 text-[#857263]">
+            <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3 text-[#94A3B8]">
               <User class="h-4 w-4" />
             </div>
             <input
@@ -276,48 +276,48 @@ async function handleVoteSubmit() {
               type="text"
               required
               placeholder="ex : Marc, Camille..."
-              class="block w-full rounded-xl border border-[#E5D6C5] bg-[#FAF2E8] pl-9 pr-3 py-2 text-sm font-normal text-[#2C2019] placeholder:text-[#AC9B8D] focus:bg-[#FFFCF7] focus:border-[#C2542D] focus:ring-1 focus:ring-[#C2542D]/20 focus:outline-none transition"
+              class="block w-full rounded-xl border border-[#383F4C] bg-[#22262E] pl-9 pr-3 py-2 text-sm font-normal text-[#F8FAFC] placeholder:text-[#94A3B8] focus:bg-[#2A2F39] focus:border-[#DC2626] focus:ring-1 focus:ring-[#DC2626]/30 focus:outline-none transition"
             />
           </div>
         </div>
 
-        <!-- Récapitulatif visuel des 3 choix -->
+        <!-- Récapitulatif visuel des 3 choix (Trio Rouge, Laiton, Zinc) -->
         <div class="flex-1 flex flex-wrap items-center gap-2 text-xs">
-          <!-- Choix 1 : Vermillon Hanko -->
+          <!-- Choix 1 : Rouge Bistrot -->
           <div 
             :class="[
-              firstChoiceId ? 'bg-[#FAF0E8] border-[#ECCDBE] text-[#7C2D12] font-medium' : 'bg-[#FFFCF7] border-dashed border-[#DAC7B2] text-[#AC9B8D]',
+              firstChoiceId ? 'bg-[#2E1819] border-[#DC2626] text-[#FCA5A5] font-medium' : 'bg-[#22262E] border-dashed border-[#383F4C] text-[#64748B]',
               'px-3 py-2 rounded-xl border flex items-center gap-2 transition'
             ]"
           >
-            <span class="w-5 h-5 rounded-full bg-[#C2542D] text-white flex items-center justify-center font-medium text-[10px]">1</span>
-            <span class="truncate max-w-[130px] sm:max-w-[170px]">{{ firstChoiceName || '1er choix (+3 pts)' }}</span>
+            <span class="w-5 h-5 rounded-full bg-[#DC2626] text-white flex items-center justify-center font-medium text-[10px] shadow-xs">1</span>
+            <span class="truncate max-w-[130px] sm:max-w-[170px] font-serif text-sm">{{ firstChoiceName || '1er choix (+3 pts)' }}</span>
           </div>
 
-          <!-- Choix 2 : Thé Matcha -->
+          <!-- Choix 2 : Laiton Doré -->
           <div 
             :class="[
-              secondChoiceId ? 'bg-[#F0F5EE] border-[#C8D7C4] text-[#2F3D2C] font-medium' : 'bg-[#FFFCF7] border-dashed border-[#DAC7B2] text-[#AC9B8D]',
+              secondChoiceId ? 'bg-[#2B2317] border-[#D97706] text-[#FDE68A] font-medium' : 'bg-[#22262E] border-dashed border-[#383F4C] text-[#64748B]',
               'px-3 py-2 rounded-xl border flex items-center gap-2 transition'
             ]"
           >
-            <span class="w-5 h-5 rounded-full bg-[#586F54] text-white flex items-center justify-center font-medium text-[10px]">2</span>
-            <span class="truncate max-w-[130px] sm:max-w-[170px]">{{ secondChoiceName || '2e choix (+2 pts)' }}</span>
+            <span class="w-5 h-5 rounded-full bg-[#D97706] text-white flex items-center justify-center font-medium text-[10px] shadow-xs">2</span>
+            <span class="truncate max-w-[130px] sm:max-w-[170px] font-serif text-sm">{{ secondChoiceName || '2e choix (+2 pts)' }}</span>
           </div>
 
-          <!-- Choix 3 : Galet / Bambou -->
+          <!-- Choix 3 : Zinc Étain -->
           <div 
             :class="[
-              thirdChoiceId ? 'bg-[#F4EDE5] border-[#DBCFBF] text-[#4A433A] font-medium' : 'bg-[#FFFCF7] border-dashed border-[#DAC7B2] text-[#AC9B8D]',
+              thirdChoiceId ? 'bg-[#242933] border-[#64748B] text-[#CBD5E1] font-medium' : 'bg-[#22262E] border-dashed border-[#383F4C] text-[#64748B]',
               'px-3 py-2 rounded-xl border flex items-center gap-2 transition'
             ]"
           >
-            <span class="w-5 h-5 rounded-full bg-[#7E6C5C] text-white flex items-center justify-center font-medium text-[10px]">3</span>
-            <span class="truncate max-w-[130px] sm:max-w-[170px]">{{ thirdChoiceName || '3e choix (+1 pt)' }}</span>
+            <span class="w-5 h-5 rounded-full bg-[#64748B] text-white flex items-center justify-center font-medium text-[10px] shadow-xs">3</span>
+            <span class="truncate max-w-[130px] sm:max-w-[170px] font-serif text-sm">{{ thirdChoiceName || '3e choix (+1 pt)' }}</span>
           </div>
         </div>
 
-        <!-- Bouton de validation bien visible -->
+        <!-- Bouton de validation Rouge Bistrot -->
         <div class="shrink-0 flex flex-col items-stretch lg:items-end">
           <button
             type="button"
@@ -325,80 +325,80 @@ async function handleVoteSubmit() {
             @click="handleVoteSubmit"
             :class="[
               canSubmit
-                ? 'bg-[#C2542D] hover:bg-[#A64320] active:bg-[#8D3517] text-white font-medium'
-                : 'bg-[#EFE4D6] text-[#AC9B8D] cursor-not-allowed border border-[#DAC7B2]',
+                ? 'bg-[#DC2626] hover:bg-[#B91C1C] active:bg-[#991B1B] text-white font-medium shadow-sm'
+                : 'bg-[#22262E] text-[#64748B] cursor-not-allowed border border-[#383F4C]',
               'px-6 py-3 rounded-xl text-sm transition flex items-center justify-center gap-2 cursor-pointer'
             ]"
           >
             <Lock class="w-4 h-4 shrink-0" />
-            <span>{{ isSubmitting ? 'Enregistrement...' : submitButtonLabel }}</span>
+            <span>{{ isSubmitting ? 'Transmission...' : submitButtonLabel }}</span>
           </button>
-          <span class="text-[11px] text-[#857263] mt-1 text-center lg:text-right font-normal">
-            Vote définitif • Enregistrement irrévocable
+          <span class="text-[11px] text-[#94A3B8] mt-1 text-center lg:text-right font-normal">
+            Choix définitif • Transmis à la cuisine
           </span>
         </div>
       </div>
 
       <!-- Erreur éventuelle -->
-      <div v-if="errorMessage" class="mt-3 p-3 rounded-xl bg-[#FAF0E8] border border-[#ECCDBE] text-[#C2542D] text-xs flex items-center gap-2 font-medium">
+      <div v-if="errorMessage" class="mt-3 p-3 rounded-xl bg-[#2E1819] border border-[#DC2626] text-[#FCA5A5] text-xs flex items-center gap-2 font-medium">
         <AlertCircle class="w-4 h-4 shrink-0" />
         <span>{{ errorMessage }}</span>
       </div>
     </div>
 
-    <!-- Barre de filtrage & tri -->
-    <div class="bg-[#FFFCF7] rounded-2xl border border-[#E5D6C5] p-4 sm:p-5 space-y-3">
+    <!-- Barre de filtrage & tri brasserie -->
+    <div class="bg-[#FFFFFF] rounded-2xl border border-[#E2D9CF] p-4 sm:p-5 space-y-3 shadow-sm font-sans">
       <div class="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
         <!-- Recherche textuelle -->
         <div class="relative flex-1">
-          <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3.5 text-[#857263]">
+          <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3.5 text-[#94A3B8]">
             <Search class="w-4 h-4" />
           </div>
           <input
             v-model="searchQuery"
             type="text"
-            placeholder="Rechercher par nom, cuisine ou adresse..."
-            class="block w-full rounded-xl border border-[#E5D6C5] bg-[#FAF2E8] pl-10 pr-3 py-2 text-sm font-normal text-[#2C2019] placeholder:text-[#AC9B8D] focus:bg-[#FFFCF7] focus:border-[#C2542D] focus:ring-1 focus:ring-[#C2542D]/20 focus:outline-none transition"
+            placeholder="Rechercher une table, cuisine ou rue..."
+            class="block w-full rounded-xl border border-[#E2D9CF] bg-[#F8F5F2] pl-10 pr-3 py-2 text-sm font-normal text-[#191C22] placeholder:text-[#94A3B8] focus:bg-[#FFFFFF] focus:border-[#DC2626] focus:ring-1 focus:ring-[#DC2626]/20 focus:outline-none transition"
           />
         </div>
 
         <!-- Bascule de Tri : Note vs Distance -->
-        <div class="flex items-center gap-1.5 shrink-0 bg-[#EFE4D6] p-1 rounded-xl border border-[#E5D6C5]">
+        <div class="flex items-center gap-1.5 shrink-0 bg-[#E7DED4] p-1 rounded-xl border border-[#D5CBC0]">
           <button
             type="button"
             @click="sortBy = 'rating'"
             :class="[
-              sortBy === 'rating' ? 'bg-[#FFFCF7] text-[#2C2019] font-medium border border-[#E5D6C5]' : 'text-[#857263] hover:text-[#2C2019]',
+              sortBy === 'rating' ? 'bg-[#191C22] text-[#F8FAFC] font-medium border border-[#383F4C] shadow-xs' : 'text-[#64748B] hover:text-[#191C22]',
               'px-3 py-1.5 rounded-lg text-xs transition flex items-center gap-1.5 cursor-pointer'
             ]"
           >
-            <Star class="w-3.5 h-3.5 text-amber-600 fill-amber-500" />
-            <span>Mieux notés ⭐</span>
+            <Star class="w-3.5 h-3.5 text-[#D97706] fill-[#D97706]" />
+            <span>Mieux notées ⭐</span>
           </button>
           <button
             type="button"
             @click="sortBy = 'distance'"
             :class="[
-              sortBy === 'distance' ? 'bg-[#FFFCF7] text-[#2C2019] font-medium border border-[#E5D6C5]' : 'text-[#857263] hover:text-[#2C2019]',
+              sortBy === 'distance' ? 'bg-[#191C22] text-[#F8FAFC] font-medium border border-[#383F4C] shadow-xs' : 'text-[#64748B] hover:text-[#191C22]',
               'px-3 py-1.5 rounded-lg text-xs transition flex items-center gap-1.5 cursor-pointer'
             ]"
           >
-            <Footprints class="w-3.5 h-3.5 text-[#586F54]" />
+            <Footprints class="w-3.5 h-3.5 text-[#D97706]" />
             <span>Plus proches</span>
           </button>
         </div>
       </div>
 
       <!-- Filtres secondaires : Cuisines, Formules, Compteur -->
-      <div class="flex flex-wrap items-center justify-between gap-3 pt-3 border-t border-[#E5D6C5] text-xs">
+      <div class="flex flex-wrap items-center justify-between gap-3 pt-3 border-t border-[#E2D9CF] text-xs">
         <div class="flex flex-wrap items-center gap-2">
           <!-- Filtre Cuisine -->
-          <div class="flex items-center gap-1.5 text-[#5D4B3E] font-medium">
-            <Filter class="w-3.5 h-3.5 text-[#857263]" />
+          <div class="flex items-center gap-1.5 text-[#475569] font-medium">
+            <Filter class="w-3.5 h-3.5 text-[#64748B]" />
             <span>Cuisine :</span>
             <select
               v-model="selectedCuisine"
-              class="rounded-lg border border-[#E5D6C5] bg-[#FAF2E8] px-2.5 py-1 text-xs font-medium text-[#2C2019] focus:border-[#C2542D] focus:outline-none cursor-pointer"
+              class="rounded-lg border border-[#E2D9CF] bg-[#F8F5F2] px-2.5 py-1 text-xs font-medium text-[#191C22] focus:border-[#DC2626] focus:outline-none cursor-pointer"
             >
               <option value="ALL">Toutes les cuisines ({{ restaurants.length }})</option>
               <option v-for="c in availableCuisines" :key="c" :value="c">{{ c }}</option>
@@ -411,42 +411,42 @@ async function handleVoteSubmit() {
             @click="onlyWithMenu = !onlyWithMenu"
             :class="[
               onlyWithMenu 
-                ? 'bg-[#F0F5EE] text-[#364A32] border border-[#C8D7C4] font-medium' 
-                : 'bg-[#FAF2E8] text-[#5D4B3E] border border-[#E5D6C5] hover:bg-[#FFFCF7]',
+                ? 'bg-[#191C22] text-[#F8FAFC] border border-[#383F4C] font-medium shadow-xs' 
+                : 'bg-[#F8F5F2] text-[#475569] border border-[#E2D9CF] hover:bg-[#FFFFFF]',
               'px-3 py-1 rounded-lg text-xs transition cursor-pointer flex items-center gap-1.5'
             ]"
           >
-            <span>Avec carte / menu en ligne</span>
+            <span>Avec carte / formules du jour</span>
           </button>
         </div>
 
-        <span class="text-[#857263] font-normal text-xs">
-          <strong class="text-[#2C2019] font-medium">{{ filteredRestaurants.length }}</strong> sur {{ restaurants.length }} restaurants affichés
+        <span class="text-[#64748B] font-normal text-xs">
+          <strong class="text-[#191C22] font-medium">{{ filteredRestaurants.length }}</strong> sur {{ restaurants.length }} adresses affichées
         </span>
       </div>
     </div>
 
-    <!-- Grille des cartes de restaurants -->
+    <!-- Grille des ardoises de restaurants -->
     <div>
       <div class="flex items-center justify-between mb-4">
         <div>
-          <h3 class="font-serif text-2xl font-normal text-[#2C2019] tracking-wide">
-            Établissements accessibles à pied
+          <h3 class="font-serif text-3xl font-normal text-[#191C22] tracking-wide">
+            Les Tables du Quartier
           </h3>
-          <p class="text-xs text-[#857263] mt-0.5">
+          <p class="text-xs text-[#64748B] mt-0.5 font-sans">
             Attribuez vos 3 préférences avec les boutons 1er (+3 pts), 2e (+2 pts) ou 3e (+1 pt)
           </p>
         </div>
       </div>
 
       <!-- État vide si filtre trop restrictif -->
-      <div v-if="filteredRestaurants.length === 0" class="rounded-2xl border border-[#E5D6C5] bg-[#FFFCF7] p-8 text-center text-[#5D4B3E] space-y-2">
-        <p class="font-serif text-base font-medium text-[#2C2019]">Aucun restaurant ne correspond à votre filtre.</p>
-        <p class="text-xs text-[#857263]">Essayez de réinitialiser la recherche ou de sélectionner "Toutes les cuisines".</p>
+      <div v-if="filteredRestaurants.length === 0" class="rounded-2xl border border-[#E2D9CF] bg-[#FFFFFF] p-8 text-center text-[#475569] space-y-2 shadow-sm font-sans">
+        <p class="font-serif text-xl font-normal text-[#191C22]">Aucune table ne correspond à vos filtres.</p>
+        <p class="text-xs text-[#64748B]">Essayez de réinitialiser la recherche ou de sélectionner "Toutes les cuisines".</p>
         <button
           type="button"
           @click="searchQuery = ''; selectedCuisine = 'ALL'; onlyWithMenu = false;"
-          class="mt-2 inline-flex items-center px-3 py-1.5 rounded-lg bg-[#FAF2E8] border border-[#E5D6C5] text-xs font-medium text-[#2C2019] hover:bg-[#FFFCF7] cursor-pointer"
+          class="mt-2 inline-flex items-center px-3 py-1.5 rounded-lg bg-[#F8F5F2] border border-[#E2D9CF] text-xs font-medium text-[#191C22] hover:bg-[#FFFFFF] cursor-pointer shadow-xs"
         >
           Réinitialiser les filtres
         </button>
