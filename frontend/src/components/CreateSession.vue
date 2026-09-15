@@ -59,23 +59,23 @@ async function handleCreateSession() {
 
 <template>
   <div class="max-w-5xl mx-auto px-4 py-6 sm:py-10">
-    <!-- En-tête Brasserie & Fronton d'Honneur -->
+    <!-- En-tête Brasserie -->
     <div class="text-center mb-8 sm:mb-12">
       <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-[var(--border-ornament)] bg-[var(--bg-surface)] text-[var(--accent-brass)] text-xs uppercase tracking-widest font-serif font-bold shadow-xs mb-3.5">
-        <span>⚜</span>
-        <span class="tracking-widest">Grand Registre des Déjeuners</span>
-        <span>⚜</span>
+        <span>🍽️</span>
+        <span class="tracking-widest">Organisation du Déjeuner</span>
+        <span>🍽️</span>
       </div>
       <h1 class="font-display sm:font-serif text-4xl sm:text-5xl lg:text-6xl font-normal tracking-wide text-[var(--text-main)] mb-3 leading-tight">
         Où déjeunons-nous ce midi ?
       </h1>
       <div class="flex items-center justify-center gap-3 text-[var(--accent-brass)] text-sm mb-2">
         <span>❧</span>
-        <span class="font-serif italic text-base sm:text-lg">Service de Table & Consultation des Cartes du Quartier</span>
+        <span class="font-serif italic text-base sm:text-lg">Trouvez où manger et votez avec vos collègues</span>
         <span>☙</span>
       </div>
       <p class="text-sm sm:text-base text-[var(--text-muted)] max-w-xl mx-auto leading-relaxed">
-        Indiquez votre adresse de ralliement pour recenser les meilleures tables accessibles à pied, consulter leurs formules du midi et voter à l'unanimité.
+        Indiquez votre adresse de départ pour trouver les restaurants accessibles à pied, consulter leurs cartes et voter ensemble.
       </p>
     </div>
 
@@ -91,20 +91,20 @@ async function handleCreateSession() {
         <!-- Grille en 2 volets ouverts (Façon Livre d'Or de Brasserie) -->
         <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-10">
           
-          <!-- Volet Gauche : Adresse & Périmètre d'arpentage -->
+          <!-- Volet Gauche : Adresse & Périmètre de marche -->
           <div class="lg:col-span-7 space-y-6">
             <div class="flex items-center gap-2 border-b border-[var(--border-subtle)] pb-2 mb-1">
-              <span class="font-serif text-xs font-bold text-[var(--accent-brass)] uppercase tracking-wider">Volet I</span>
+              <span class="font-serif text-xs font-bold text-[var(--accent-brass)] uppercase tracking-wider">Étape 1</span>
               <span class="text-[var(--text-faint)]">•</span>
-              <h2 class="font-serif text-xl sm:text-2xl font-normal text-[var(--text-main)]">
-                Le Point de Ralliement
+              <h2 class="font-serif text-xl sm:text-2xl font-bold text-[var(--text-main)]">
+                Point de départ & Distance
               </h2>
             </div>
 
             <!-- Champ Adresse de départ -->
             <div>
               <label for="address-input" class="block font-serif text-sm font-semibold text-[var(--text-main)] mb-2 tracking-wide">
-                📍 Adresse de départ ou station
+                📍 Adresse de départ ou lieu de rendez-vous
               </label>
               <div class="relative rounded-2xl">
                 <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-4 text-[var(--text-faint)]">
@@ -120,17 +120,17 @@ async function handleCreateSession() {
                   class="block w-full rounded-2xl border border-[var(--border-main)] bg-[var(--bg-surface-inset)] pl-11 pr-4 py-3.5 text-[var(--text-main)] placeholder:text-[var(--text-faint)] focus:border-[var(--accent-brass)] focus:bg-[var(--bg-surface)] focus:ring-2 focus:ring-[var(--accent-brass)]/20 focus:outline-none text-sm sm:text-base transition font-normal"
                 />
               </div>
-              <p class="mt-2 text-xs text-[var(--text-muted)] font-serif italic">
-                Toutes les adresses seront repérées à partir de cet ancrage géographique.
+              <p class="mt-2 text-xs text-[var(--text-muted)] font-serif">
+                Tous les restaurants seront recherchés à pied autour de cette adresse.
               </p>
             </div>
 
             <!-- Réglette Périmètre de marche -->
             <div class="bg-[var(--bg-surface-subtle)] rounded-2xl p-5 sm:p-6 border border-[var(--border-subtle)] space-y-4">
               <div class="flex items-center justify-between gap-2">
-                <label for="walk-slider" class="font-serif text-base font-normal text-[var(--text-main)] flex items-center gap-2">
+                <label for="walk-slider" class="font-serif text-base font-semibold text-[var(--text-main)] flex items-center gap-2">
                   <Footprints class="w-4 h-4 text-[var(--accent-red)]" />
-                  <span>Périmètre de marche maximale</span>
+                  <span>Temps de marche maximal</span>
                 </label>
                 <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[var(--bg-surface)] border border-[var(--border-main)] text-[var(--text-main)] font-medium text-xs shadow-xs">
                   <Clock class="w-3.5 h-3.5 text-[var(--accent-brass)]" />
@@ -173,33 +173,33 @@ async function handleCreateSession() {
               </div>
 
               <p class="text-xs text-[var(--text-muted)] pt-1">
-                Allure dynamique calculée à 6 km/h (100 mètres par minute).
+                Allure estimée à environ 6 km/h (100 mètres par minute).
               </p>
             </div>
           </div>
 
-          <!-- Volet Droit : Format de table, Protocole & Grand Sceau -->
+          <!-- Volet Droit : Nombre de restaurants & Validation -->
           <div class="lg:col-span-5 flex flex-col justify-between space-y-6 lg:border-l lg:border-[var(--border-subtle)] lg:pl-10">
             <div class="space-y-5">
               <div class="flex items-center gap-2 border-b border-[var(--border-subtle)] pb-2 mb-1">
-                <span class="font-serif text-xs font-bold text-[var(--accent-brass)] uppercase tracking-wider">Volet II</span>
+                <span class="font-serif text-xs font-bold text-[var(--accent-brass)] uppercase tracking-wider">Étape 2</span>
                 <span class="text-[var(--text-faint)]">•</span>
-                <h2 class="font-serif text-xl sm:text-2xl font-normal text-[var(--text-main)]">
-                  La Tablée & Le Protocole
+                <h2 class="font-serif text-xl sm:text-2xl font-bold text-[var(--text-main)]">
+                  Options du vote
                 </h2>
               </div>
 
-              <!-- Format de table -->
+              <!-- Nombre de restaurants -->
               <div class="space-y-2.5">
                 <label class="block font-serif text-sm font-semibold text-[var(--text-main)]">
-                  Nombre de tables à recenser
+                  Nombre de restaurants à retenir
                 </label>
                 <div class="grid grid-cols-3 gap-2">
                   <button
                     v-for="opt in [
-                      { count: 20, label: '20 tables', desc: 'Sélection' },
-                      { count: 35, label: '35 tables', desc: 'Idéal' },
-                      { count: 50, label: '50 tables', desc: 'Grand rayon' },
+                      { count: 20, label: '20 adresses', desc: 'Sélection' },
+                      { count: 35, label: '35 adresses', desc: 'Recommandé' },
+                      { count: 50, label: '50 adresses', desc: 'Large choix' },
                     ]"
                     :key="opt.count"
                     type="button"
@@ -225,15 +225,14 @@ async function handleCreateSession() {
                 </div>
               </div>
 
-              <!-- Note de protocole du suffrage -->
-              <div class="p-4 rounded-2xl bg-[var(--bg-surface-inset)] border border-[var(--border-subtle)] text-xs text-[var(--text-muted)] space-y-2">
+              <!-- Comment fonctionne le vote -->
+              <div class="p-4 rounded-2xl bg-[var(--bg-surface-inset)] border border-[var(--border-subtle)] text-xs text-[var(--text-muted)] space-y-1.5">
                 <div class="flex items-center gap-2 text-[var(--accent-brass)] font-serif font-bold text-xs uppercase tracking-wider">
-                  <span>❧</span>
-                  <span>Règlement du vote</span>
-                  <span>☙</span>
+                  <span>💡</span>
+                  <span>Principe du vote</span>
                 </div>
                 <p class="leading-relaxed font-serif">
-                  Chaque convive disposera de <strong>3 choix pondérés</strong> (3 points pour le 1er, 2 pour le second, 1 pour le troisième). L'ardoise compilera les suffrages en temps réel dès la soumission.
+                  Chaque personne choisit <strong>3 restaurants préférés</strong> (1er choix : 3 pts, 2e : 2 pts, 3e : 1 pt). Les résultats et le nombre de participants s'actualisent en direct.
                 </p>
               </div>
 
@@ -247,19 +246,19 @@ async function handleCreateSession() {
               </div>
             </div>
 
-            <!-- Grand Sceau de Cire / Bouton de Soumission -->
+            <!-- Bouton de Création -->
             <div class="pt-2">
               <button
                 type="submit"
                 :disabled="isLoading"
-                class="wax-seal-btn w-full rounded-2xl px-6 py-4 text-base sm:text-lg font-serif font-semibold tracking-wide disabled:opacity-70 cursor-pointer flex items-center justify-center gap-3 shadow-xl"
+                class="wax-seal-btn w-full rounded-2xl px-6 py-4 text-base sm:text-lg font-serif font-bold tracking-wide disabled:opacity-70 cursor-pointer flex items-center justify-center gap-3 shadow-xl"
               >
                 <template v-if="isLoading">
                   <Loader2 class="w-5 h-5 animate-spin" />
                   <span class="font-sans text-sm sm:text-base">{{ loadingStep }}</span>
                 </template>
                 <template v-else>
-                  <span>Apposer le sceau & ouvrir la table</span>
+                  <span>Créer la session de vote</span>
                   <ArrowRight class="w-5 h-5" />
                 </template>
               </button>
@@ -269,19 +268,19 @@ async function handleCreateSession() {
       </form>
     </div>
 
-    <!-- Les 3 temps de la brasserie sous forme de cartouches d'honneur -->
+    <!-- Les 3 étapes -->
     <div class="mt-12 grid grid-cols-1 sm:grid-cols-3 gap-5 text-center">
       <div class="bistro-card-frame p-5 rounded-2xl shadow-xs">
-        <span class="block font-serif text-sm font-bold text-[var(--accent-brass)] uppercase tracking-wider mb-1">⚜ I. Conviez la Tablée</span>
-        <p class="text-xs text-[var(--text-muted)] font-serif">Partagez l'adresse de votre ardoise avec vos collègues en un clic.</p>
+        <span class="block font-serif text-sm font-bold text-[var(--accent-brass)] uppercase tracking-wider mb-1">1. Invitez vos collègues</span>
+        <p class="text-xs text-[var(--text-muted)] font-serif">Partagez simplement le lien de la session avec votre équipe.</p>
       </div>
       <div class="bistro-card-frame p-5 rounded-2xl shadow-xs">
-        <span class="block font-serif text-sm font-bold text-[var(--accent-brass)] uppercase tracking-wider mb-1">⚜ II. Explorez les Cartes</span>
-        <p class="text-xs text-[var(--text-muted)] font-serif">Consultez les formules du midi et attribuez vos jetons (3, 2 et 1 pt).</p>
+        <span class="block font-serif text-sm font-bold text-[var(--accent-brass)] uppercase tracking-wider mb-1">2. Votez pour vos favoris</span>
+        <p class="text-xs text-[var(--text-muted)] font-serif">Consultez les menus et attribuez vos 3 choix (3, 2 et 1 pt).</p>
       </div>
       <div class="bistro-card-frame p-5 rounded-2xl shadow-xs">
-        <span class="block font-serif text-sm font-bold text-[var(--accent-brass)] uppercase tracking-wider mb-1">⚜ III. À Table !</span>
-        <p class="text-xs text-[var(--text-muted)] font-serif">L'adresse plébiscitée triomphe en tête d'ardoise en temps réel.</p>
+        <span class="block font-serif text-sm font-bold text-[var(--accent-brass)] uppercase tracking-wider mb-1">3. Réservez la table</span>
+        <p class="text-xs text-[var(--text-muted)] font-serif">Visualisez le restaurant gagnant et le nombre exact de personnes pour réserver.</p>
       </div>
     </div>
   </div>

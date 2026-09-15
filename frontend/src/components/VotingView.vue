@@ -139,7 +139,7 @@ const canSubmit = computed(() => {
 const submitButtonLabel = computed(() => {
   if (!voterName.value.trim()) return "Saisissez votre prénom pour voter";
   if (!firstChoiceId.value) return "Choisissez votre 1er choix (3 pts)";
-  return "Valider mon vote (Définitif)";
+  return "Valider mon vote";
 });
 
 async function copyShareLink() {
@@ -206,9 +206,9 @@ async function handleVoteSubmit() {
       <div class="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
         <div>
           <div class="flex items-center gap-2 text-xs font-serif font-bold text-[var(--accent-brass)] mb-1.5 uppercase tracking-wider">
-            <span>⚜</span>
-            <span>Service du Midi • Point de Ralliement</span>
-            <span>⚜</span>
+            <span>🍽️</span>
+            <span>Point de départ</span>
+            <span>🍽️</span>
           </div>
           <h2 class="font-display sm:font-serif text-3xl sm:text-4xl lg:text-5xl font-normal text-[var(--text-main)] tracking-wide leading-tight">
             {{ session.departure_address }}
@@ -219,7 +219,7 @@ async function handleVoteSubmit() {
               Périmètre : <strong class="text-[var(--text-main)] font-semibold">{{ session.radius_meters >= 1000 ? (session.radius_meters / 1000).toFixed(1).replace('.', ',') + ' km' : session.radius_meters + ' m' }}</strong> (~{{ Math.round(session.radius_meters / 100) }} min à pied)
             </span>
             <span class="text-[var(--text-faint)]">•</span>
-            <span class="font-medium text-sm text-[var(--text-main)]">{{ restaurants.length }} tables répertoriées</span>
+            <span class="font-medium text-sm text-[var(--text-main)]">{{ restaurants.length }} restaurants trouvés</span>
           </div>
         </div>
 
@@ -242,7 +242,7 @@ async function handleVoteSubmit() {
           >
             <CheckCircle2 v-if="copySuccess" class="w-4 h-4 text-emerald-600" />
             <Share2 v-else class="w-4 h-4 text-[var(--accent-red)]" />
-            <span>{{ copySuccess ? 'Lien copié !' : 'Inviter à la table' }}</span>
+            <span>{{ copySuccess ? 'Lien copié !' : 'Inviter des collègues' }}</span>
           </button>
         </div>
       </div>
@@ -278,7 +278,7 @@ async function handleVoteSubmit() {
         <!-- Champ nom du convive -->
         <div class="w-full lg:w-72 shrink-0">
           <label for="voter-name" class="block font-serif text-sm font-bold text-[var(--text-main)] mb-1.5 tracking-wide">
-            Votre prénom ou table <span class="text-[var(--accent-red)]">*</span>
+            Votre prénom <span class="text-[var(--accent-red)]">*</span>
           </label>
           <div class="relative rounded-2xl">
             <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3.5 text-[var(--text-faint)]">
@@ -345,10 +345,10 @@ async function handleVoteSubmit() {
             ]"
           >
             <Lock class="w-4 h-4 shrink-0" />
-            <span class="text-sm sm:text-base tracking-wide">{{ isSubmitting ? 'Transmission au chef...' : submitButtonLabel }}</span>
+            <span class="text-sm sm:text-base tracking-wide">{{ isSubmitting ? 'Envoi du vote...' : submitButtonLabel }}</span>
           </button>
           <span class="text-[10px] text-[var(--text-faint)] mt-1.5 text-center lg:text-right font-serif italic">
-            Scellé au registre • Transmission directe
+            Vote comptabilisé en direct • 1 vote par personne
           </span>
         </div>
       </div>
@@ -371,7 +371,7 @@ async function handleVoteSubmit() {
           <input
             v-model="searchQuery"
             type="text"
-            placeholder="Rechercher une table, cuisine ou rue..."
+            placeholder="Rechercher un restaurant, cuisine ou rue..."
             class="block w-full rounded-xl border border-[var(--border-main)] bg-[var(--bg-surface-inset)] pl-10 pr-3 py-2 text-sm font-normal text-[var(--text-main)] placeholder:text-[var(--text-faint)] focus:bg-[var(--bg-surface)] focus:border-[var(--accent-brass)] focus:ring-1 focus:ring-[var(--accent-brass)]/20 focus:outline-none transition"
           />
         </div>
@@ -430,7 +430,7 @@ async function handleVoteSubmit() {
               'px-3 py-1 rounded-lg text-xs font-serif transition cursor-pointer flex items-center gap-1.5'
             ]"
           >
-            <span>📜 Avec carte / formules du jour</span>
+            <span>📜 Avec carte / menu du jour</span>
           </button>
         </div>
 
@@ -445,17 +445,17 @@ async function handleVoteSubmit() {
       <div class="flex items-center justify-between mb-4">
         <div>
           <h3 class="font-serif text-3xl sm:text-4xl font-normal text-[var(--text-main)] tracking-wide">
-            Les Tables du Quartier
+            Restaurants à proximité
           </h3>
           <p class="text-xs text-[var(--text-muted)] mt-0.5 font-serif italic">
-            Attribuez vos 3 dégustations prioritaires (1er à 3 pts, 2e à 2 pts, 3e à 1 pt)
+            Choisissez vos 3 restaurants favoris (1er : 3 pts, 2e : 2 pts, 3e : 1 pt)
           </p>
         </div>
       </div>
 
       <!-- État vide si filtre trop restrictif -->
       <div v-if="filteredRestaurants.length === 0" class="bistro-card-frame rounded-2xl p-8 text-center text-[var(--text-muted)] space-y-2 shadow-sm">
-        <p class="font-serif text-2xl font-normal text-[var(--text-main)]">Aucune table ne correspond à vos filtres.</p>
+        <p class="font-serif text-2xl font-normal text-[var(--text-main)]">Aucun restaurant ne correspond à vos filtres.</p>
         <p class="text-xs">Essayez de réinitialiser la recherche ou de sélectionner "Toutes les cuisines".</p>
         <button
           type="button"

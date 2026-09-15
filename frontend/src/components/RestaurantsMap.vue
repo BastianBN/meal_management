@@ -261,7 +261,7 @@ watch(
     <div class="p-4 bg-[var(--bg-surface-subtle)] border-b border-[var(--border-main)] flex items-center justify-between text-xs text-[var(--text-muted)]">
       <div class="flex items-center gap-3">
         <span class="flex items-center gap-1.5 font-serif text-base font-bold text-[var(--text-main)]">
-          <span>🗺️</span> Carte des Tables & Arpentage
+          <span>🗺️</span> Carte des restaurants
         </span>
         <span class="text-[var(--text-faint)]">•</span>
         <span class="font-serif">Rayon : {{ departure.radius_meters }} m</span>

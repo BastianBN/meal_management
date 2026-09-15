@@ -61,64 +61,84 @@ onMounted(() => {
 
 <template>
   <div class="space-y-7">
-    <!-- En-tête : Confirmation du vote et récapitulatif personnel (Addition / Fiche brasserie) -->
+    <!-- 1. Récapitulatif Réservation & Liste des Votants (Pour savoir combien réserver) -->
     <div class="bistro-card-frame rounded-3xl p-6 sm:p-7 shadow-md">
-      <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 border-b border-[var(--border-subtle)] pb-4 mb-4">
+      <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border-b border-[var(--border-subtle)] pb-4 mb-5">
         <div class="flex items-center gap-3.5">
-          <div class="w-10 h-10 rounded-2xl bg-[var(--accent-red-soft)] text-[var(--accent-red)] flex items-center justify-center shrink-0 border border-[var(--accent-red-border)]">
-            <CheckCircle2 class="w-5 h-5" />
+          <div class="w-11 h-11 rounded-2xl bg-[var(--accent-brass-soft)] text-[var(--accent-brass)] flex items-center justify-center shrink-0 border border-[var(--accent-brass-border)] shadow-xs">
+            <Users class="w-5 h-5" />
           </div>
           <div>
-            <h2 class="font-serif text-2xl sm:text-3xl font-normal text-[var(--text-main)] tracking-wide leading-tight">
-              Vote enregistré au registre
-            </h2>
-            <p class="text-xs text-[var(--text-muted)] mt-0.5 font-serif italic">
-              Merci <strong class="text-[var(--text-main)] not-italic font-semibold">{{ currentVoterName }}</strong> • Votre suffrage est scellé. La table s'actualise en direct.
+            <div class="flex items-center gap-2">
+              <h2 class="font-serif text-2xl sm:text-3xl font-bold text-[var(--text-main)] tracking-wide leading-tight">
+                Réservation : {{ totalVoters }} {{ totalVoters <= 1 ? 'personne' : 'personnes' }}
+              </h2>
+              <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-[var(--accent-red-soft)] text-[var(--accent-red)] border border-[var(--accent-red-border)]">
+                ● En direct
+              </span>
+            </div>
+            <p class="text-xs text-[var(--text-muted)] mt-1 font-serif">
+              {{ totalVoters <= 1 ? '1 personne a voté pour ce déjeuner.' : `${totalVoters} personnes ont voté et sont à compter pour la réservation.` }}
             </p>
           </div>
         </div>
 
-        <div class="flex items-center gap-2 self-end sm:self-auto text-xs font-serif font-medium text-[var(--text-main)] bg-[var(--bg-surface-inset)] border border-[var(--border-main)] px-3.5 py-1.5 rounded-xl shrink-0">
-          <Users class="w-4 h-4 text-[var(--accent-brass)]" />
-          <span>{{ totalVoters }} {{ totalVoters <= 1 ? 'convive attablé' : 'convives attablés' }}</span>
+        <div class="self-start sm:self-center">
+          <span class="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-[var(--bg-surface-inset)] border border-[var(--border-main)] text-sm font-serif font-bold text-[var(--text-main)] shadow-xs">
+            <span>🍽️ Table de</span>
+            <span class="text-[var(--accent-brass)] text-base font-bold">{{ totalVoters }}</span>
+            <span>à réserver</span>
+          </span>
         </div>
       </div>
 
-      <!-- Vos 3 choix validés (Sceaux Trio : Rouge Bordeaux, Laiton, Zinc) -->
-      <div v-if="myChoices" class="flex flex-wrap items-center gap-2.5 pt-1 text-xs font-serif">
-        <span class="text-[var(--text-muted)] mr-1 flex items-center gap-1 font-medium italic">
-          <Lock class="w-3.5 h-3.5 text-[var(--accent-brass)]" /> Vos choix enregistrés :
-        </span>
-        <span class="bg-[var(--accent-red)] text-white px-3 py-1 rounded-xl font-medium border border-white/20 shadow-xs">
-          1er (3 pts) : {{ myChoices.first }}
-        </span>
-        <span v-if="myChoices.second" class="bg-[var(--accent-brass)] text-white px-3 py-1 rounded-xl font-medium border border-white/20 shadow-xs">
-          2e (2 pts) : {{ myChoices.second }}
-        </span>
-        <span v-if="myChoices.third" class="bg-[var(--accent-zinc)] text-white px-3 py-1 rounded-xl font-medium border border-white/20 shadow-xs">
-          3e (1 pt) : {{ myChoices.third }}
-        </span>
+      <!-- Liste détaillée des prénoms des votants -->
+      <div class="space-y-2">
+        <div class="flex items-center justify-between text-xs font-serif text-[var(--text-muted)]">
+          <span class="font-bold uppercase tracking-wider text-[11px] text-[var(--text-faint)]">
+            Participants ayant voté ({{ voters.length }}) :
+          </span>
+        </div>
+
+        <div v-if="voters.length > 0" class="flex flex-wrap items-center gap-2 pt-1">
+          <span
+            v-for="(name, idx) in voters"
+            :key="idx"
+            :class="[
+              name.toLowerCase() === currentVoterName.toLowerCase()
+                ? 'badge-voter-me'
+                : 'badge-voter-other',
+              'px-3.5 py-1.5 rounded-xl text-xs sm:text-sm font-serif flex items-center gap-1.5 font-semibold'
+            ]"
+          >
+            <span class="w-2 h-2 rounded-full" :class="name.toLowerCase() === currentVoterName.toLowerCase() ? 'bg-white' : 'bg-[var(--accent-brass)]'"></span>
+            <span>{{ name }}</span>
+            <span v-if="name.toLowerCase() === currentVoterName.toLowerCase()" class="text-[10px] opacity-90 font-sans font-normal">(vous)</span>
+          </span>
+        </div>
+        <p v-else class="text-xs text-[var(--text-faint)] italic font-serif py-1">
+          Aucun vote n'a encore été enregistré. Partagez le lien avec vos collègues pour débuter.
+        </p>
       </div>
 
-      <!-- Liste de tous les collègues ayant voté -->
-      <div v-if="voters.length > 0" class="flex flex-wrap items-center gap-1.5 text-xs text-[var(--text-muted)] mt-4 pt-3 border-t border-[var(--border-subtle)] font-serif">
-        <span class="text-[var(--text-faint)] italic">Convives à table :</span>
-        <span
-          v-for="(name, idx) in voters"
-          :key="idx"
-          :class="[
-            name.toLowerCase() === currentVoterName.toLowerCase()
-              ? 'bg-[var(--accent-red-soft)] text-[var(--accent-red)] font-semibold border border-[var(--accent-red-border)]'
-              : 'bg-[var(--bg-surface-inset)] text-[var(--text-main)] border border-[var(--border-subtle)]',
-            'px-2.5 py-0.5 rounded-lg'
-          ]"
-        >
-          {{ name }} {{ name.toLowerCase() === currentVoterName.toLowerCase() ? '(vous)' : '' }}
+      <!-- Confirmation personnelle si l'utilisateur a voté -->
+      <div v-if="myChoices" class="mt-4 pt-3.5 border-t border-[var(--border-subtle)] flex flex-wrap items-center gap-2 text-xs font-serif">
+        <span class="text-[var(--text-muted)] mr-1 flex items-center gap-1 font-medium">
+          <CheckCircle2 class="w-3.5 h-3.5 text-emerald-600" /> Vos 3 choix :
+        </span>
+        <span class="badge-choice-1 px-3 py-1 rounded-xl font-medium shadow-2xs">
+          1er (3 pts) : {{ myChoices.first }}
+        </span>
+        <span v-if="myChoices.second" class="badge-choice-2 px-3 py-1 rounded-xl font-medium shadow-2xs">
+          2e (2 pts) : {{ myChoices.second }}
+        </span>
+        <span v-if="myChoices.third" class="badge-choice-3 px-3 py-1 rounded-xl font-medium shadow-2xs">
+          3e (1 pt) : {{ myChoices.third }}
         </span>
       </div>
     </div>
 
-    <!-- Le restaurant en tête (« L'Ardoise du Chef / Choix de la Table ») -->
+    <!-- Le restaurant en tête (« Restaurant le plus voté ») -->
     <div 
       v-if="winner && winner.points > 0"
       class="bistro-grand-frame rounded-3xl p-6 sm:p-10 relative overflow-hidden shadow-2xl"
@@ -130,10 +150,10 @@ onMounted(() => {
       <div class="brass-corner-bracket brass-corner-br"></div>
 
       <div class="relative z-10">
-        <!-- Ruban d'Honneur de la Brasserie -->
-        <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[var(--accent-red)] text-white text-xs font-serif font-bold uppercase tracking-wider mb-4 shadow-md">
+        <!-- Ruban de 1ère place -->
+        <div class="badge-winner inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-xs font-serif font-bold uppercase tracking-wider mb-4 shadow-md">
           <Trophy class="w-4 h-4 text-amber-200 shrink-0" />
-          <span>⚜ L'Ardoise du Chef • Choix de la Table ⚜</span>
+          <span>Restaurant en tête des votes</span>
         </div>
 
         <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-6">
@@ -142,8 +162,8 @@ onMounted(() => {
               {{ winner.name }}
             </h3>
             <div class="flex items-center gap-3 flex-wrap mt-3">
-              <p class="font-serif text-base italic text-[var(--text-muted)]">
-                ❧ {{ winner.cuisine }} ☙
+              <p class="font-serif text-base text-[var(--text-muted)]">
+                {{ winner.cuisine }}
               </p>
               <div 
                 v-if="winner.rating"
@@ -151,7 +171,7 @@ onMounted(() => {
               >
                 <Star class="w-3.5 h-3.5 fill-current" />
                 <span>{{ Number(winner.rating).toFixed(1) }}</span>
-                <span v-if="winner.rating_count" class="text-[10px] opacity-75 font-normal font-sans">({{ winner.rating_count }})</span>
+                <span v-if="winner.rating_count" class="text-[10px] opacity-75 font-normal font-sans">({{ winner.rating_count }} avis)</span>
               </div>
             </div>
             <div class="flex items-center gap-2 mt-3 text-xs font-serif text-[var(--text-muted)]">
@@ -166,7 +186,7 @@ onMounted(() => {
             <span class="font-serif text-6xl sm:text-7xl lg:text-8xl font-normal text-[var(--accent-brass)] leading-none drop-shadow-sm">
               {{ winner.points }} <span class="font-serif text-xl text-[var(--text-faint)]">pts</span>
             </span>
-            <span class="text-xs font-serif italic text-[var(--text-muted)] mt-2 text-right">
+            <span class="text-xs font-serif text-[var(--text-muted)] mt-2 text-right">
               {{ winner.first_votes }}x 1er • {{ winner.second_votes }}x 2e • {{ winner.third_votes }}x 3e
             </span>
           </div>
@@ -198,20 +218,15 @@ onMounted(() => {
       </div>
     </div>
 
-    <!-- Tableau de classement complet (Grand Registre des Suffrages) -->
+    <!-- Tableau de classement complet -->
     <div class="bistro-card-frame rounded-3xl overflow-hidden shadow-xl">
       <div class="p-5 sm:p-7 border-b border-[var(--border-main)] bg-[var(--bg-surface-subtle)] flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div>
-          <div class="flex items-center gap-2 text-xs font-serif font-bold text-[var(--accent-brass)] uppercase tracking-wider mb-1">
-            <span>⚜</span>
-            <span>Palmarès Officiel</span>
-            <span>⚜</span>
-          </div>
           <h3 class="font-display sm:font-serif text-2xl sm:text-3xl font-normal text-[var(--text-main)] tracking-wide">
-            Le Grand Registre des Suffrages
+            Classement complet des votes
           </h3>
-          <p class="text-xs text-[var(--text-muted)] mt-0.5 font-serif italic">
-            Total des suffrages pondérés calculés en temps réel (1er choix : 3 pts • 2e choix : 2 pts • 3e choix : 1 pt)
+          <p class="text-xs text-[var(--text-muted)] mt-0.5 font-serif">
+            Points calculés en direct selon les votes : 1er choix (3 pts) • 2e choix (2 pts) • 3e choix (1 pt)
           </p>
         </div>
 

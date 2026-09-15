@@ -221,7 +221,7 @@ onUnmounted(() => {
             class="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl border border-[var(--border-main)] hover:border-[var(--accent-red)] text-xs font-medium text-[var(--text-main)] bg-[var(--bg-surface)] hover:bg-[var(--bg-surface-subtle)] transition cursor-pointer shadow-xs"
           >
             <Plus class="w-3.5 h-3.5 text-[var(--accent-red)]" />
-            <span class="hidden sm:inline font-serif text-sm">Nouvelle table</span>
+            <span class="hidden sm:inline font-serif text-sm">Nouveau vote</span>
           </button>
         </div>
       </div>
@@ -232,7 +232,7 @@ onUnmounted(() => {
       <!-- Chargement initial -->
       <div v-if="isLoading" class="text-center py-20">
         <Loader2 class="w-8 h-8 animate-spin text-[var(--accent-red)] mx-auto mb-3" />
-        <p class="text-xs tracking-wider uppercase text-[var(--text-faint)] font-serif text-base">Mise en place de la table...</p>
+        <p class="text-xs tracking-wider uppercase text-[var(--text-faint)] font-serif text-base">Chargement de la session...</p>
       </div>
 
       <!-- Erreur de chargement de la session -->
@@ -240,14 +240,14 @@ onUnmounted(() => {
         <div class="w-12 h-12 rounded-full bg-[var(--accent-red-soft)] text-[var(--accent-red)] mx-auto flex items-center justify-center mb-3 border border-[var(--accent-red-border)]">
           <AlertCircle class="w-5 h-5" />
         </div>
-        <h3 class="font-serif text-2xl font-normal text-[var(--text-main)] mb-2">Table introuvable</h3>
+        <h3 class="font-serif text-2xl font-normal text-[var(--text-main)] mb-2">Session introuvable</h3>
         <p class="text-sm text-[var(--text-muted)] mb-6">{{ loadError }}</p>
         <button
           @click="resetToHome"
           class="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-[var(--accent-red)] text-white text-sm font-medium hover:bg-[var(--accent-red-hover)] transition cursor-pointer shadow-sm"
         >
           <ArrowLeft class="w-4 h-4" />
-          <span>Dresser une nouvelle table</span>
+          <span>Créer un nouveau vote</span>
         </button>
       </div>
 
@@ -272,7 +272,7 @@ onUnmounted(() => {
                 'px-6 py-2 rounded-xl text-xs sm:text-sm font-serif transition cursor-pointer tracking-wide'
               ]"
             >
-              🍽️ Découvrir & Choisir
+              🍽️ Découvrir & Voter
             </button>
             <button
               type="button"
@@ -284,7 +284,7 @@ onUnmounted(() => {
                 'px-6 py-2 rounded-xl text-xs sm:text-sm font-serif transition cursor-pointer tracking-wide'
               ]"
             >
-              🏆 Suffrages en Direct
+              🏆 Résultats des votes
             </button>
           </div>
         </div>
@@ -296,7 +296,7 @@ onUnmounted(() => {
               ✓
             </div>
             <span>
-              Merci <strong class="text-[var(--accent-brass)]">{{ currentVoterName }}</strong> • Votre commande a été transmise au chef. Le classement ci-dessous s'actualise en temps réel.
+              Merci <strong class="text-[var(--accent-brass)]">{{ currentVoterName }}</strong> • Votre vote a été enregistré. Les résultats ci-dessous s'actualisent en direct.
             </span>
           </div>
         </div>
@@ -328,7 +328,7 @@ onUnmounted(() => {
         </div>
         <div class="tracking-wider uppercase text-[11px] font-medium text-[var(--text-muted)] flex items-center gap-2">
           <span>❧</span>
-          <span>Tradition de brasserie & suffrage pondéré (3, 2, 1 points)</span>
+          <span>Système de vote pondéré : 1er (3 pts) • 2e (2 pts) • 3e (1 pt)</span>
           <span>☙</span>
         </div>
       </div>

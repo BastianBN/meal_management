@@ -6,6 +6,35 @@
   --font-serif: "Cormorant Garamond", Garamond, Georgia, serif;
   --font-display: "Playfair Display", Georgia, serif;
   --font-chalk: "Caveat", cursive, sans-serif;
+
+  --color-accent-red: var(--accent-red);
+  --color-accent-red-hover: var(--accent-red-hover);
+  --color-accent-red-soft: var(--accent-red-soft);
+  --color-accent-red-border: var(--accent-red-border);
+
+  --color-accent-brass: var(--accent-brass);
+  --color-accent-brass-hover: var(--accent-brass-hover);
+  --color-accent-brass-soft: var(--accent-brass-soft);
+  --color-accent-brass-border: var(--accent-brass-border);
+
+  --color-accent-zinc: var(--accent-zinc);
+  --color-accent-zinc-hover: var(--accent-zinc-hover);
+  --color-accent-zinc-soft: var(--accent-zinc-soft);
+  --color-accent-zinc-border: var(--accent-zinc-border);
+
+  --color-border-main: var(--border-main);
+  --color-border-subtle: var(--border-subtle);
+  --color-border-ornament: var(--border-ornament);
+
+  --color-bg-canvas: var(--bg-canvas);
+  --color-bg-surface: var(--bg-surface);
+  --color-bg-surface-elevated: var(--bg-surface-elevated);
+  --color-bg-surface-subtle: var(--bg-surface-subtle);
+  --color-bg-surface-inset: var(--bg-surface-inset);
+
+  --color-text-main: var(--text-main);
+  --color-text-muted: var(--text-muted);
+  --color-text-faint: var(--text-faint);
 }
 
 /* =========================================================================
@@ -403,8 +432,41 @@ html.theme-ardoise .leaflet-popup-content-wrapper {
 }
 
 html.theme-ardoise .leaflet-popup-tip {
-  background: #181C24;
-  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.85);
+  background: #202530;
+  border: 2px solid #363E4D;
+}
+
+/* 7. Classes d'accent pour badges, votants et choix */
+.badge-winner {
+  background-color: var(--accent-red) !important;
+  color: #ffffff !important;
+}
+
+.badge-voter-me {
+  background-color: var(--accent-red) !important;
+  color: #ffffff !important;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
+}
+
+.badge-voter-other {
+  background-color: var(--bg-surface-inset) !important;
+  color: var(--text-main) !important;
+  border: 1px solid var(--border-main) !important;
+}
+
+.badge-choice-1 {
+  background-color: var(--accent-red) !important;
+  color: #ffffff !important;
+}
+
+.badge-choice-2 {
+  background-color: var(--accent-brass) !important;
+  color: #ffffff !important;
+}
+
+.badge-choice-3 {
+  background-color: var(--accent-zinc) !important;
+  color: #ffffff !important;
 }
 
 .leaflet-popup-content {
