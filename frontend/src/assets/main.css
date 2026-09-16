@@ -6,6 +6,8 @@
   --font-serif: "Cormorant Garamond", Garamond, Georgia, serif;
   --font-display: "Playfair Display", Georgia, serif;
   --font-chalk: "Caveat", cursive, sans-serif;
+  --font-sketch: "Cabin Sketch", cursive, sans-serif;
+  --font-hand: "Patrick Hand", "Caveat", cursive, sans-serif;
 
   --color-accent-red: var(--accent-red);
   --color-accent-red-hover: var(--accent-red-hover);
@@ -53,7 +55,7 @@ html.theme-carte {
   --border-ornament: #C5A880;
 
   --text-main: #1F1A15;
-  --text-muted: #6B5747;
+  --text-muted: #312821ff;
   --text-faint: #9A8471;
 
   --accent-red: #8B1515;
@@ -122,17 +124,31 @@ html.theme-ardoise {
 
   --card-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.6), inset 0 0 0 1px rgba(255, 255, 255, 0.04);
   --header-bg: rgba(15, 18, 22, 0.94);
+
+  --chalk-white: #F8FAFC;
+  --chalk-white-glow: rgba(255, 255, 255, 0.45);
+  --chalk-yellow: #FDE047;
+  --chalk-yellow-glow: rgba(253, 224, 71, 0.45);
+  --chalk-coral: #FB7185;
+  --chalk-coral-glow: rgba(251, 113, 133, 0.45);
+  --chalk-mint: #86EFAC;
+  --chalk-mint-glow: rgba(134, 239, 172, 0.45);
+  --chalk-blue: #93C5FD;
+  --chalk-blue-glow: rgba(147, 197, 253, 0.45);
 }
 
 html.theme-ardoise body {
   background-color: var(--bg-canvas);
   color: var(--text-main);
-  /* Grain d'ardoise et boiserie de nuit */
+  /* Grain d'ardoise naturelle et traces de craie estompée */
   background-image: 
     radial-gradient(ellipse at 50% 0%, rgba(217, 119, 6, 0.08) 0%, rgba(15, 18, 22, 0) 75%),
+    radial-gradient(circle at 15% 25%, rgba(255, 255, 255, 0.03) 0%, transparent 45%),
+    radial-gradient(circle at 85% 70%, rgba(255, 255, 255, 0.025) 0%, transparent 40%),
+    radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.015) 0%, transparent 60%),
     url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='slateNoise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='matrix' values='1 0 0 0 0.05  0 1 0 0 0.05  0 0 1 0 0.05  0 0 0 0.07 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23slateNoise)'/%3E%3C/svg%3E");
   background-attachment: fixed;
-  background-size: auto, 160px 160px;
+  background-size: auto, auto, auto, auto, 160px 160px;
 }
 
 /* =========================================================================
@@ -157,21 +173,47 @@ html.theme-ardoise body {
 }
 
 /* Ornements et Filets de Menu */
-.bistro-card-frame {
+/* Ornements et Filets de Menu */
+html.theme-carte .bistro-card-frame {
   position: relative;
   background-color: var(--bg-surface);
   border: 1px solid var(--border-main);
   box-shadow: var(--card-shadow);
+  border-radius: 1rem;
   transition: all 0.25s ease;
 }
 
-.bistro-card-frame::before {
+html.theme-carte .bistro-card-frame::before {
   content: "";
   position: absolute;
   inset: 5px;
   border: 1px solid var(--border-subtle);
   border-radius: calc(1rem - 5px);
   pointer-events: none;
+}
+
+html.theme-ardoise .bistro-card-frame {
+  position: relative;
+  background-color: #141820;
+  border: 6px solid #28190E;
+  outline: 1px solid rgba(217, 119, 6, 0.35);
+  box-shadow: 0 16px 36px -6px rgba(0, 0, 0, 0.8), inset 0 0 24px rgba(0, 0, 0, 0.85);
+  border-radius: 1.15rem;
+  transition: all 0.25s ease;
+}
+
+html.theme-ardoise .bistro-card-frame::before {
+  content: "";
+  position: absolute;
+  inset: 4px;
+  border: 1.5px dashed rgba(255, 255, 255, 0.2);
+  border-radius: calc(1.15rem - 4px);
+  pointer-events: none;
+}
+
+html.theme-ardoise .bistro-card-frame:hover {
+  outline-color: rgba(253, 224, 71, 0.5);
+  box-shadow: 0 20px 40px -6px rgba(0, 0, 0, 0.9), 0 0 15px rgba(253, 224, 71, 0.12), inset 0 0 24px rgba(0, 0, 0, 0.85);
 }
 
 /* Boutons et interactions */
@@ -398,15 +440,122 @@ html.theme-ardoise .brass-corner-br { bottom: 12px; right: 12px; }
 }
 
 /* 6. Écriture à la craie pour le mode Ardoise */
+.chalk-font {
+  font-family: var(--font-chalk);
+}
+
+.chalk-sketch {
+  font-family: var(--font-sketch);
+  letter-spacing: 0.5px;
+}
+
+.chalk-hand {
+  font-family: var(--font-hand);
+  letter-spacing: 0.3px;
+}
+
 html.theme-ardoise .chalk-font {
   font-family: var(--font-chalk);
   letter-spacing: 0.5px;
-  text-shadow: 0 0 1px rgba(255, 255, 255, 0.3), 0 0 8px rgba(255, 255, 255, 0.15);
+  text-shadow: 0 0 1px rgba(255, 255, 255, 0.4), 0 0 6px var(--chalk-white-glow);
 }
 
+html.theme-ardoise .chalk-sketch {
+  font-family: var(--font-sketch);
+  letter-spacing: 0.5px;
+  text-shadow: 0 0 1px rgba(255, 255, 255, 0.5), 0 0 8px var(--chalk-white-glow);
+}
+
+html.theme-ardoise .chalk-hand {
+  font-family: var(--font-hand);
+  letter-spacing: 0.3px;
+  text-shadow: 0 0 1px rgba(255, 255, 255, 0.35);
+}
+
+/* Couleurs de craies réalistes de bistrot */
+html.theme-ardoise .chalk-white {
+  color: var(--chalk-white) !important;
+  text-shadow: 0 0 1px rgba(255, 255, 255, 0.6), 0 0 6px var(--chalk-white-glow);
+}
+
+html.theme-ardoise .chalk-yellow {
+  color: var(--chalk-yellow) !important;
+  text-shadow: 0 0 1px rgba(253, 224, 71, 0.7), 0 0 8px var(--chalk-yellow-glow);
+}
+
+html.theme-ardoise .chalk-coral {
+  color: var(--chalk-coral) !important;
+  text-shadow: 0 0 1px rgba(251, 113, 133, 0.7), 0 0 8px var(--chalk-coral-glow);
+}
+
+html.theme-ardoise .chalk-mint {
+  color: var(--chalk-mint) !important;
+  text-shadow: 0 0 1px rgba(134, 239, 172, 0.7), 0 0 8px var(--chalk-mint-glow);
+}
+
+html.theme-ardoise .chalk-blue {
+  color: var(--chalk-blue) !important;
+  text-shadow: 0 0 1px rgba(147, 197, 253, 0.7), 0 0 8px var(--chalk-blue-glow);
+}
+
+/* Cadres et filets craie */
 html.theme-ardoise .chalk-box {
   border: 1.5px dashed rgba(255, 255, 255, 0.35);
   box-shadow: inset 0 0 10px rgba(255, 255, 255, 0.03);
+}
+
+html.theme-ardoise .chalk-divider {
+  border: 0;
+  border-bottom: 2px dashed rgba(255, 255, 255, 0.25);
+}
+
+html.theme-ardoise .menu-leader-dots {
+  border-bottom: 2px dashed rgba(253, 224, 71, 0.4);
+  opacity: 0.7;
+}
+
+/* Bouton d'encoche de vote à la craie (Chalk Tally Button) */
+.chalk-tally-btn {
+  transition: all 0.2s cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+html.theme-ardoise .chalk-tally-btn {
+  background-color: rgba(255, 255, 255, 0.04);
+  border: 1.5px dashed rgba(255, 255, 255, 0.35);
+  color: #F8FAFC;
+  box-shadow: inset 0 0 8px rgba(0, 0, 0, 0.4);
+}
+
+html.theme-ardoise .chalk-tally-btn:hover:not(:disabled) {
+  background-color: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.65);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.6), 0 0 8px rgba(255, 255, 255, 0.25);
+}
+
+html.theme-ardoise .chalk-tally-btn:active:not(:disabled) {
+  transform: translateY(1px) scale(0.97);
+}
+
+html.theme-ardoise .chalk-tally-btn.active-choice-1 {
+  background-color: rgba(251, 113, 133, 0.25) !important;
+  border: 2px solid #FB7185 !important;
+  color: #FFFFFF !important;
+  box-shadow: 0 0 14px rgba(251, 113, 133, 0.5), inset 0 0 10px rgba(251, 113, 133, 0.2) !important;
+}
+
+html.theme-ardoise .chalk-tally-btn.active-choice-2 {
+  background-color: rgba(253, 224, 71, 0.22) !important;
+  border: 2px solid #FDE047 !important;
+  color: #FFFFFF !important;
+  box-shadow: 0 0 14px rgba(253, 224, 71, 0.45), inset 0 0 10px rgba(253, 224, 71, 0.2) !important;
+}
+
+html.theme-ardoise .chalk-tally-btn.active-choice-3 {
+  background-color: rgba(147, 197, 253, 0.22) !important;
+  border: 2px solid #93C5FD !important;
+  color: #FFFFFF !important;
+  box-shadow: 0 0 14px rgba(147, 197, 253, 0.45), inset 0 0 10px rgba(147, 197, 253, 0.2) !important;
 }
 
 /* Personnalisation popup Leaflet */
@@ -474,6 +623,169 @@ html.theme-ardoise .leaflet-popup-tip {
   line-height: 1.4;
   font-family: inherit;
 }
+
+/* =========================================================================
+   8. COMPOSANTS SPÉCIFIQUES ARDOISE (Restaurant Card, Titres & Menus)
+   ========================================================================= */
+html.theme-ardoise .restaurant-title {
+  font-family: var(--font-sketch) !important;
+  letter-spacing: 1px;
+  color: #FFFFFF !important;
+  text-shadow: 0 0 1px rgba(255, 255, 255, 0.7), 0 0 8px rgba(255, 255, 255, 0.35);
+}
+
+html.theme-ardoise .restaurant-cuisine-tag {
+  background-color: rgba(134, 239, 172, 0.12) !important;
+  color: #86EFAC !important;
+  border: 1px dashed rgba(134, 239, 172, 0.45) !important;
+  font-family: var(--font-hand) !important;
+  text-shadow: 0 0 4px rgba(134, 239, 172, 0.3);
+}
+
+html.theme-ardoise .restaurant-badge-favorite {
+  background-color: rgba(251, 113, 133, 0.18) !important;
+  color: #FB7185 !important;
+  border: 1px dashed rgba(251, 113, 133, 0.5) !important;
+  font-family: var(--font-sketch) !important;
+  text-shadow: 0 0 4px rgba(251, 113, 133, 0.3);
+}
+
+html.theme-ardoise .restaurant-formula-box {
+  background-color: rgba(255, 255, 255, 0.03) !important;
+  border: 1px dashed rgba(255, 255, 255, 0.2) !important;
+  transition: all 0.2s ease;
+}
+
+html.theme-ardoise .restaurant-formula-box:hover {
+  background-color: rgba(255, 255, 255, 0.06) !important;
+  border-color: rgba(253, 224, 71, 0.4) !important;
+}
+
+html.theme-ardoise .restaurant-formula-name {
+  font-family: var(--font-hand) !important;
+  font-size: 1.15rem !important;
+  color: #F8FAFC !important;
+  letter-spacing: 0.3px;
+}
+
+html.theme-ardoise .restaurant-price-tag {
+  color: #FDE047 !important;
+  font-family: var(--font-sketch) !important;
+  background-color: rgba(253, 224, 71, 0.12) !important;
+  border: 1px dashed rgba(253, 224, 71, 0.45) !important;
+  text-shadow: 0 0 6px rgba(253, 224, 71, 0.4);
+}
+
+html.theme-ardoise .restaurant-rank-badge {
+  font-family: var(--font-sketch) !important;
+  letter-spacing: 0.5px;
+  border: 1.5px dashed rgba(255, 255, 255, 0.5) !important;
+}
+
+/* =========================================================================
+   9. COMPOSANTS SPÉCIFIQUES VOTE & BON DE COMMANDE
+   ========================================================================= */
+html.theme-ardoise .voting-address-title {
+  font-family: var(--font-sketch) !important;
+  color: #FFFFFF !important;
+  text-shadow: 0 0 1px rgba(255, 255, 255, 0.7), 0 0 8px rgba(255, 255, 255, 0.35);
+}
+
+html.theme-ardoise .voting-section-title {
+  font-family: var(--font-sketch) !important;
+  color: #FFFFFF !important;
+  letter-spacing: 1px;
+  text-shadow: 0 0 1px rgba(255, 255, 255, 0.7), 0 0 8px rgba(255, 255, 255, 0.35);
+}
+
+html.theme-ardoise .waiter-docket {
+  background-color: #12161E !important;
+  border: 5px solid #28190E !important;
+  outline: 1px solid rgba(217, 119, 6, 0.35) !important;
+  box-shadow: 0 20px 45px -5px rgba(0, 0, 0, 0.85), inset 0 0 20px rgba(0, 0, 0, 0.9) !important;
+}
+
+html.theme-ardoise .waiter-clip {
+  background: linear-gradient(180deg, #B45309, #78350F) !important;
+  border-color: #451A03 !important;
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.6) !important;
+}
+
+html.theme-ardoise .waiter-clip::after {
+  background: #271103 !important;
+}
+
+/* =========================================================================
+   10. COMPOSANTS SPÉCIFIQUES RÉSULTATS & RÉSERVATION
+   ========================================================================= */
+html.theme-ardoise .results-reservation-title {
+  font-family: var(--font-sketch) !important;
+  color: #FDE047 !important;
+  text-shadow: 0 0 1px rgba(253, 224, 71, 0.7), 0 0 8px rgba(253, 224, 71, 0.35);
+  letter-spacing: 0.5px;
+}
+
+html.theme-ardoise .results-table-badge {
+  background-color: rgba(253, 224, 71, 0.1) !important;
+  border: 1.5px dashed rgba(253, 224, 71, 0.45) !important;
+  color: #FDE047 !important;
+  font-family: var(--font-sketch) !important;
+}
+
+html.theme-ardoise .results-winner-title {
+  font-family: var(--font-sketch) !important;
+  color: #FFFFFF !important;
+  text-shadow: 0 0 1px rgba(255, 255, 255, 0.8), 0 0 12px rgba(255, 255, 255, 0.4);
+  letter-spacing: 1px;
+}
+
+html.theme-ardoise .results-winner-points {
+  font-family: var(--font-sketch) !important;
+  color: #FDE047 !important;
+  text-shadow: 0 0 1px rgba(253, 224, 71, 0.7), 0 0 12px rgba(253, 224, 71, 0.4);
+}
+
+html.theme-ardoise .results-ranking-title {
+  font-family: var(--font-sketch) !important;
+  color: #FFFFFF !important;
+  letter-spacing: 1px;
+  text-shadow: 0 0 1px rgba(255, 255, 255, 0.7), 0 0 8px rgba(255, 255, 255, 0.35);
+}
+
+html.theme-ardoise .results-rank-badge {
+  font-family: var(--font-sketch) !important;
+  border: 1.5px dashed rgba(255, 255, 255, 0.4) !important;
+}
+
+html.theme-ardoise .results-ranking-name {
+  font-family: var(--font-sketch) !important;
+  color: #F8FAFC !important;
+  letter-spacing: 0.5px;
+  text-shadow: 0 0 1px rgba(255, 255, 255, 0.5);
+}
+
+html.theme-ardoise .results-ranking-points {
+  font-family: var(--font-sketch) !important;
+  color: #FDE047 !important;
+  text-shadow: 0 0 1px rgba(253, 224, 71, 0.6);
+}
+
+html.theme-ardoise .app-logo-title {
+  font-family: var(--font-sketch) !important;
+  letter-spacing: 1.5px;
+  color: #FFFFFF !important;
+  text-shadow: 0 0 1px rgba(255, 255, 255, 0.8), 0 0 8px rgba(255, 255, 255, 0.4);
+}
+
+html.theme-ardoise .create-hero-title {
+  font-family: var(--font-sketch) !important;
+  letter-spacing: 1px;
+  color: #FFFFFF !important;
+  text-shadow: 0 0 1px rgba(255, 255, 255, 0.8), 0 0 12px rgba(255, 255, 255, 0.35);
+}
+
+
+
 
 
 

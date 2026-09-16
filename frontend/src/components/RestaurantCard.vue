@@ -53,7 +53,7 @@ function handleRankClick(rank) {
         currentRank === 1 ? 'bg-[var(--accent-red)] text-white border-2 border-white/40 shadow-lg' :
         currentRank === 2 ? 'bg-[var(--accent-brass)] text-white border-2 border-white/40 shadow-lg' :
         'bg-[var(--accent-zinc)] text-white border-2 border-white/40 shadow-lg',
-        'absolute -top-3.5 right-6 px-4 py-1 rounded-full text-xs sm:text-sm font-serif tracking-wider uppercase font-bold flex items-center gap-1.5 z-10'
+        'restaurant-rank-badge absolute -top-3.5 right-6 px-4 py-1 rounded-full text-xs sm:text-sm font-serif tracking-wider uppercase font-bold flex items-center gap-1.5 z-10'
       ]"
     >
       <Check class="w-4 h-4 stroke-[2.5]" />
@@ -65,7 +65,7 @@ function handleRankClick(rank) {
       <!-- Ligne supérieure : Spécialité & Allure de marche -->
       <div class="flex items-center justify-between gap-2 flex-wrap mb-2.5">
         <div class="flex items-center gap-2 flex-wrap">
-          <span class="inline-block text-xs sm:text-sm font-serif italic px-3.5 py-1 rounded-full bg-[var(--bg-surface-inset)] text-[var(--text-muted)] border border-[var(--border-subtle)]">
+          <span class="restaurant-cuisine-tag inline-block text-xs sm:text-sm font-serif italic px-3.5 py-1 rounded-full bg-[var(--bg-surface-inset)] text-[var(--text-muted)] border border-[var(--border-subtle)]">
             ❧ {{ restaurant.cuisine || 'Bistrot de quartier' }} ☙
           </span>
 
@@ -82,7 +82,7 @@ function handleRankClick(rank) {
 
           <span 
             v-if="restaurant.rating >= 4.7"
-            class="inline-block text-xs font-serif uppercase tracking-wider font-bold px-3 py-1 rounded-full bg-[var(--accent-red-soft)] text-[var(--accent-red)] border border-[var(--accent-red-border)]"
+            class="restaurant-badge-favorite inline-block text-xs font-serif uppercase tracking-wider font-bold px-3 py-1 rounded-full bg-[var(--accent-red-soft)] text-[var(--accent-red)] border border-[var(--accent-red-border)]"
           >
             Coup de cœur
           </span>
@@ -98,7 +98,7 @@ function handleRankClick(rank) {
       </div>
 
       <!-- Titre du restaurant en majestueuse typographie -->
-      <h3 class="font-display sm:font-serif text-2xl sm:text-3xl font-normal text-[var(--text-main)] tracking-wide leading-snug mb-1">
+      <h3 class="restaurant-title font-display sm:font-serif text-2xl sm:text-3xl font-normal text-[var(--text-main)] tracking-wide leading-snug mb-1">
         {{ restaurant.name }}
       </h3>
 
@@ -112,12 +112,12 @@ function handleRankClick(rank) {
           <div 
             v-for="(f, idx) in restaurant.lunch_formulas" 
             :key="idx"
-            class="p-4 rounded-2xl bg-[var(--bg-surface-subtle)] border border-[var(--border-subtle)] text-sm"
+            class="restaurant-formula-box p-4 rounded-2xl bg-[var(--bg-surface-subtle)] border border-[var(--border-subtle)] text-sm"
           >
             <div class="menu-leader-line">
-              <span class="font-serif text-base sm:text-lg font-semibold text-[var(--text-main)] tracking-wide">{{ f.name }}</span>
+              <span class="restaurant-formula-name font-serif text-base sm:text-lg font-semibold text-[var(--text-main)] tracking-wide">{{ f.name }}</span>
               <span class="menu-leader-dots"></span>
-              <span class="font-serif text-base sm:text-lg font-bold text-[var(--accent-brass)] shrink-0 bg-[var(--bg-surface)] px-3 py-0.5 rounded-lg border border-[var(--border-subtle)] shadow-2xs">{{ f.price }}</span>
+              <span class="restaurant-price-tag font-serif text-base sm:text-lg font-bold text-[var(--accent-brass)] shrink-0 bg-[var(--bg-surface)] px-3 py-0.5 rounded-lg border border-[var(--border-subtle)] shadow-2xs">{{ f.price }}</span>
             </div>
             <p v-if="f.description" class="text-[var(--text-muted)] mt-1.5 text-xs sm:text-sm font-serif italic leading-relaxed">
               {{ f.description }}
@@ -125,7 +125,7 @@ function handleRankClick(rank) {
           </div>
         </div>
 
-        <div v-else-if="restaurant.menu_summary" class="p-4 rounded-2xl bg-[var(--bg-surface-subtle)] border border-[var(--border-subtle)] text-xs sm:text-sm text-[var(--text-muted)] font-serif italic leading-relaxed">
+        <div v-else-if="restaurant.menu_summary" class="restaurant-formula-box p-4 rounded-2xl bg-[var(--bg-surface-subtle)] border border-[var(--border-subtle)] text-xs sm:text-sm text-[var(--text-muted)] font-serif italic leading-relaxed">
           {{ restaurant.menu_summary }}
         </div>
       </div>
@@ -183,14 +183,14 @@ function handleRankClick(rank) {
           @click="handleRankClick(1)"
           :class="[
             currentRank === 1 
-              ? 'bg-[var(--accent-red)] text-white font-serif font-bold border-2 border-white/50 shadow-md scale-[1.02]' 
+              ? 'bg-[var(--accent-red)] text-white font-serif font-bold border-2 border-white/50 shadow-md scale-[1.02] active-choice-1' 
               : 'bg-[var(--bg-surface-inset)] hover:bg-[var(--accent-red-soft)] text-[var(--text-main)] hover:text-[var(--accent-red)] border border-[var(--border-main)] hover:border-[var(--accent-red)]',
-            'w-full py-3 px-2 rounded-xl transition btn-interaction flex items-center justify-center gap-1.5 cursor-pointer select-none'
+            'chalk-tally-btn w-full py-3 px-2 rounded-xl transition btn-interaction flex items-center justify-center gap-1.5 cursor-pointer select-none'
           ]"
           title="1er Choix (attribue 3 points)"
         >
           <span class="w-5 h-5 rounded-full bg-white/20 flex items-center justify-center text-xs font-sans font-bold">1</span>
-          <span class="font-serif font-bold text-sm sm:text-base">3 pts</span>
+          <span class="font-serif font-bold text-sm sm:text-base chalk-sketch">3 pts</span>
           <Check v-if="currentRank === 1" class="w-4 h-4 stroke-[3]" />
         </button>
 
@@ -201,14 +201,14 @@ function handleRankClick(rank) {
           @click="handleRankClick(2)"
           :class="[
             currentRank === 2 
-              ? 'bg-[var(--accent-brass)] text-white font-serif font-bold border-2 border-white/50 shadow-md scale-[1.02]' 
+              ? 'bg-[var(--accent-brass)] text-white font-serif font-bold border-2 border-white/50 shadow-md scale-[1.02] active-choice-2' 
               : 'bg-[var(--bg-surface-inset)] hover:bg-[var(--accent-brass-soft)] text-[var(--text-main)] hover:text-[var(--accent-brass)] border border-[var(--border-main)] hover:border-[var(--accent-brass)]',
-            'w-full py-3 px-2 rounded-xl transition btn-interaction flex items-center justify-center gap-1.5 cursor-pointer select-none'
+            'chalk-tally-btn w-full py-3 px-2 rounded-xl transition btn-interaction flex items-center justify-center gap-1.5 cursor-pointer select-none'
           ]"
           title="2e Choix (attribue 2 points)"
         >
           <span class="w-5 h-5 rounded-full bg-white/20 flex items-center justify-center text-xs font-sans font-bold">2</span>
-          <span class="font-serif font-bold text-sm sm:text-base">2 pts</span>
+          <span class="font-serif font-bold text-sm sm:text-base chalk-sketch">2 pts</span>
           <Check v-if="currentRank === 2" class="w-4 h-4 stroke-[3]" />
         </button>
 
@@ -219,14 +219,14 @@ function handleRankClick(rank) {
           @click="handleRankClick(3)"
           :class="[
             currentRank === 3 
-              ? 'bg-[var(--accent-zinc)] text-white font-serif font-bold border-2 border-white/50 shadow-md scale-[1.02]' 
+              ? 'bg-[var(--accent-zinc)] text-white font-serif font-bold border-2 border-white/50 shadow-md scale-[1.02] active-choice-3' 
               : 'bg-[var(--bg-surface-inset)] hover:bg-[var(--accent-zinc-soft)] text-[var(--text-main)] hover:text-[var(--accent-zinc)] border border-[var(--border-main)] hover:border-[var(--accent-zinc)]',
-            'w-full py-3 px-2 rounded-xl transition btn-interaction flex items-center justify-center gap-1.5 cursor-pointer select-none'
+            'chalk-tally-btn w-full py-3 px-2 rounded-xl transition btn-interaction flex items-center justify-center gap-1.5 cursor-pointer select-none'
           ]"
           title="3e Choix (attribue 1 point)"
         >
           <span class="w-5 h-5 rounded-full bg-white/20 flex items-center justify-center text-xs font-sans font-bold">3</span>
-          <span class="font-serif font-bold text-sm sm:text-base">1 pt</span>
+          <span class="font-serif font-bold text-sm sm:text-base chalk-sketch">1 pt</span>
           <Check v-if="currentRank === 3" class="w-4 h-4 stroke-[3]" />
         </button>
       </div>

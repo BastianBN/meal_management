@@ -210,7 +210,7 @@ async function handleVoteSubmit() {
             <span>Point de départ</span>
             <span>🍽️</span>
           </div>
-          <h2 class="font-display sm:font-serif text-3xl sm:text-4xl lg:text-5xl font-normal text-[var(--text-main)] tracking-wide leading-tight">
+          <h2 class="voting-address-title font-display sm:font-serif text-3xl sm:text-4xl lg:text-5xl font-normal text-[var(--text-main)] tracking-wide leading-tight">
             {{ session.departure_address }}
           </h2>
           <div class="text-sm text-[var(--text-muted)] mt-3 flex items-center gap-3 flex-wrap font-serif">
@@ -444,7 +444,7 @@ async function handleVoteSubmit() {
     <div>
       <div class="flex items-center justify-between mb-4">
         <div>
-          <h3 class="font-serif text-3xl sm:text-4xl font-normal text-[var(--text-main)] tracking-wide">
+          <h3 class="voting-section-title font-serif text-3xl sm:text-4xl font-normal text-[var(--text-main)] tracking-wide">
             Restaurants à proximité
           </h3>
           <p class="text-sm sm:text-base text-[var(--text-muted)] mt-1 font-serif italic">

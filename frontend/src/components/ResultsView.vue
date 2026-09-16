@@ -70,7 +70,7 @@ onMounted(() => {
           </div>
           <div>
             <div class="flex items-center gap-2">
-              <h2 class="font-serif text-3xl sm:text-4xl font-bold text-[var(--text-main)] tracking-wide leading-tight">
+              <h2 class="results-reservation-title font-serif text-3xl sm:text-4xl font-bold text-[var(--text-main)] tracking-wide leading-tight">
                 Réservation : {{ totalVoters }} {{ totalVoters <= 1 ? 'personne' : 'personnes' }}
               </h2>
               <span class="inline-flex items-center px-3 py-1 rounded-full text-xs sm:text-sm font-semibold bg-[var(--accent-red-soft)] text-[var(--accent-red)] border border-[var(--accent-red-border)]">
@@ -84,7 +84,7 @@ onMounted(() => {
         </div>
 
         <div class="self-start sm:self-center">
-          <span class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-[var(--bg-surface-inset)] border border-[var(--border-main)] text-base font-serif font-bold text-[var(--text-main)] shadow-xs">
+          <span class="results-table-badge inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-[var(--bg-surface-inset)] border border-[var(--border-main)] text-base font-serif font-bold text-[var(--text-main)] shadow-xs">
             <span>🍽️ Table de</span>
             <span class="text-[var(--accent-brass)] text-lg font-bold">{{ totalVoters }}</span>
             <span>à réserver</span>
@@ -158,7 +158,7 @@ onMounted(() => {
 
         <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-6">
           <div>
-            <h3 class="font-display sm:font-serif text-3xl sm:text-5xl lg:text-6xl font-normal text-[var(--text-main)] tracking-wide leading-tight">
+            <h3 class="results-winner-title font-display sm:font-serif text-3xl sm:text-5xl lg:text-6xl font-normal text-[var(--text-main)] tracking-wide leading-tight">
               {{ winner.name }}
             </h3>
             <div class="flex items-center gap-3 flex-wrap mt-3">
@@ -183,7 +183,7 @@ onMounted(() => {
           </div>
 
           <div class="flex sm:flex-col items-baseline sm:items-end justify-between sm:justify-center border-t sm:border-t-0 border-[var(--border-subtle)] pt-4 sm:pt-0 shrink-0">
-            <span class="font-serif text-6xl sm:text-7xl lg:text-8xl font-normal text-[var(--accent-brass)] leading-none drop-shadow-sm">
+            <span class="results-winner-points font-serif text-6xl sm:text-7xl lg:text-8xl font-normal text-[var(--accent-brass)] leading-none drop-shadow-sm">
               {{ winner.points }} <span class="font-serif text-xl sm:text-2xl text-[var(--text-faint)]">pts</span>
             </span>
             <span class="text-sm font-serif text-[var(--text-muted)] mt-2 text-right">
@@ -222,7 +222,7 @@ onMounted(() => {
     <div class="bistro-card-frame rounded-3xl overflow-hidden shadow-xl">
       <div class="p-5 sm:p-7 border-b border-[var(--border-main)] bg-[var(--bg-surface-subtle)] flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div>
-          <h3 class="font-display sm:font-serif text-2xl sm:text-3xl font-normal text-[var(--text-main)] tracking-wide">
+          <h3 class="results-ranking-title font-display sm:font-serif text-2xl sm:text-3xl font-normal text-[var(--text-main)] tracking-wide">
             Classement complet des votes
           </h3>
           <p class="text-sm sm:text-base text-[var(--text-muted)] mt-1 font-serif">
@@ -264,7 +264,7 @@ onMounted(() => {
                 item.rank === 2 ? 'bg-[var(--accent-brass)] text-white font-bold shadow-md' :
                 item.rank === 3 ? 'bg-[var(--accent-zinc)] text-white font-bold shadow-md' :
                 'bg-[var(--bg-surface-inset)] text-[var(--text-faint)] font-medium border border-[var(--border-subtle)]',
-                'w-10 h-10 rounded-2xl flex items-center justify-center font-serif text-base shrink-0'
+                'results-rank-badge w-10 h-10 rounded-2xl flex items-center justify-center font-serif text-base shrink-0'
               ]"
             >
               {{ item.rank }}
@@ -273,7 +273,7 @@ onMounted(() => {
             <!-- Infos Restaurant -->
             <div class="min-w-0">
               <div class="flex items-center gap-2 flex-wrap">
-                <span class="font-serif text-xl sm:text-2xl font-normal text-[var(--text-main)] truncate">
+                <span class="results-ranking-name font-serif text-xl sm:text-2xl font-normal text-[var(--text-main)] truncate">
                   {{ item.name }}
                 </span>
                 <a
@@ -315,7 +315,7 @@ onMounted(() => {
               <span 
                 :class="[
                   item.rank === 1 ? 'text-[var(--accent-brass)] font-semibold' : 'text-[var(--text-main)]',
-                  'font-serif text-3xl sm:text-4xl font-normal leading-none'
+                  'results-ranking-points font-serif text-3xl sm:text-4xl font-normal leading-none'
                 ]"
               >
                 {{ item.points }}

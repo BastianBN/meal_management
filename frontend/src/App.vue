@@ -172,7 +172,7 @@ onUnmounted(() => {
             <Utensils class="w-5 h-5" />
           </div>
           <div>
-            <span class="font-serif text-2xl sm:text-3xl font-normal text-[var(--text-main)] tracking-wide block leading-none">
+            <span class="app-logo-title font-serif text-2xl sm:text-3xl font-normal text-[var(--text-main)] tracking-wide block leading-none">
               Meal Manager
             </span>
             <span class="text-[10px] text-[var(--text-faint)] block mt-1 font-medium tracking-widest uppercase font-sans">
@@ -193,11 +193,11 @@ onUnmounted(() => {
                 currentTheme === 'carte'
                   ? 'bg-[var(--bg-surface)] text-[var(--text-main)] shadow-xs border border-[var(--border-main)] font-semibold'
                   : 'text-[var(--text-faint)] hover:text-[var(--text-main)]',
-                'px-3 py-1.5 rounded-lg text-xs flex items-center gap-1.5 transition cursor-pointer'
+                'px-3.5 py-1.5 rounded-lg text-sm flex items-center gap-1.5 transition cursor-pointer'
               ]"
             >
-              <span>☀️</span>
-              <span class="hidden md:inline font-serif text-base">La Carte</span>
+              <span>📜</span>
+              <span class="font-serif text-base">La Carte</span>
             </button>
             <button
               type="button"
@@ -210,8 +210,8 @@ onUnmounted(() => {
                 'px-3.5 py-1.5 rounded-lg text-sm flex items-center gap-1.5 transition cursor-pointer'
               ]"
             >
-              <span>🌙</span>
-              <span class="hidden md:inline font-serif text-base">L'Ardoise</span>
+              <span>🪵</span>
+              <span class="font-serif text-base">L'Ardoise</span>
             </button>
           </div>
 

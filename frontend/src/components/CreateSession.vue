@@ -66,7 +66,7 @@ async function handleCreateSession() {
         <span class="tracking-widest">Organisation du Déjeuner</span>
         <span>🍽️</span>
       </div>
-      <h1 class="font-display sm:font-serif text-4xl sm:text-5xl lg:text-6xl font-normal tracking-wide text-[var(--text-main)] mb-3 leading-tight">
+      <h1 class="create-hero-title font-display sm:font-serif text-4xl sm:text-5xl lg:text-6xl font-normal tracking-wide text-[var(--text-main)] mb-3 leading-tight">
         Où déjeunons-nous ce midi ?
       </h1>
       <div class="flex items-center justify-center gap-3 text-[var(--accent-brass)] text-sm mb-2">
