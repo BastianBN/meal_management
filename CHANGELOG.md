@@ -1,3 +1,10 @@
+# [1.3.0](https://github.com/BastianBN/meal_management/compare/v1.2.0...v1.3.0) (2026-09-16)
+
+
+### Features
+
+* **ui:** add playful chalkboard dark theme with chalk fonts and classic brasserie card light theme ([e2feece](https://github.com/BastianBN/meal_management/commit/e2feecef8006cdcd23a024ffdb40d9716d405ef7))
+
 # [1.2.0](https://github.com/BastianBN/meal_management/compare/v1.1.0...v1.2.0) (2026-09-15)
 
 
