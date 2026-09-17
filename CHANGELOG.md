@@ -1,3 +1,10 @@
+# [1.4.0](https://github.com/BastianBN/meal_management/compare/v1.3.0...v1.4.0) (2026-09-17)
+
+
+### Features
+
+* **css:** new chalkboard style css ([96dbeae](https://github.com/BastianBN/meal_management/commit/96dbeaec27cc79621071b35355384925d3dbe203))
+
 # [1.3.0](https://github.com/BastianBN/meal_management/compare/v1.2.0...v1.3.0) (2026-09-16)
 
 
