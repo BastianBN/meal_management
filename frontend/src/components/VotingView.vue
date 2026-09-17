@@ -195,13 +195,36 @@ async function handleVoteSubmit() {
 
 <template>
   <div class="space-y-8">
-    <!-- En-tête de Session (Grand Fronton Brasserie & Point de Ralliement) -->
-    <div class="bistro-grand-frame rounded-3xl p-6 sm:p-9 relative">
+    <!-- En-tête Brasserie : Adresse & Périmètre (Grand Format) -->
+    <div class="bistro-grand-frame rounded-3xl p-6 sm:p-8 relative">
+      <!-- Suspension à corde et anneaux en fonte (Ardoise) -->
+      <div class="chalk-suspension-container">
+        <div class="chalk-nail-top"></div>
+        <div class="chalk-rope-left"></div>
+        <div class="chalk-rope-right"></div>
+        <div class="chalk-ring-left"></div>
+        <div class="chalk-ring-right"></div>
+      </div>
+
       <!-- 4 Coins Laiton Vénérable -->
       <div class="brass-corner-bracket brass-corner-tl"></div>
       <div class="brass-corner-bracket brass-corner-tr"></div>
       <div class="brass-corner-bracket brass-corner-bl"></div>
       <div class="brass-corner-bracket brass-corner-br"></div>
+
+      <!-- Rebord porte-craie en bois avec craies et effaceur (Ardoise) -->
+      <div class="chalk-ledge-container">
+        <div class="chalk-ledge-groove">
+          <div class="flex items-center gap-2">
+            <span class="chalk-stick chalk-stick-white" title="Craie blanche"></span>
+            <span class="chalk-stick chalk-stick-yellow" title="Craie jaune bistrot"></span>
+            <span class="chalk-stick chalk-stick-coral" title="Craie rouge"></span>
+          </div>
+          <div class="flex items-center gap-2">
+            <span class="chalk-eraser" title="Effaceur de bistrot"></span>
+          </div>
+        </div>
+      </div>
 
       <div class="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
         <div>

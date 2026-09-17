@@ -31,3 +31,7 @@ Thumbs.db
 # Impeccable / Logs
 .system_generated/
 *.log
+
+# Brag
+brag-output/
+.agents/skills/**

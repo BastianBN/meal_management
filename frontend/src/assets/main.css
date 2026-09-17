@@ -1,13 +1,23 @@
 @import "tailwindcss";
 @import "leaflet/dist/leaflet.css";
 
+@font-face {
+  font-family: "ChalkFont";
+  src: url("/fonts/Chalk.otf") format("opentype");
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
 @theme {
   --font-sans: "Plus Jakarta Sans", -apple-system, BlinkMacSystemFont, sans-serif;
   --font-serif: "Cormorant Garamond", Garamond, Georgia, serif;
   --font-display: "Playfair Display", Georgia, serif;
-  --font-chalk: "Caveat", cursive, sans-serif;
+  --font-chalk: "ChalkFont", "Fredericka the Great", cursive, sans-serif;
+  --font-chalk-body: "Walter Turncoat", cursive, sans-serif;
   --font-sketch: "Cabin Sketch", cursive, sans-serif;
-  --font-hand: "Patrick Hand", "Caveat", cursive, sans-serif;
+  --font-hand: "Patrick Hand", cursive, sans-serif;
+  --font-chalk-label: "Amatic SC", cursive, sans-serif;
 
   --color-accent-red: var(--accent-red);
   --color-accent-red-hover: var(--accent-red-hover);
@@ -89,66 +99,95 @@ html.theme-carte body {
 }
 
 /* =========================================================================
-   THÈME 2 : « L'ARDOISE DU BOUCHON LYONNAIS » (Service du Soir • Nuit Bistrot)
+   THÈME 2 : « L'ARDOISE DU BISTROT » — Véritable Ardoise de Restaurant
    ========================================================================= */
 html.theme-ardoise {
-  --bg-canvas: #0F1216;
-  --bg-canvas-rgb: 15, 18, 22;
-  --bg-surface: #181C24;
-  --bg-surface-elevated: #202530;
-  --bg-surface-subtle: #252B38;
-  --bg-surface-inset: #12151B;
+  /* Vert-noir d'ardoise naturelle */
+  --bg-canvas: #1e2520;
+  --bg-canvas-rgb: 30, 37, 32;
+  --bg-surface: rgba(255, 255, 255, 0.03);
+  --bg-surface-elevated: rgba(255, 255, 255, 0.06);
+  --bg-surface-subtle: rgba(255, 255, 255, 0.04);
+  --bg-surface-inset: rgba(0, 0, 0, 0.2);
 
-  --border-main: #363E4D;
-  --border-subtle: #29303D;
-  --border-ornament: #D97706;
+  --border-main: rgba(255, 255, 255, 0.18);
+  --border-subtle: rgba(255, 255, 255, 0.1);
+  --border-ornament: rgba(253, 224, 71, 0.5);
 
-  --text-main: #F8FAFC;
-  --text-muted: #CBD5E1;
-  --text-faint: #94A3B8;
+  --text-main: rgba(248, 250, 252, 0.88);
+  --text-muted: rgba(203, 213, 225, 0.7);
+  --text-faint: rgba(148, 163, 184, 0.55);
 
-  --accent-red: #DC2626;
-  --accent-red-hover: #B91C1C;
-  --accent-red-soft: rgba(220, 38, 38, 0.18);
-  --accent-red-border: rgba(220, 38, 38, 0.4);
+  --accent-red: #e85d6f;
+  --accent-red-hover: #d14456;
+  --accent-red-soft: rgba(232, 93, 111, 0.15);
+  --accent-red-border: rgba(232, 93, 111, 0.35);
 
-  --accent-brass: #D97706;
-  --accent-brass-hover: #B45309;
-  --accent-brass-soft: rgba(217, 119, 6, 0.18);
-  --accent-brass-border: rgba(217, 119, 6, 0.4);
+  --accent-brass: #dba34a;
+  --accent-brass-hover: #c48b30;
+  --accent-brass-soft: rgba(219, 163, 74, 0.15);
+  --accent-brass-border: rgba(219, 163, 74, 0.35);
 
-  --accent-zinc: #64748B;
-  --accent-zinc-hover: #475569;
-  --accent-zinc-soft: rgba(100, 116, 139, 0.18);
-  --accent-zinc-border: rgba(100, 116, 139, 0.4);
+  --accent-zinc: #7a8a9e;
+  --accent-zinc-hover: #5e6f85;
+  --accent-zinc-soft: rgba(122, 138, 158, 0.15);
+  --accent-zinc-border: rgba(122, 138, 158, 0.35);
 
-  --card-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.6), inset 0 0 0 1px rgba(255, 255, 255, 0.04);
-  --header-bg: rgba(15, 18, 22, 0.94);
+  --card-shadow: none;
+  --header-bg: rgba(30, 37, 32, 0.88);
 
-  --chalk-white: #F8FAFC;
-  --chalk-white-glow: rgba(255, 255, 255, 0.45);
-  --chalk-yellow: #FDE047;
-  --chalk-yellow-glow: rgba(253, 224, 71, 0.45);
-  --chalk-coral: #FB7185;
-  --chalk-coral-glow: rgba(251, 113, 133, 0.45);
-  --chalk-mint: #86EFAC;
-  --chalk-mint-glow: rgba(134, 239, 172, 0.45);
-  --chalk-blue: #93C5FD;
-  --chalk-blue-glow: rgba(147, 197, 253, 0.45);
+  /* Couleurs de craie authentiques */
+  --chalk-white: rgba(245, 243, 238, 0.9);
+  --chalk-white-glow: rgba(245, 243, 238, 0.25);
+  --chalk-yellow: #e8d44d;
+  --chalk-yellow-glow: rgba(232, 212, 77, 0.35);
+  --chalk-coral: #e8879a;
+  --chalk-coral-glow: rgba(232, 135, 154, 0.3);
+  --chalk-mint: #7dd4a0;
+  --chalk-mint-glow: rgba(125, 212, 160, 0.25);
+  --chalk-blue: #8cb8e8;
+  --chalk-blue-glow: rgba(140, 184, 232, 0.25);
+
+  /* Bois du cadre */
+  --wood-dark: #3d2816;
+  --wood-mid: #5c3a1e;
+  --wood-light: #7a4f2a;
+  --wood-highlight: #96633a;
 }
 
 html.theme-ardoise body {
   background-color: var(--bg-canvas);
   color: var(--text-main);
-  /* Grain d'ardoise naturelle et traces de craie estompée */
+  /*
+    Texture d'ardoise authentique :
+    1. Lueur ambiante subtile (lampe de bistrot au-dessus)
+    2-4. Fantômes de craie effacée (taches semi-transparentes aléatoires)
+    5. Stries horizontales (grain naturel du schiste)
+    6. Grain fin de pierre (feTurbulence agressif)
+  */
   background-image: 
-    radial-gradient(ellipse at 50% 0%, rgba(217, 119, 6, 0.08) 0%, rgba(15, 18, 22, 0) 75%),
-    radial-gradient(circle at 15% 25%, rgba(255, 255, 255, 0.03) 0%, transparent 45%),
-    radial-gradient(circle at 85% 70%, rgba(255, 255, 255, 0.025) 0%, transparent 40%),
-    radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.015) 0%, transparent 60%),
-    url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='slateNoise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='matrix' values='1 0 0 0 0.05  0 1 0 0 0.05  0 0 1 0 0.05  0 0 0 0.07 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23slateNoise)'/%3E%3C/svg%3E");
+    /* 1. Lueur chaude d'éclairage au-dessus */
+    radial-gradient(ellipse at 50% -10%, rgba(219, 163, 74, 0.07) 0%, transparent 65%),
+    /* 2. Fantôme de craie effacée — gauche */
+    radial-gradient(ellipse at 20% 30%, rgba(245, 243, 238, 0.025) 0%, transparent 40%),
+    /* 3. Fantôme de craie effacée — centre-droit */
+    radial-gradient(ellipse at 75% 55%, rgba(245, 243, 238, 0.02) 0%, transparent 35%),
+    /* 4. Fantôme de craie — bas */
+    radial-gradient(ellipse at 40% 80%, rgba(245, 243, 238, 0.018) 0%, transparent 30%),
+    /* 5. Stries horizontales subtiles (grain de schiste) */
+    repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 3px,
+      rgba(255, 255, 255, 0.008) 3px,
+      rgba(255, 255, 255, 0.008) 4px
+    ),
+    /* 6. Grain de pierre — feTurbulence plus agressif */
+    url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='slateGrain'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.2' numOctaves='4' seed='42' stitchTiles='stitch'/%3E%3CfeColorMatrix type='matrix' values='0 0 0 0 0.12  0 0 0 0 0.15  0 0 0 0 0.13  0 0 0 0.09 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23slateGrain)'/%3E%3C/svg%3E");
   background-attachment: fixed;
-  background-size: auto, auto, auto, auto, 160px 160px;
+  background-size: auto, auto, auto, auto, auto, 200px 200px;
+  /* Police par défaut en mode ardoise = craie manuscrite */
+  font-family: "Walter Turncoat", cursive, sans-serif;
 }
 
 /* =========================================================================
@@ -172,8 +211,9 @@ html.theme-ardoise body {
   }
 }
 
-/* Ornements et Filets de Menu */
-/* Ornements et Filets de Menu */
+/* =========================================================================
+   CARTE — Ornements et Filets de Menu
+   ========================================================================= */
 html.theme-carte .bistro-card-frame {
   position: relative;
   background-color: var(--bg-surface);
@@ -192,40 +232,302 @@ html.theme-carte .bistro-card-frame::before {
   pointer-events: none;
 }
 
+/* =========================================================================
+   ARDOISE — Cards = zones dessinées à la craie sur le tableau
+   ========================================================================= */
 html.theme-ardoise .bistro-card-frame {
   position: relative;
-  background-color: #141820;
-  border: 6px solid #28190E;
-  outline: 1px solid rgba(217, 119, 6, 0.35);
-  box-shadow: 0 16px 36px -6px rgba(0, 0, 0, 0.8), inset 0 0 24px rgba(0, 0, 0, 0.85);
-  border-radius: 1.15rem;
-  transition: all 0.25s ease;
+  background-color: transparent;
+  border: 2px dashed rgba(245, 243, 238, 0.25);
+  box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.3);
+  border-radius: 6px;
+  transition: all 0.3s ease;
 }
 
 html.theme-ardoise .bistro-card-frame::before {
-  content: "";
-  position: absolute;
-  inset: 4px;
-  border: 1.5px dashed rgba(255, 255, 255, 0.2);
-  border-radius: calc(1.15rem - 4px);
-  pointer-events: none;
+  content: none;
 }
 
 html.theme-ardoise .bistro-card-frame:hover {
-  outline-color: rgba(253, 224, 71, 0.5);
-  box-shadow: 0 20px 40px -6px rgba(0, 0, 0, 0.9), 0 0 15px rgba(253, 224, 71, 0.12), inset 0 0 24px rgba(0, 0, 0, 0.85);
+  border-color: rgba(232, 212, 77, 0.5);
+  box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.3), 0 0 12px rgba(232, 212, 77, 0.08);
 }
 
-/* Boutons et interactions */
-.btn-interaction {
-  transition: all 0.2s cubic-bezier(0.25, 1, 0.5, 1);
+/* =========================================================================
+   CARTE — Grand Cadre Brasserie
+   ========================================================================= */
+html.theme-carte .bistro-grand-frame {
+  position: relative;
+  background-color: var(--bg-surface);
+  border: 8px solid #3A2213;
+  outline: 2px solid #C5A880;
+  border-radius: 1.5rem;
+  box-shadow: 0 25px 60px -10px rgba(58, 34, 19, 0.35), 0 0 0 1px rgba(0, 0, 0, 0.2);
 }
 
-.btn-interaction:active {
-  transform: scale(0.98);
+html.theme-carte .bistro-grand-frame::after {
+  content: "";
+  position: absolute;
+  inset: 8px;
+  border: 1px solid #D8C7B0;
+  border-radius: calc(1.5rem - 8px);
+  pointer-events: none;
 }
 
-/* Slider de marche adapté */
+/* =========================================================================
+   ARDOISE — Grand Cadre = Vrai tableau en bois avec ardoise
+   ========================================================================= */
+html.theme-ardoise .bistro-grand-frame {
+  position: relative;
+  background-color: transparent;
+  /* Cadre en bois épais et usé */
+  border: 14px solid var(--wood-dark);
+  border-image: linear-gradient(
+    180deg,
+    var(--wood-highlight) 0%,
+    var(--wood-mid) 15%,
+    var(--wood-dark) 40%,
+    #2a1a0d 60%,
+    var(--wood-dark) 80%,
+    var(--wood-mid) 95%,
+    var(--wood-highlight) 100%
+  ) 14;
+  border-radius: 0; /* Le bois n'est pas rond */
+  box-shadow:
+    /* Ombre projetée — le tableau pend sur le mur */
+    0 20px 60px -10px rgba(0, 0, 0, 0.8),
+    0 8px 25px rgba(0, 0, 0, 0.5),
+    /* Ombre intérieure — profondeur de l'ardoise */
+    inset 0 0 30px rgba(0, 0, 0, 0.6),
+    inset 0 2px 4px rgba(0, 0, 0, 0.4);
+}
+
+html.theme-ardoise .bistro-grand-frame::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  /* Texture de grain de bois sur le cadre via ombre intérieure */
+  box-shadow: inset 0 0 80px rgba(0, 0, 0, 0.4);
+  pointer-events: none;
+  z-index: 1;
+}
+
+html.theme-ardoise .bistro-grand-frame::after {
+  content: "";
+  position: absolute;
+  inset: 4px;
+  border: 1.5px dashed rgba(245, 243, 238, 0.15);
+  pointer-events: none;
+  z-index: 2;
+}
+
+/* =========================================================================
+   CARTE — Coins en Laiton Vénérable
+   ========================================================================= */
+.brass-corner-bracket {
+  position: absolute;
+  width: 28px;
+  height: 28px;
+  pointer-events: none;
+  z-index: 15;
+}
+
+html.theme-carte .brass-corner-bracket::before,
+html.theme-carte .brass-corner-bracket::after {
+  content: "";
+  position: absolute;
+  background: linear-gradient(135deg, #D4AF37, #AA771C);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+}
+
+html.theme-carte .brass-corner-tl { top: 6px; left: 6px; }
+html.theme-carte .brass-corner-tl::before { top: 0; left: 0; width: 22px; height: 3px; border-radius: 2px; }
+html.theme-carte .brass-corner-tl::after { top: 0; left: 0; width: 3px; height: 22px; border-radius: 2px; }
+
+html.theme-carte .brass-corner-tr { top: 6px; right: 6px; }
+html.theme-carte .brass-corner-tr::before { top: 0; right: 0; width: 22px; height: 3px; border-radius: 2px; }
+html.theme-carte .brass-corner-tr::after { top: 0; right: 0; width: 3px; height: 22px; border-radius: 2px; }
+
+html.theme-carte .brass-corner-bl { bottom: 6px; left: 6px; }
+html.theme-carte .brass-corner-bl::before { bottom: 0; left: 0; width: 22px; height: 3px; border-radius: 2px; }
+html.theme-carte .brass-corner-bl::after { bottom: 0; left: 0; width: 3px; height: 22px; border-radius: 2px; }
+
+html.theme-carte .brass-corner-br { bottom: 6px; right: 6px; }
+html.theme-carte .brass-corner-br::before { bottom: 0; right: 0; width: 22px; height: 3px; border-radius: 2px; }
+html.theme-carte .brass-corner-br::after { bottom: 0; right: 0; width: 3px; height: 22px; border-radius: 2px; }
+
+/* ARDOISE — Clous / Vis rouillées aux coins du tableau */
+html.theme-ardoise .brass-corner-bracket {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 35%, #9a7a52, #4a3520 60%, #2a1a0d);
+  box-shadow:
+    0 2px 4px rgba(0, 0, 0, 0.7),
+    inset 0 1px 1px rgba(255, 255, 255, 0.15),
+    inset 0 -1px 2px rgba(0, 0, 0, 0.5);
+  /* Fente de vis */
+  overflow: hidden;
+}
+html.theme-ardoise .brass-corner-bracket::before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 25%;
+  right: 25%;
+  height: 1.5px;
+  background: #1a0f06;
+  transform: translateY(-50%) rotate(-30deg);
+  border-radius: 1px;
+}
+html.theme-ardoise .brass-corner-bracket::after {
+  content: none;
+}
+html.theme-ardoise .brass-corner-tl { top: 10px; left: 10px; }
+html.theme-ardoise .brass-corner-tr { top: 10px; right: 10px; }
+html.theme-ardoise .brass-corner-bl { bottom: 10px; left: 10px; }
+html.theme-ardoise .brass-corner-br { bottom: 10px; right: 10px; }
+
+/* =========================================================================
+   BOUTONS — Cachet de Cire (Carte) / Craie rouge (Ardoise)
+   ========================================================================= */
+.wax-seal-btn {
+  position: relative;
+  background: radial-gradient(circle at 35% 30%, #A81B1B, #700E0E);
+  color: #FFFFFF;
+  border: 2px solid #550808;
+  box-shadow: 
+    0 8px 25px rgba(136, 19, 19, 0.45), 
+    inset 0 2px 4px rgba(255, 255, 255, 0.35), 
+    inset 0 -2px 5px rgba(0, 0, 0, 0.5);
+  transition: all 0.25s cubic-bezier(0.25, 1, 0.5, 1);
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.6);
+}
+
+.wax-seal-btn:hover:not(:disabled) {
+  transform: translateY(-2px) scale(1.01);
+  box-shadow: 
+    0 12px 30px rgba(136, 19, 19, 0.55), 
+    inset 0 2px 5px rgba(255, 255, 255, 0.45), 
+    inset 0 -2px 6px rgba(0, 0, 0, 0.6);
+}
+
+.wax-seal-btn:active:not(:disabled) {
+  transform: translateY(1px) scale(0.99);
+  box-shadow: 0 4px 15px rgba(136, 19, 19, 0.4);
+}
+
+/* Ardoise — le bouton principal est en "craie appuyée" rose/rouge */
+html.theme-ardoise .wax-seal-btn {
+  background: rgba(232, 93, 111, 0.2);
+  border: 2.5px dashed rgba(232, 135, 154, 0.6);
+  box-shadow:
+    0 0 20px rgba(232, 93, 111, 0.15),
+    inset 0 0 15px rgba(0, 0, 0, 0.2);
+  color: var(--chalk-white);
+  font-family: "ChalkFont", "Fredericka the Great", cursive;
+  letter-spacing: 1.5px;
+  text-shadow:
+    0 0 2px rgba(245, 243, 238, 0.5),
+    0 0 8px rgba(232, 135, 154, 0.3);
+}
+
+html.theme-ardoise .wax-seal-btn:hover:not(:disabled) {
+  background: rgba(232, 93, 111, 0.3);
+  border-color: rgba(232, 135, 154, 0.85);
+  box-shadow:
+    0 0 25px rgba(232, 93, 111, 0.25),
+    0 0 8px rgba(232, 135, 154, 0.15),
+    inset 0 0 15px rgba(0, 0, 0, 0.2);
+  transform: translateY(-1px);
+}
+
+html.theme-ardoise .wax-seal-btn:active:not(:disabled) {
+  transform: translateY(1px) scale(0.98);
+  box-shadow:
+    0 0 10px rgba(232, 93, 111, 0.15),
+    inset 0 0 20px rgba(0, 0, 0, 0.3);
+}
+
+/* =========================================================================
+   BON DE COMMANDE (Waiter's Order Docket)
+   ========================================================================= */
+.waiter-docket {
+  position: relative;
+  background-color: var(--bg-surface);
+  border: 1px solid var(--border-main);
+  box-shadow: 0 12px 35px -5px rgba(0, 0, 0, 0.25);
+}
+
+.waiter-clip {
+  position: absolute;
+  top: -12px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 56px;
+  height: 18px;
+  background: linear-gradient(180deg, #D4AF37, #996515);
+  border-radius: 4px;
+  border: 1px solid #734F18;
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.35);
+  z-index: 25;
+}
+
+.waiter-clip::after {
+  content: "";
+  position: absolute;
+  top: 4px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 24px;
+  height: 2px;
+  background: #5C3D10;
+  border-radius: 1px;
+}
+
+html.theme-ardoise .waiter-docket {
+  background-color: transparent !important;
+  border: 2px dashed rgba(245, 243, 238, 0.2) !important;
+  box-shadow: inset 0 0 25px rgba(0, 0, 0, 0.3) !important;
+}
+
+html.theme-ardoise .waiter-clip {
+  background: linear-gradient(180deg, #7a5025, #4a2d12) !important;
+  border-color: #2a1a08 !important;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.6), inset 0 1px 1px rgba(255, 255, 255, 0.1) !important;
+}
+
+html.theme-ardoise .waiter-clip::after {
+  background: #1a0f04 !important;
+}
+
+/* =========================================================================
+   POINTS DE CONDUITE (Leader dots / brasserie dots)
+   ========================================================================= */
+.menu-leader-line {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 6px;
+  width: 100%;
+}
+
+.menu-leader-dots {
+  flex: 1;
+  border-bottom: 2px dotted var(--border-ornament);
+  opacity: 0.5;
+  margin: 0 6px 4px 6px;
+  min-width: 16px;
+}
+
+html.theme-ardoise .menu-leader-dots {
+  border-bottom: 2px dashed rgba(232, 212, 77, 0.3);
+  opacity: 0.7;
+}
+
+/* =========================================================================
+   SLIDER — Trait de craie / Règle
+   ========================================================================= */
 .slider-custom {
   -webkit-appearance: none;
   appearance: none;
@@ -272,265 +574,170 @@ html.theme-ardoise .bistro-card-frame:hover {
   border-color: var(--accent-red);
 }
 
+/* Ardoise — slider = trait de craie */
+html.theme-ardoise .slider-custom {
+  height: 3px;
+  background: rgba(245, 243, 238, 0.2);
+  border-radius: 0;
+  box-shadow: 0 0 4px rgba(245, 243, 238, 0.08);
+}
+
+html.theme-ardoise .slider-custom::-webkit-slider-thumb {
+  width: 20px;
+  height: 20px;
+  background: rgba(30, 37, 32, 0.9);
+  border: 2.5px solid var(--chalk-yellow);
+  box-shadow:
+    0 0 8px rgba(232, 212, 77, 0.3),
+    0 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+html.theme-ardoise .slider-custom::-moz-range-thumb {
+  width: 20px;
+  height: 20px;
+  background: rgba(30, 37, 32, 0.9);
+  border: 2.5px solid var(--chalk-yellow);
+  box-shadow:
+    0 0 8px rgba(232, 212, 77, 0.3),
+    0 2px 4px rgba(0, 0, 0, 0.5);
+}
+
 /* =========================================================================
-   COMPOSANTS RÉALISTES BRASSERIE & BISTROT
+   ÉCRITURE À LA CRAIE — Classes typographiques
    ========================================================================= */
 
-/* 1. Le Grand Dépliant de Menu (Mode Carte) ou Le Tableau Noir (Mode Ardoise) */
-html.theme-carte .bistro-grand-frame {
-  position: relative;
-  background-color: var(--bg-surface);
-  border: 8px solid #3A2213;
-  outline: 2px solid #C5A880;
-  border-radius: 1.5rem;
-  box-shadow: 0 25px 60px -10px rgba(58, 34, 19, 0.35), 0 0 0 1px rgba(0, 0, 0, 0.2);
-}
-
-html.theme-ardoise .bistro-grand-frame {
-  position: relative;
-  background-color: var(--bg-surface);
-  border: 10px solid #24160E;
-  outline: 1px solid rgba(217, 119, 6, 0.3);
-  border-radius: 1.5rem;
-  box-shadow: 0 25px 70px -10px rgba(0, 0, 0, 0.9), inset 0 0 25px rgba(0, 0, 0, 0.8);
-}
-
-/* Filet intérieur ouvragé de la grande carte */
-html.theme-carte .bistro-grand-frame::after {
-  content: "";
-  position: absolute;
-  inset: 8px;
-  border: 1px solid #D8C7B0;
-  border-radius: calc(1.5rem - 8px);
-  pointer-events: none;
-}
-
-html.theme-ardoise .bistro-grand-frame::after {
-  content: "";
-  position: absolute;
-  inset: 8px;
-  border: 1px dashed rgba(203, 213, 225, 0.2);
-  border-radius: calc(1.5rem - 8px);
-  pointer-events: none;
-}
-
-/* 2. Coins en Laiton Vénérable (Brass Corners) */
-.brass-corner-bracket {
-  position: absolute;
-  width: 28px;
-  height: 28px;
-  pointer-events: none;
-  z-index: 15;
-}
-
-html.theme-carte .brass-corner-bracket::before,
-html.theme-carte .brass-corner-bracket::after {
-  content: "";
-  position: absolute;
-  background: linear-gradient(135deg, #D4AF37, #AA771C);
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
-}
-
-html.theme-carte .brass-corner-tl { top: 6px; left: 6px; }
-html.theme-carte .brass-corner-tl::before { top: 0; left: 0; width: 22px; height: 3px; border-radius: 2px; }
-html.theme-carte .brass-corner-tl::after { top: 0; left: 0; width: 3px; height: 22px; border-radius: 2px; }
-
-html.theme-carte .brass-corner-tr { top: 6px; right: 6px; }
-html.theme-carte .brass-corner-tr::before { top: 0; right: 0; width: 22px; height: 3px; border-radius: 2px; }
-html.theme-carte .brass-corner-tr::after { top: 0; right: 0; width: 3px; height: 22px; border-radius: 2px; }
-
-html.theme-carte .brass-corner-bl { bottom: 6px; left: 6px; }
-html.theme-carte .brass-corner-bl::before { bottom: 0; left: 0; width: 22px; height: 3px; border-radius: 2px; }
-html.theme-carte .brass-corner-bl::after { bottom: 0; left: 0; width: 3px; height: 22px; border-radius: 2px; }
-
-html.theme-carte .brass-corner-br { bottom: 6px; right: 6px; }
-html.theme-carte .brass-corner-br::before { bottom: 0; right: 0; width: 22px; height: 3px; border-radius: 2px; }
-html.theme-carte .brass-corner-br::after { bottom: 0; right: 0; width: 3px; height: 22px; border-radius: 2px; }
-
-/* En mode ardoise : rivets/vis d'ardoise en cuivre vieilli */
-html.theme-ardoise .brass-corner-bracket {
-  width: 14px;
-  height: 14px;
-  border-radius: 50%;
-  background: radial-gradient(circle at 35% 35%, #FDE68A, #78350F);
-  box-shadow: 0 2px 5px rgba(0,0,0,0.7), inset 0 1px 1px rgba(255,255,255,0.4);
-}
-html.theme-ardoise .brass-corner-tl { top: 12px; left: 12px; }
-html.theme-ardoise .brass-corner-tr { top: 12px; right: 12px; }
-html.theme-ardoise .brass-corner-bl { bottom: 12px; left: 12px; }
-html.theme-ardoise .brass-corner-br { bottom: 12px; right: 12px; }
-
-/* 3. Cachet de Cire / Sceau Officiel 3D */
-.wax-seal-btn {
-  position: relative;
-  background: radial-gradient(circle at 35% 30%, #A81B1B, #700E0E);
-  color: #FFFFFF;
-  border: 2px solid #550808;
-  box-shadow: 
-    0 8px 25px rgba(136, 19, 19, 0.45), 
-    inset 0 2px 4px rgba(255, 255, 255, 0.35), 
-    inset 0 -2px 5px rgba(0, 0, 0, 0.5);
-  transition: all 0.25s cubic-bezier(0.25, 1, 0.5, 1);
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.6);
-}
-
-.wax-seal-btn:hover:not(:disabled) {
-  transform: translateY(-2px) scale(1.01);
-  box-shadow: 
-    0 12px 30px rgba(136, 19, 19, 0.55), 
-    inset 0 2px 5px rgba(255, 255, 255, 0.45), 
-    inset 0 -2px 6px rgba(0, 0, 0, 0.6);
-}
-
-.wax-seal-btn:active:not(:disabled) {
-  transform: translateY(1px) scale(0.99);
-  box-shadow: 0 4px 15px rgba(136, 19, 19, 0.4);
-}
-
-/* 4. Bon de Commande du Garçon (Waiter's Order Docket) */
-.waiter-docket {
-  position: relative;
-  background-color: var(--bg-surface);
-  border: 1px solid var(--border-main);
-  box-shadow: 0 12px 35px -5px rgba(0, 0, 0, 0.25);
-}
-
-/* Clip / Pince métallique dorée en haut du bon de commande */
-.waiter-clip {
-  position: absolute;
-  top: -12px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 56px;
-  height: 18px;
-  background: linear-gradient(180deg, #D4AF37, #996515);
-  border-radius: 4px;
-  border: 1px solid #734F18;
-  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.35);
-  z-index: 25;
-}
-
-.waiter-clip::after {
-  content: "";
-  position: absolute;
-  top: 4px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 24px;
-  height: 2px;
-  background: #5C3D10;
-  border-radius: 1px;
-}
-
-/* 5. Points de conduite classiques des cartes de brasserie (Leader dots) */
-.menu-leader-line {
-  display: flex;
-  align-items: baseline;
-  justify-content: space-between;
-  gap: 6px;
-  width: 100%;
-}
-
-.menu-leader-dots {
-  flex: 1;
-  border-bottom: 2px dotted var(--border-ornament);
-  opacity: 0.5;
-  margin: 0 6px 4px 6px;
-  min-width: 16px;
-}
-
-/* 6. Écriture à la craie pour le mode Ardoise */
+/* Titres en craie — texture poudreuse de Fredericka the Great */
 .chalk-font {
   font-family: var(--font-chalk);
 }
 
+/* Corps de texte en craie — écriture manuscrite Walter Turncoat */
+.chalk-body {
+  font-family: var(--font-chalk-body);
+}
+
+/* Sous-titres esquissés — Cabin Sketch */
 .chalk-sketch {
   font-family: var(--font-sketch);
   letter-spacing: 0.5px;
 }
 
+/* Écriture à la main — Patrick Hand */
 .chalk-hand {
   font-family: var(--font-hand);
   letter-spacing: 0.3px;
 }
 
+/* Labels/badges — Amatic SC (condensée, grande) */
+.chalk-label {
+  font-family: var(--font-chalk-label);
+  letter-spacing: 1px;
+  font-weight: 700;
+}
+
+/* En mode ardoise : le texte a un effet de poussière de craie */
 html.theme-ardoise .chalk-font {
   font-family: var(--font-chalk);
-  letter-spacing: 0.5px;
-  text-shadow: 0 0 1px rgba(255, 255, 255, 0.4), 0 0 6px var(--chalk-white-glow);
+  color: var(--chalk-white);
+  text-shadow:
+    0 0 1px rgba(245, 243, 238, 0.4),
+    0 0 3px rgba(245, 243, 238, 0.15),
+    1px 1px 2px rgba(0, 0, 0, 0.3);
 }
 
 html.theme-ardoise .chalk-sketch {
   font-family: var(--font-sketch);
   letter-spacing: 0.5px;
-  text-shadow: 0 0 1px rgba(255, 255, 255, 0.5), 0 0 8px var(--chalk-white-glow);
+  color: var(--chalk-white);
+  text-shadow:
+    0 0 1px rgba(245, 243, 238, 0.5),
+    0 0 4px rgba(245, 243, 238, 0.15);
 }
 
 html.theme-ardoise .chalk-hand {
   font-family: var(--font-hand);
   letter-spacing: 0.3px;
-  text-shadow: 0 0 1px rgba(255, 255, 255, 0.35);
+  color: var(--chalk-white);
+  text-shadow: 0 0 1px rgba(245, 243, 238, 0.3);
 }
 
-/* Couleurs de craies réalistes de bistrot */
+html.theme-ardoise .chalk-label {
+  font-family: var(--font-chalk-label);
+  letter-spacing: 2px;
+  font-weight: 700;
+  color: var(--chalk-white);
+  text-shadow:
+    0 0 1px rgba(245, 243, 238, 0.4),
+    0 0 3px rgba(245, 243, 238, 0.12);
+}
+
+/* Couleurs de craies spécifiques */
 html.theme-ardoise .chalk-white {
   color: var(--chalk-white) !important;
-  text-shadow: 0 0 1px rgba(255, 255, 255, 0.6), 0 0 6px var(--chalk-white-glow);
+  text-shadow:
+    0 0 1px rgba(245, 243, 238, 0.5),
+    0 0 4px var(--chalk-white-glow);
 }
 
 html.theme-ardoise .chalk-yellow {
   color: var(--chalk-yellow) !important;
-  text-shadow: 0 0 1px rgba(253, 224, 71, 0.7), 0 0 8px var(--chalk-yellow-glow);
+  text-shadow:
+    0 0 1px rgba(232, 212, 77, 0.6),
+    0 0 6px var(--chalk-yellow-glow);
 }
 
 html.theme-ardoise .chalk-coral {
   color: var(--chalk-coral) !important;
-  text-shadow: 0 0 1px rgba(251, 113, 133, 0.7), 0 0 8px var(--chalk-coral-glow);
+  text-shadow:
+    0 0 1px rgba(232, 135, 154, 0.6),
+    0 0 6px var(--chalk-coral-glow);
 }
 
 html.theme-ardoise .chalk-mint {
   color: var(--chalk-mint) !important;
-  text-shadow: 0 0 1px rgba(134, 239, 172, 0.7), 0 0 8px var(--chalk-mint-glow);
+  text-shadow:
+    0 0 1px rgba(125, 212, 160, 0.6),
+    0 0 6px var(--chalk-mint-glow);
 }
 
 html.theme-ardoise .chalk-blue {
   color: var(--chalk-blue) !important;
-  text-shadow: 0 0 1px rgba(147, 197, 253, 0.7), 0 0 8px var(--chalk-blue-glow);
+  text-shadow:
+    0 0 1px rgba(140, 184, 232, 0.6),
+    0 0 6px var(--chalk-blue-glow);
 }
 
 /* Cadres et filets craie */
 html.theme-ardoise .chalk-box {
-  border: 1.5px dashed rgba(255, 255, 255, 0.35);
-  box-shadow: inset 0 0 10px rgba(255, 255, 255, 0.03);
+  border: 1.5px dashed rgba(245, 243, 238, 0.25);
+  box-shadow: inset 0 0 12px rgba(0, 0, 0, 0.2);
 }
 
 html.theme-ardoise .chalk-divider {
   border: 0;
-  border-bottom: 2px dashed rgba(255, 255, 255, 0.25);
+  border-bottom: 2px dashed rgba(245, 243, 238, 0.18);
 }
 
-html.theme-ardoise .menu-leader-dots {
-  border-bottom: 2px dashed rgba(253, 224, 71, 0.4);
-  opacity: 0.7;
-}
-
-/* Bouton d'encoche de vote à la craie (Chalk Tally Button) */
+/* Boutons de vote à la craie */
 .chalk-tally-btn {
   transition: all 0.2s cubic-bezier(0.25, 1, 0.5, 1);
 }
 
 html.theme-ardoise .chalk-tally-btn {
-  background-color: rgba(255, 255, 255, 0.04);
-  border: 1.5px dashed rgba(255, 255, 255, 0.35);
-  color: #F8FAFC;
-  box-shadow: inset 0 0 8px rgba(0, 0, 0, 0.4);
+  background-color: transparent;
+  border: 2px dashed rgba(245, 243, 238, 0.22);
+  color: var(--chalk-white);
+  box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.2);
+  font-family: "Walter Turncoat", cursive;
 }
 
 html.theme-ardoise .chalk-tally-btn:hover:not(:disabled) {
-  background-color: rgba(255, 255, 255, 0.1);
-  border-color: rgba(255, 255, 255, 0.65);
+  background-color: rgba(245, 243, 238, 0.05);
+  border-color: rgba(245, 243, 238, 0.5);
   transform: translateY(-2px);
-  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.6), 0 0 8px rgba(255, 255, 255, 0.25);
+  box-shadow:
+    0 4px 12px rgba(0, 0, 0, 0.4),
+    0 0 8px rgba(245, 243, 238, 0.08);
 }
 
 html.theme-ardoise .chalk-tally-btn:active:not(:disabled) {
@@ -538,27 +745,40 @@ html.theme-ardoise .chalk-tally-btn:active:not(:disabled) {
 }
 
 html.theme-ardoise .chalk-tally-btn.active-choice-1 {
-  background-color: rgba(251, 113, 133, 0.25) !important;
-  border: 2px solid #FB7185 !important;
-  color: #FFFFFF !important;
-  box-shadow: 0 0 14px rgba(251, 113, 133, 0.5), inset 0 0 10px rgba(251, 113, 133, 0.2) !important;
+  background-color: rgba(232, 135, 154, 0.15) !important;
+  border: 2.5px solid rgba(232, 135, 154, 0.65) !important;
+  color: var(--chalk-white) !important;
+  box-shadow: 0 0 14px rgba(232, 135, 154, 0.2), inset 0 0 10px rgba(232, 135, 154, 0.08) !important;
 }
 
 html.theme-ardoise .chalk-tally-btn.active-choice-2 {
-  background-color: rgba(253, 224, 71, 0.22) !important;
-  border: 2px solid #FDE047 !important;
-  color: #FFFFFF !important;
-  box-shadow: 0 0 14px rgba(253, 224, 71, 0.45), inset 0 0 10px rgba(253, 224, 71, 0.2) !important;
+  background-color: rgba(232, 212, 77, 0.12) !important;
+  border: 2.5px solid rgba(232, 212, 77, 0.6) !important;
+  color: var(--chalk-white) !important;
+  box-shadow: 0 0 14px rgba(232, 212, 77, 0.18), inset 0 0 10px rgba(232, 212, 77, 0.08) !important;
 }
 
 html.theme-ardoise .chalk-tally-btn.active-choice-3 {
-  background-color: rgba(147, 197, 253, 0.22) !important;
-  border: 2px solid #93C5FD !important;
-  color: #FFFFFF !important;
-  box-shadow: 0 0 14px rgba(147, 197, 253, 0.45), inset 0 0 10px rgba(147, 197, 253, 0.2) !important;
+  background-color: rgba(140, 184, 232, 0.12) !important;
+  border: 2.5px solid rgba(140, 184, 232, 0.55) !important;
+  color: var(--chalk-white) !important;
+  box-shadow: 0 0 14px rgba(140, 184, 232, 0.18), inset 0 0 10px rgba(140, 184, 232, 0.08) !important;
 }
 
-/* Personnalisation popup Leaflet */
+/* =========================================================================
+   INTERACTIONS — Bouton générique
+   ========================================================================= */
+.btn-interaction {
+  transition: all 0.2s cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+.btn-interaction:active {
+  transform: scale(0.98);
+}
+
+/* =========================================================================
+   LEAFLET POPUP — personnalisation
+   ========================================================================= */
 html.theme-carte .leaflet-popup-content-wrapper {
   background: #FFFDF9;
   color: #1F1A15;
@@ -573,19 +793,28 @@ html.theme-carte .leaflet-popup-tip {
 }
 
 html.theme-ardoise .leaflet-popup-content-wrapper {
-  background: #181C24;
-  color: #F8FAFC;
-  border: 2px solid #D97706;
-  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.85);
-  border-radius: 1rem;
+  background: #1e2520;
+  color: var(--chalk-white);
+  border: 2px dashed rgba(245, 243, 238, 0.3);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.7);
+  border-radius: 4px;
+  font-family: "Walter Turncoat", cursive;
 }
 
 html.theme-ardoise .leaflet-popup-tip {
-  background: #202530;
-  border: 2px solid #363E4D;
+  background: #1e2520;
+  border: 1px dashed rgba(245, 243, 238, 0.2);
 }
 
-/* 7. Classes d'accent pour badges, votants et choix */
+.leaflet-popup-content {
+  margin: 0;
+  line-height: 1.4;
+  font-family: inherit;
+}
+
+/* =========================================================================
+   BADGES — Résultats & Votants
+   ========================================================================= */
 .badge-winner {
   background-color: var(--accent-red) !important;
   color: #ffffff !important;
@@ -618,176 +847,677 @@ html.theme-ardoise .leaflet-popup-tip {
   color: #ffffff !important;
 }
 
-.leaflet-popup-content {
-  margin: 0;
-  line-height: 1.4;
-  font-family: inherit;
+/* Ardoise badges — craie dessinée */
+html.theme-ardoise .badge-winner {
+  background-color: rgba(232, 93, 111, 0.2) !important;
+  border: 1.5px dashed rgba(232, 135, 154, 0.6) !important;
+  font-family: "Amatic SC", cursive !important;
+  font-weight: 700 !important;
+  font-size: 1.1em !important;
+  letter-spacing: 1px;
+}
+
+html.theme-ardoise .badge-voter-me {
+  background-color: rgba(232, 93, 111, 0.15) !important;
+  border: 1.5px dashed rgba(232, 135, 154, 0.5) !important;
+  font-family: "Walter Turncoat", cursive !important;
+}
+
+html.theme-ardoise .badge-voter-other {
+  background-color: transparent !important;
+  border: 1.5px dashed rgba(245, 243, 238, 0.2) !important;
+  font-family: "Walter Turncoat", cursive !important;
+}
+
+html.theme-ardoise .badge-choice-1 {
+  background-color: rgba(232, 135, 154, 0.2) !important;
+  color: var(--chalk-coral) !important;
+  border: 1.5px dashed rgba(232, 135, 154, 0.5) !important;
+  font-family: "Amatic SC", cursive !important;
+  font-weight: 700 !important;
+}
+
+html.theme-ardoise .badge-choice-2 {
+  background-color: rgba(232, 212, 77, 0.15) !important;
+  color: var(--chalk-yellow) !important;
+  border: 1.5px dashed rgba(232, 212, 77, 0.45) !important;
+  font-family: "Amatic SC", cursive !important;
+  font-weight: 700 !important;
+}
+
+html.theme-ardoise .badge-choice-3 {
+  background-color: rgba(140, 184, 232, 0.12) !important;
+  color: var(--chalk-blue) !important;
+  border: 1.5px dashed rgba(140, 184, 232, 0.4) !important;
+  font-family: "Amatic SC", cursive !important;
+  font-weight: 700 !important;
 }
 
 /* =========================================================================
-   8. COMPOSANTS SPÉCIFIQUES ARDOISE (Restaurant Card, Titres & Menus)
+   ARDOISE — Input fields = Tablette d'écolier
+   ========================================================================= */
+html.theme-ardoise input[type="text"],
+html.theme-ardoise input[type="search"],
+html.theme-ardoise input[type="email"],
+html.theme-ardoise textarea {
+  background-color: rgba(0, 0, 0, 0.15) !important;
+  border: none !important;
+  border-bottom: 2px dashed rgba(245, 243, 238, 0.3) !important;
+  border-radius: 0 !important;
+  color: var(--chalk-white) !important;
+  font-family: "Patrick Hand", "Walter Turncoat", cursive !important;
+  font-size: 1.2rem !important;
+  letter-spacing: 0.5px;
+  text-shadow: 0 0 1px rgba(245, 243, 238, 0.3);
+  caret-color: var(--chalk-yellow);
+}
+
+html.theme-ardoise input[type="text"]::placeholder,
+html.theme-ardoise input[type="search"]::placeholder,
+html.theme-ardoise input[type="email"]::placeholder,
+html.theme-ardoise textarea::placeholder {
+  color: rgba(148, 163, 184, 0.5) !important;
+  font-family: "Patrick Hand", "Walter Turncoat", cursive !important;
+  font-size: 1.1rem !important;
+}
+
+html.theme-ardoise input[type="text"]:focus,
+html.theme-ardoise input[type="search"]:focus,
+html.theme-ardoise input[type="email"]:focus,
+html.theme-ardoise textarea:focus {
+  border-bottom-color: rgba(232, 212, 77, 0.5) !important;
+  box-shadow: 0 2px 8px rgba(232, 212, 77, 0.1) !important;
+  outline: none !important;
+}
+
+/* =========================================================================
+   ARDOISE — Composants spécifiques Restaurant Card
    ========================================================================= */
 html.theme-ardoise .restaurant-title {
-  font-family: var(--font-sketch) !important;
+  font-family: "ChalkFont", "Fredericka the Great", cursive !important;
   letter-spacing: 1px;
-  color: #FFFFFF !important;
-  text-shadow: 0 0 1px rgba(255, 255, 255, 0.7), 0 0 8px rgba(255, 255, 255, 0.35);
+  color: var(--chalk-white) !important;
+  text-shadow:
+    0 0 1px rgba(245, 243, 238, 0.5),
+    0 0 4px rgba(245, 243, 238, 0.15),
+    1px 1px 2px rgba(0, 0, 0, 0.3);
 }
 
 html.theme-ardoise .restaurant-cuisine-tag {
-  background-color: rgba(134, 239, 172, 0.12) !important;
-  color: #86EFAC !important;
-  border: 1px dashed rgba(134, 239, 172, 0.45) !important;
-  font-family: var(--font-hand) !important;
-  text-shadow: 0 0 4px rgba(134, 239, 172, 0.3);
+  background-color: rgba(125, 212, 160, 0.08) !important;
+  color: var(--chalk-mint) !important;
+  border: 1.5px dashed rgba(125, 212, 160, 0.35) !important;
+  font-family: "Amatic SC", cursive !important;
+  font-weight: 700 !important;
+  font-size: 1rem !important;
+  letter-spacing: 1px;
+  text-shadow: 0 0 3px rgba(125, 212, 160, 0.2);
 }
 
 html.theme-ardoise .restaurant-badge-favorite {
-  background-color: rgba(251, 113, 133, 0.18) !important;
-  color: #FB7185 !important;
-  border: 1px dashed rgba(251, 113, 133, 0.5) !important;
-  font-family: var(--font-sketch) !important;
-  text-shadow: 0 0 4px rgba(251, 113, 133, 0.3);
+  background-color: rgba(232, 135, 154, 0.1) !important;
+  color: var(--chalk-coral) !important;
+  border: 1.5px dashed rgba(232, 135, 154, 0.4) !important;
+  font-family: "Amatic SC", cursive !important;
+  font-weight: 700 !important;
+  letter-spacing: 1px;
+  text-shadow: 0 0 3px rgba(232, 135, 154, 0.2);
 }
 
 html.theme-ardoise .restaurant-formula-box {
-  background-color: rgba(255, 255, 255, 0.03) !important;
-  border: 1px dashed rgba(255, 255, 255, 0.2) !important;
+  background-color: transparent !important;
+  border: 1.5px dashed rgba(245, 243, 238, 0.15) !important;
   transition: all 0.2s ease;
 }
 
 html.theme-ardoise .restaurant-formula-box:hover {
-  background-color: rgba(255, 255, 255, 0.06) !important;
-  border-color: rgba(253, 224, 71, 0.4) !important;
+  background-color: rgba(245, 243, 238, 0.03) !important;
+  border-color: rgba(232, 212, 77, 0.3) !important;
 }
 
 html.theme-ardoise .restaurant-formula-name {
-  font-family: var(--font-hand) !important;
+  font-family: "Walter Turncoat", cursive !important;
   font-size: 1.15rem !important;
-  color: #F8FAFC !important;
+  color: var(--chalk-white) !important;
   letter-spacing: 0.3px;
 }
 
 html.theme-ardoise .restaurant-price-tag {
-  color: #FDE047 !important;
-  font-family: var(--font-sketch) !important;
-  background-color: rgba(253, 224, 71, 0.12) !important;
-  border: 1px dashed rgba(253, 224, 71, 0.45) !important;
-  text-shadow: 0 0 6px rgba(253, 224, 71, 0.4);
+  color: var(--chalk-yellow) !important;
+  font-family: "ChalkFont", "Fredericka the Great", cursive !important;
+  background-color: rgba(232, 212, 77, 0.08) !important;
+  border: 1.5px dashed rgba(232, 212, 77, 0.35) !important;
+  text-shadow: 0 0 4px rgba(232, 212, 77, 0.25);
 }
 
 html.theme-ardoise .restaurant-rank-badge {
-  font-family: var(--font-sketch) !important;
+  font-family: "ChalkFont", "Fredericka the Great", cursive !important;
   letter-spacing: 0.5px;
-  border: 1.5px dashed rgba(255, 255, 255, 0.5) !important;
+  border: 1.5px dashed rgba(245, 243, 238, 0.35) !important;
 }
 
 /* =========================================================================
-   9. COMPOSANTS SPÉCIFIQUES VOTE & BON DE COMMANDE
+   ARDOISE — Composants Vote & Bon de Commande
    ========================================================================= */
 html.theme-ardoise .voting-address-title {
-  font-family: var(--font-sketch) !important;
-  color: #FFFFFF !important;
-  text-shadow: 0 0 1px rgba(255, 255, 255, 0.7), 0 0 8px rgba(255, 255, 255, 0.35);
+  font-family: "ChalkFont", "Fredericka the Great", cursive !important;
+  color: var(--chalk-white) !important;
+  text-shadow:
+    0 0 1px rgba(245, 243, 238, 0.5),
+    0 0 5px rgba(245, 243, 238, 0.15),
+    1px 1px 2px rgba(0, 0, 0, 0.3);
 }
 
 html.theme-ardoise .voting-section-title {
-  font-family: var(--font-sketch) !important;
-  color: #FFFFFF !important;
+  font-family: "ChalkFont", "Fredericka the Great", cursive !important;
+  color: var(--chalk-white) !important;
   letter-spacing: 1px;
-  text-shadow: 0 0 1px rgba(255, 255, 255, 0.7), 0 0 8px rgba(255, 255, 255, 0.35);
-}
-
-html.theme-ardoise .waiter-docket {
-  background-color: #12161E !important;
-  border: 5px solid #28190E !important;
-  outline: 1px solid rgba(217, 119, 6, 0.35) !important;
-  box-shadow: 0 20px 45px -5px rgba(0, 0, 0, 0.85), inset 0 0 20px rgba(0, 0, 0, 0.9) !important;
-}
-
-html.theme-ardoise .waiter-clip {
-  background: linear-gradient(180deg, #B45309, #78350F) !important;
-  border-color: #451A03 !important;
-  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.6) !important;
-}
-
-html.theme-ardoise .waiter-clip::after {
-  background: #271103 !important;
+  text-shadow:
+    0 0 1px rgba(245, 243, 238, 0.5),
+    0 0 5px rgba(245, 243, 238, 0.15),
+    1px 1px 2px rgba(0, 0, 0, 0.3);
 }
 
 /* =========================================================================
-   10. COMPOSANTS SPÉCIFIQUES RÉSULTATS & RÉSERVATION
+   ARDOISE — Composants Résultats & Réservation
    ========================================================================= */
 html.theme-ardoise .results-reservation-title {
-  font-family: var(--font-sketch) !important;
-  color: #FDE047 !important;
-  text-shadow: 0 0 1px rgba(253, 224, 71, 0.7), 0 0 8px rgba(253, 224, 71, 0.35);
+  font-family: "ChalkFont", "Fredericka the Great", cursive !important;
+  color: var(--chalk-yellow) !important;
+  text-shadow:
+    0 0 1px rgba(232, 212, 77, 0.6),
+    0 0 6px rgba(232, 212, 77, 0.25);
   letter-spacing: 0.5px;
 }
 
 html.theme-ardoise .results-table-badge {
-  background-color: rgba(253, 224, 71, 0.1) !important;
-  border: 1.5px dashed rgba(253, 224, 71, 0.45) !important;
-  color: #FDE047 !important;
-  font-family: var(--font-sketch) !important;
+  background-color: rgba(232, 212, 77, 0.08) !important;
+  border: 1.5px dashed rgba(232, 212, 77, 0.35) !important;
+  color: var(--chalk-yellow) !important;
+  font-family: "Amatic SC", cursive !important;
+  font-weight: 700 !important;
+  letter-spacing: 1px;
 }
 
 html.theme-ardoise .results-winner-title {
-  font-family: var(--font-sketch) !important;
-  color: #FFFFFF !important;
-  text-shadow: 0 0 1px rgba(255, 255, 255, 0.8), 0 0 12px rgba(255, 255, 255, 0.4);
+  font-family: "ChalkFont", "Fredericka the Great", cursive !important;
+  color: var(--chalk-white) !important;
+  text-shadow:
+    0 0 2px rgba(245, 243, 238, 0.6),
+    0 0 8px rgba(245, 243, 238, 0.2),
+    1px 1px 3px rgba(0, 0, 0, 0.4);
   letter-spacing: 1px;
 }
 
 html.theme-ardoise .results-winner-points {
-  font-family: var(--font-sketch) !important;
-  color: #FDE047 !important;
-  text-shadow: 0 0 1px rgba(253, 224, 71, 0.7), 0 0 12px rgba(253, 224, 71, 0.4);
+  font-family: "ChalkFont", "Fredericka the Great", cursive !important;
+  color: var(--chalk-yellow) !important;
+  text-shadow:
+    0 0 2px rgba(232, 212, 77, 0.6),
+    0 0 8px rgba(232, 212, 77, 0.25);
 }
 
 html.theme-ardoise .results-ranking-title {
-  font-family: var(--font-sketch) !important;
-  color: #FFFFFF !important;
+  font-family: "ChalkFont", "Fredericka the Great", cursive !important;
+  color: var(--chalk-white) !important;
   letter-spacing: 1px;
-  text-shadow: 0 0 1px rgba(255, 255, 255, 0.7), 0 0 8px rgba(255, 255, 255, 0.35);
+  text-shadow:
+    0 0 1px rgba(245, 243, 238, 0.5),
+    0 0 5px rgba(245, 243, 238, 0.15);
 }
 
 html.theme-ardoise .results-rank-badge {
-  font-family: var(--font-sketch) !important;
-  border: 1.5px dashed rgba(255, 255, 255, 0.4) !important;
+  font-family: "ChalkFont", "Fredericka the Great", cursive !important;
+  border: 1.5px dashed rgba(245, 243, 238, 0.3) !important;
 }
 
 html.theme-ardoise .results-ranking-name {
-  font-family: var(--font-sketch) !important;
-  color: #F8FAFC !important;
+  font-family: "Walter Turncoat", cursive !important;
+  color: var(--chalk-white) !important;
   letter-spacing: 0.5px;
-  text-shadow: 0 0 1px rgba(255, 255, 255, 0.5);
+  text-shadow: 0 0 1px rgba(245, 243, 238, 0.3);
 }
 
 html.theme-ardoise .results-ranking-points {
-  font-family: var(--font-sketch) !important;
-  color: #FDE047 !important;
-  text-shadow: 0 0 1px rgba(253, 224, 71, 0.6);
+  font-family: "ChalkFont", "Fredericka the Great", cursive !important;
+  color: var(--chalk-yellow) !important;
+  text-shadow: 0 0 2px rgba(232, 212, 77, 0.4);
 }
 
+/* =========================================================================
+   ARDOISE — App chrome (Header, Logo, Footer)
+   ========================================================================= */
 html.theme-ardoise .app-logo-title {
-  font-family: var(--font-sketch) !important;
-  letter-spacing: 1.5px;
-  color: #FFFFFF !important;
-  text-shadow: 0 0 1px rgba(255, 255, 255, 0.8), 0 0 8px rgba(255, 255, 255, 0.4);
+  font-family: "ChalkFont", "Fredericka the Great", cursive !important;
+  letter-spacing: 2px;
+  color: var(--chalk-white) !important;
+  text-shadow:
+    0 0 2px rgba(245, 243, 238, 0.5),
+    0 0 6px rgba(245, 243, 238, 0.2),
+    1px 1px 2px rgba(0, 0, 0, 0.4);
 }
 
 html.theme-ardoise .create-hero-title {
-  font-family: var(--font-sketch) !important;
-  letter-spacing: 1px;
-  color: #FFFFFF !important;
-  text-shadow: 0 0 1px rgba(255, 255, 255, 0.8), 0 0 12px rgba(255, 255, 255, 0.35);
+  font-family: "ChalkFont", "Fredericka the Great", cursive !important;
+  letter-spacing: 2px;
+  color: var(--chalk-white) !important;
+  text-shadow:
+    0 0 2px rgba(245, 243, 238, 0.6),
+    0 0 10px rgba(245, 243, 238, 0.25),
+    2px 2px 4px rgba(0, 0, 0, 0.5);
 }
 
+/* =========================================================================
+   ARDOISE — Tilts & imperfections (casser l'alignement numérique)
+   ========================================================================= */
+html.theme-ardoise .chalk-tilt-1 { transform: rotate(-0.5deg); }
+html.theme-ardoise .chalk-tilt-2 { transform: rotate(0.7deg); }
+html.theme-ardoise .chalk-tilt-3 { transform: rotate(-0.3deg); }
 
+/* Ornements de craie — séparateurs et décorations */
+html.theme-ardoise .chalk-ornament::before {
+  content: "✦ ─ ─ ─ ✦ ─ ─ ─ ✦";
+  display: block;
+  text-align: center;
+  color: var(--chalk-yellow);
+  font-size: 0.8rem;
+  letter-spacing: 4px;
+  opacity: 0.5;
+  text-shadow: 0 0 3px rgba(232, 212, 77, 0.3);
+}
 
+/* =========================================================================
+   ARDOISE — Header & Footer overrides
+   ========================================================================= */
+html.theme-ardoise header {
+  border-bottom: 2px dashed rgba(245, 243, 238, 0.12) !important;
+}
 
+html.theme-ardoise footer {
+  border-top: 2px dashed rgba(245, 243, 238, 0.12) !important;
+  font-family: "Walter Turncoat", cursive;
+}
 
+/* =========================================================================
+   ARDOISE — Overrides globaux pour tout le texte
+   ========================================================================= */
 
+/* Tous les éléments de type serif dans le thème ardoise → craie */
+html.theme-ardoise .font-serif {
+  font-family: "Walter Turncoat", cursive !important;
+}
 
+/* Les titres display → ChalkFont */
+html.theme-ardoise .font-display {
+  font-family: "ChalkFont", "Fredericka the Great", cursive !important;
+}
 
+/* Les textes en font-sans restent en Walter Turncoat pour cohérence */
+html.theme-ardoise .font-sans {
+  font-family: "Walter Turncoat", cursive !important;
+}
+
+/* Sections info/instructions en mode ardoise */
+html.theme-ardoise [class*="bg-[var(--bg-surface-subtle)]"],
+html.theme-ardoise [class*="bg-[var(--bg-surface-inset)]"] {
+  background-color: rgba(0, 0, 0, 0.15) !important;
+  border-color: rgba(245, 243, 238, 0.12) !important;
+}
+
+/* Boutons génériques en mode ardoise */
+html.theme-ardoise button {
+  font-family: "Walter Turncoat", cursive;
+}
+
+/* Fix : les petits labels uppercase restent en Amatic SC */
+html.theme-ardoise .tracking-widest,
+html.theme-ardoise .tracking-wider {
+  font-family: "Amatic SC", cursive !important;
+  font-weight: 700 !important;
+  letter-spacing: 2px !important;
+}
+
+/* =========================================================================
+   ARDOISE — Select dropdown styling
+   ========================================================================= */
+html.theme-ardoise select {
+  background-color: rgba(0, 0, 0, 0.2) !important;
+  border: 1.5px dashed rgba(245, 243, 238, 0.2) !important;
+  border-radius: 4px !important;
+  color: var(--chalk-white) !important;
+  font-family: "Walter Turncoat", cursive !important;
+}
+
+html.theme-ardoise select:focus {
+  border-color: rgba(232, 212, 77, 0.5) !important;
+  outline: none !important;
+}
+
+html.theme-ardoise select option {
+  background-color: #1e2520;
+  color: #f5f3ee;
+}
+
+/* =========================================================================
+   ARDOISE — Rounds corners override (l'ardoise n'est pas ronde)
+   ========================================================================= */
+html.theme-ardoise .rounded-3xl {
+  border-radius: 6px !important;
+}
+
+html.theme-ardoise .rounded-2xl {
+  border-radius: 4px !important;
+}
+
+html.theme-ardoise .rounded-xl {
+  border-radius: 3px !important;
+}
+
+html.theme-ardoise .rounded-lg {
+  border-radius: 3px !important;
+}
+
+html.theme-ardoise .rounded-full {
+  /* Keep rounded-full for circles/pills */
+}
+
+/* =========================================================================
+   ARDOISE — Chalk dust smudge decoration on the grand frame
+   ========================================================================= */
+html.theme-ardoise .bistro-grand-frame::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    /* Chalk dust smudge top-left */
+    radial-gradient(ellipse at 15% 10%, rgba(245, 243, 238, 0.03) 0%, transparent 50%),
+    /* Chalk dust smudge center */
+    radial-gradient(ellipse at 60% 45%, rgba(245, 243, 238, 0.02) 0%, transparent 40%),
+    /* Chalk dust smudge bottom-right */
+    radial-gradient(ellipse at 80% 85%, rgba(245, 243, 238, 0.025) 0%, transparent 45%);
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* =========================================================================
+   ARDOISE — Theme toggle buttons styling
+   ========================================================================= */
+html.theme-ardoise .shadow-inner {
+  box-shadow: inset 0 0 8px rgba(0, 0, 0, 0.3) !important;
+}
+
+html.theme-ardoise .shadow-xs,
+html.theme-ardoise .shadow-sm,
+html.theme-ardoise .shadow-md {
+  box-shadow: 0 0 8px rgba(0, 0, 0, 0.3) !important;
+}
+
+/* =========================================================================
+   ARDOISE — Chalk line separator between sections
+   ========================================================================= */
+html.theme-ardoise .border-t {
+  border-top: 2px dashed rgba(245, 243, 238, 0.12) !important;
+}
+
+html.theme-ardoise .border-b {
+  border-bottom: 2px dashed rgba(245, 243, 238, 0.12) !important;
+}
+
+/* =========================================================================
+   ARDOISE — Backdrop blur reduced (ardoise is opaque)
+   ========================================================================= */
+html.theme-ardoise .backdrop-blur-md {
+  backdrop-filter: blur(4px) !important;
+  -webkit-backdrop-filter: blur(4px) !important;
+}
+
+/* =========================================================================
+   ARDOISE — Additional chalk decoration utilities
+   ========================================================================= */
+
+/* Chalk underline effect */
+html.theme-ardoise .chalk-underline {
+  text-decoration: none;
+  background-image: linear-gradient(
+    to right,
+    rgba(245, 243, 238, 0.3) 0%,
+    rgba(245, 243, 238, 0.15) 30%,
+    rgba(245, 243, 238, 0.35) 60%,
+    rgba(245, 243, 238, 0.1) 100%
+  );
+  background-position: 0 1.15em;
+  background-repeat: no-repeat;
+  background-size: 100% 2px;
+}
+
+/* Chalk highlight (like circled text) */
+html.theme-ardoise .chalk-highlight {
+  position: relative;
+}
+
+html.theme-ardoise .chalk-highlight::after {
+  content: "";
+  position: absolute;
+  inset: -4px -8px;
+  border: 2px dashed rgba(232, 212, 77, 0.4);
+  border-radius: 50% / 40%;
+  pointer-events: none;
+  transform: rotate(-1deg);
+}
+
+/* =========================================================================
+   ARDOISE — Corniche Porte-Craie & Éponge (Chalk Ledge)
+   ========================================================================= */
+.chalk-ledge-container {
+  display: none;
+}
+
+html.theme-ardoise .chalk-ledge-container {
+  display: block;
+  position: absolute;
+  left: -14px;
+  right: -14px;
+  bottom: -28px;
+  height: 28px;
+  background: linear-gradient(180deg, #744620 0%, #4d2e13 40%, #221306 100%);
+  border-top: 2.5px solid #996437;
+  border-bottom: 3.5px solid #100803;
+  box-shadow:
+    0 12px 24px rgba(0, 0, 0, 0.8),
+    inset 0 1px 2px rgba(255, 255, 255, 0.3);
+  z-index: 25;
+  pointer-events: none;
+}
+
+/* Rainure creusée pour retenir les craies */
+html.theme-ardoise .chalk-ledge-groove {
+  position: absolute;
+  top: 3px;
+  left: 16px;
+  right: 16px;
+  height: 8px;
+  background: rgba(0, 0, 0, 0.6);
+  border-radius: 4px;
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.95), 0 1px 0 rgba(255, 255, 255, 0.12);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 16px;
+}
+
+/* Bâtons de craie posés */
+.chalk-stick {
+  display: inline-block;
+  height: 10px;
+  border-radius: 3px 5px 5px 3px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.75);
+}
+
+.chalk-stick-white {
+  width: 52px;
+  background: linear-gradient(180deg, #ffffff 0%, #ece9e2 60%, #c4bfb4 100%);
+  transform: rotate(-1.5deg);
+}
+
+.chalk-stick-yellow {
+  width: 42px;
+  background: linear-gradient(180deg, #fef08a 0%, #eab308 60%, #a16207 100%);
+  transform: rotate(2deg);
+}
+
+.chalk-stick-coral {
+  width: 36px;
+  background: linear-gradient(180deg, #fca5a5 0%, #f43f5e 60%, #9f1239 100%);
+  transform: rotate(-2deg);
+}
+
+/* Effaceur en bois & feutre */
+.chalk-eraser {
+  display: inline-block;
+  width: 64px;
+  height: 16px;
+  background: linear-gradient(180deg, #85532b 0%, #593519 50%, #22150a 52%, #141211 100%);
+  border-radius: 2px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.85), inset 0 1px 1px rgba(255, 255, 255, 0.25);
+  transform: rotate(1deg);
+  position: relative;
+}
+
+.chalk-eraser::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 2px;
+  right: 2px;
+  height: 6px;
+  background: repeating-linear-gradient(
+    90deg,
+    #181818 0px,
+    #181818 3px,
+    rgba(245, 243, 238, 0.45) 3px,
+    rgba(245, 243, 238, 0.45) 6px
+  );
+  border-radius: 0 0 2px 2px;
+}
+
+/* Punaise / Clou en haut des cartes étapes en mode ardoise */
+.chalk-step-pin {
+  display: none;
+}
+
+html.theme-ardoise .chalk-step-pin {
+  display: block;
+  position: absolute;
+  top: -9px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 35%, #fef08a, #ca8a04 60%, #451a03);
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.8), inset 0 1px 1px rgba(255, 255, 255, 0.4);
+  z-index: 10;
+}
+
+/* =========================================================================
+   ARDOISE — Suspension à Corde & Pitons forgés
+   ========================================================================= */
+.chalk-suspension-container {
+  display: none;
+}
+
+html.theme-ardoise .chalk-suspension-container {
+  display: block;
+  position: absolute;
+  top: -36px;
+  left: 0;
+  right: 0;
+  height: 40px;
+  pointer-events: none;
+  z-index: 5;
+}
+
+/* Anneaux forgés */
+.chalk-ring-left {
+  position: absolute;
+  top: 14px;
+  left: 15%;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  border: 3.5px solid #281a10;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.8), inset 0 1px 1px rgba(255, 255, 255, 0.2);
+  background: radial-gradient(circle at 30% 30%, #5c3c20, #1a0f07);
+}
+
+.chalk-ring-right {
+  position: absolute;
+  top: 14px;
+  right: 15%;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  border: 3.5px solid #281a10;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.8), inset 0 1px 1px rgba(255, 255, 255, 0.2);
+  background: radial-gradient(circle at 30% 30%, #5c3c20, #1a0f07);
+}
+
+/* Cordes qui convergent vers le clou central */
+.chalk-rope-left {
+  position: absolute;
+  top: -6px;
+  left: calc(15% + 8px);
+  width: calc(35% - 8px);
+  height: 22px;
+  border-bottom: 4px solid #8b6b41;
+  border-left: 2px solid transparent;
+  border-radius: 0 0 0 16px;
+  filter: drop-shadow(0 3px 3px rgba(0, 0, 0, 0.6));
+}
+
+.chalk-rope-right {
+  position: absolute;
+  top: -6px;
+  right: calc(15% + 8px);
+  width: calc(35% - 8px);
+  height: 22px;
+  border-bottom: 4px solid #8b6b41;
+  border-right: 2px solid transparent;
+  border-radius: 0 0 16px 0;
+  filter: drop-shadow(0 3px 3px rgba(0, 0, 0, 0.6));
+}
+
+.chalk-nail-top {
+  position: absolute;
+  top: -12px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 35%, #947146, #3b2512 60%, #1a0f07);
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.8), inset 0 1px 1px rgba(255, 255, 255, 0.3);
+}
+
+/* =========================================================================
+   ARDOISE — Illustrations et croquis à la craie
+   ========================================================================= */
+.chalk-doodle {
+  opacity: 0.85;
+  filter: drop-shadow(0 0 2px rgba(245, 243, 238, 0.3));
+}
+
+html.theme-ardoise .chalk-doodle path,
+html.theme-ardoise .chalk-doodle circle,
+html.theme-ardoise .chalk-doodle line {
+  stroke-dasharray: 6 1;
+}
+
+/* Bâtons de vote à la craie (Tally marks 卌) */
+.chalk-tally-container {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  font-family: monospace;
+  letter-spacing: 2px;
+}

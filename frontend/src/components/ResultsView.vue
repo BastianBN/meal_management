@@ -141,13 +141,36 @@ onMounted(() => {
     <!-- Le restaurant en tête (« Restaurant le plus voté ») -->
     <div 
       v-if="winner && winner.points > 0"
-      class="bistro-grand-frame rounded-3xl p-6 sm:p-10 relative overflow-hidden shadow-2xl"
+      class="bistro-grand-frame rounded-3xl p-6 sm:p-10 relative shadow-2xl"
     >
+      <!-- Suspension à corde et anneaux en fonte (Ardoise) -->
+      <div class="chalk-suspension-container">
+        <div class="chalk-nail-top"></div>
+        <div class="chalk-rope-left"></div>
+        <div class="chalk-rope-right"></div>
+        <div class="chalk-ring-left"></div>
+        <div class="chalk-ring-right"></div>
+      </div>
+
       <!-- 4 Coins Laiton Vénérable -->
       <div class="brass-corner-bracket brass-corner-tl"></div>
       <div class="brass-corner-bracket brass-corner-tr"></div>
       <div class="brass-corner-bracket brass-corner-bl"></div>
       <div class="brass-corner-bracket brass-corner-br"></div>
+
+      <!-- Rebord porte-craie en bois avec craies et effaceur (Ardoise) -->
+      <div class="chalk-ledge-container">
+        <div class="chalk-ledge-groove">
+          <div class="flex items-center gap-2">
+            <span class="chalk-stick chalk-stick-white" title="Craie blanche"></span>
+            <span class="chalk-stick chalk-stick-yellow" title="Craie jaune bistrot"></span>
+            <span class="chalk-stick chalk-stick-coral" title="Craie rouge"></span>
+          </div>
+          <div class="flex items-center gap-2">
+            <span class="chalk-eraser" title="Effaceur de bistrot"></span>
+          </div>
+        </div>
+      </div>
 
       <div class="relative z-10">
         <!-- Ruban de 1ère place -->

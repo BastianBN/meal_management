@@ -81,11 +81,34 @@ async function handleCreateSession() {
 
     <!-- Le Grand Registre / Livre d'Accueil Déployé (Cadre Brasserie Grand Format) -->
     <div class="bistro-grand-frame rounded-3xl p-6 sm:p-10 relative">
+      <!-- Suspension à corde et anneaux en fonte (Ardoise) -->
+      <div class="chalk-suspension-container">
+        <div class="chalk-nail-top"></div>
+        <div class="chalk-rope-left"></div>
+        <div class="chalk-rope-right"></div>
+        <div class="chalk-ring-left"></div>
+        <div class="chalk-ring-right"></div>
+      </div>
+
       <!-- 4 Coins en Laiton Vénérable -->
       <div class="brass-corner-bracket brass-corner-tl"></div>
       <div class="brass-corner-bracket brass-corner-tr"></div>
       <div class="brass-corner-bracket brass-corner-bl"></div>
       <div class="brass-corner-bracket brass-corner-br"></div>
+
+      <!-- Rebord porte-craie en bois avec craies et effaceur (Ardoise) -->
+      <div class="chalk-ledge-container">
+        <div class="chalk-ledge-groove">
+          <div class="flex items-center gap-2">
+            <span class="chalk-stick chalk-stick-white" title="Craie blanche"></span>
+            <span class="chalk-stick chalk-stick-yellow" title="Craie jaune bistrot"></span>
+            <span class="chalk-stick chalk-stick-coral" title="Craie rouge"></span>
+          </div>
+          <div class="flex items-center gap-2">
+            <span class="chalk-eraser" title="Effaceur de bistrot"></span>
+          </div>
+        </div>
+      </div>
 
       <form @submit.prevent="handleCreateSession" class="relative z-10">
         <!-- Grille en 2 volets ouverts (Façon Livre d'Or de Brasserie) -->
@@ -248,6 +271,10 @@ async function handleCreateSession() {
 
             <!-- Bouton de Création -->
             <div class="pt-2">
+              <div class="flex items-center justify-between text-xs sm:text-sm text-[var(--chalk-yellow)] mb-1 px-1 font-chalk opacity-90">
+                <span class="tracking-wider">~ Service express ~</span>
+                <span class="tracking-wider">☞ Prêt à voter</span>
+              </div>
               <button
                 type="submit"
                 :disabled="isLoading"
@@ -269,18 +296,24 @@ async function handleCreateSession() {
     </div>
 
     <!-- Les 3 étapes -->
-    <div class="mt-12 grid grid-cols-1 sm:grid-cols-3 gap-5 text-center">
-      <div class="bistro-card-frame p-5 sm:p-6 rounded-2xl shadow-xs">
-        <span class="block font-serif text-base sm:text-lg font-bold text-[var(--accent-brass)] uppercase tracking-wider mb-1.5">1. Invitez vos collègues</span>
-        <p class="text-sm sm:text-base text-[var(--text-muted)] font-serif">Partagez simplement le lien de la session avec votre équipe.</p>
+    <div class="mt-14 grid grid-cols-1 sm:grid-cols-3 gap-6 text-center">
+      <div class="bistro-card-frame chalk-tilt-1 p-6 rounded-2xl shadow-xs relative">
+        <div class="chalk-step-pin"></div>
+        <div class="text-3xl mb-2 select-none">💬</div>
+        <span class="block font-serif text-base sm:text-lg font-bold text-[var(--accent-brass)] uppercase tracking-wider mb-2">1. Invitez vos collègues</span>
+        <p class="text-sm sm:text-base text-[var(--text-muted)] font-serif leading-relaxed">Partagez simplement le lien de la session avec votre équipe ou vos amis.</p>
       </div>
-      <div class="bistro-card-frame p-5 sm:p-6 rounded-2xl shadow-xs">
-        <span class="block font-serif text-base sm:text-lg font-bold text-[var(--accent-brass)] uppercase tracking-wider mb-1.5">2. Votez pour vos favoris</span>
-        <p class="text-sm sm:text-base text-[var(--text-muted)] font-serif">Consultez les menus et attribuez vos 3 choix (3, 2 et 1 pt).</p>
+      <div class="bistro-card-frame chalk-tilt-2 p-6 rounded-2xl shadow-xs relative">
+        <div class="chalk-step-pin"></div>
+        <div class="text-3xl mb-2 select-none">✍️ <span class="font-chalk text-xl tracking-widest text-[var(--chalk-yellow)]">卌 |</span></div>
+        <span class="block font-serif text-base sm:text-lg font-bold text-[var(--accent-brass)] uppercase tracking-wider mb-2">2. Votez pour vos favoris</span>
+        <p class="text-sm sm:text-base text-[var(--text-muted)] font-serif leading-relaxed">Consultez les menus et attribuez vos 3 choix (3, 2 et 1 pt) à la craie.</p>
       </div>
-      <div class="bistro-card-frame p-5 sm:p-6 rounded-2xl shadow-xs">
-        <span class="block font-serif text-base sm:text-lg font-bold text-[var(--accent-brass)] uppercase tracking-wider mb-1.5">3. Réservez la table</span>
-        <p class="text-sm sm:text-base text-[var(--text-muted)] font-serif">Visualisez le restaurant gagnant et le nombre exact de personnes pour réserver.</p>
+      <div class="bistro-card-frame chalk-tilt-3 p-6 rounded-2xl shadow-xs relative">
+        <div class="chalk-step-pin"></div>
+        <div class="text-3xl mb-2 select-none">🛎️</div>
+        <span class="block font-serif text-base sm:text-lg font-bold text-[var(--accent-brass)] uppercase tracking-wider mb-2">3. Réservez la table</span>
+        <p class="text-sm sm:text-base text-[var(--text-muted)] font-serif leading-relaxed">Visualisez le restaurant gagnant et le nombre exact de convives pour réserver.</p>
       </div>
     </div>
   </div>
