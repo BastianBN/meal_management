@@ -1,7 +1,7 @@
 <script setup>
 import { ref, computed, onMounted } from 'vue';
 
-import { Trophy, Footprints, ExternalLink, Users, MapPin, Map as MapIcon, List, CheckCircle2, Lock, Star } from 'lucide-vue-next';
+import { Trophy, Footprints, ExternalLink, Users, MapPin, Map as MapIcon, List, CheckCircle2, Lock, Star, Phone, Dices, Sparkles, X, AlertTriangle } from 'lucide-vue-next';
 import RestaurantsMap from './RestaurantsMap.vue';
 
 
@@ -23,10 +23,64 @@ const props = defineProps({
 const showMap = ref(false); // Carte masquée par défaut pour mettre le classement en plein écran
 const myChoices = ref(null);
 
+// Roulette / Tirage express Top 3
+const showTopDeciderModal = ref(false);
+const isDeciderRolling = ref(false);
+const deciderPick = ref(null);
+let deciderTimer = null;
+
 const rankings = computed(() => props.leaderboard?.rankings || []);
 const totalVoters = computed(() => props.leaderboard?.total_voters || 0);
 const voters = computed(() => props.leaderboard?.voters || []);
 const winner = computed(() => rankings.value.length > 0 ? rankings.value[0] : null);
+
+const winnerDetails = computed(() => {
+  if (!winner.value) return null;
+  const original = (props.session?.restaurants || []).find(r => r.id === winner.value.restaurant_id) || {};
+  return {
+    ...winner.value,
+    dietary_tags: winner.value.dietary_tags || original.dietary_tags || [],
+    allergen_info: winner.value.allergen_info || original.allergen_info,
+    price_level: winner.value.price_level || original.price_level || 2,
+    phone: winner.value.phone || original.phone,
+  };
+});
+
+function getDietaryBadges(tags) {
+  const map = {
+    vegetarian: { label: 'Végétarien', icon: '🌿', class: 'bg-emerald-600 text-white shadow-sm border-emerald-700 dark:bg-emerald-500 dark:text-white dark:border-emerald-600 font-medium' },
+    vegan: { label: 'Végan', icon: '🌱', class: 'bg-green-500/15 text-green-800 dark:text-green-300 border-green-500/30' },
+    gluten_free: { label: 'Sans gluten', icon: '🌾', class: 'bg-amber-500/15 text-amber-800 dark:text-amber-300 border-amber-500/30' },
+    halal: { label: 'Halal', icon: '☪️', class: 'bg-teal-500/15 text-teal-800 dark:text-teal-300 border-teal-500/30' },
+  };
+  return (tags || []).filter(t => map[t]).map(t => map[t]);
+}
+
+function openTopDecider() {
+  const topList = rankings.value.slice(0, 3);
+  if (topList.length === 0) return;
+  showTopDeciderModal.value = true;
+  triggerDecider();
+}
+
+function triggerDecider() {
+  const topList = rankings.value.slice(0, 3);
+  if (topList.length === 0) return;
+  isDeciderRolling.value = true;
+  let counter = 0;
+  const maxIterations = 14;
+  if (deciderTimer) clearInterval(deciderTimer);
+
+  deciderTimer = setInterval(() => {
+    counter++;
+    const randomIdx = Math.floor(Math.random() * topList.length);
+    deciderPick.value = topList[randomIdx];
+    if (counter >= maxIterations) {
+      clearInterval(deciderTimer);
+      isDeciderRolling.value = false;
+    }
+  }, 85);
+}
 
 // Associer les coordonnées des restaurants pour la carte
 const restaurantsWithCoords = computed(() => {
@@ -43,6 +97,10 @@ const restaurantsWithCoords = computed(() => {
       google_maps_url: item.google_maps_url || original.google_maps_url,
       website_url: item.website_url || original.website_url,
       menu_url: item.menu_url || original.menu_url,
+      dietary_tags: item.dietary_tags || original.dietary_tags || [],
+      allergen_info: item.allergen_info || original.allergen_info,
+      price_level: item.price_level || original.price_level || 2,
+      phone: item.phone || original.phone,
     };
   });
 });
@@ -196,7 +254,34 @@ onMounted(() => {
                 <span>{{ Number(winner.rating).toFixed(1) }}</span>
                 <span v-if="winner.rating_count" class="text-xs opacity-75 font-normal font-sans">({{ winner.rating_count }} avis)</span>
               </div>
+
+              <!-- Badge Prix Vainqueur -->
+              <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-serif font-bold bg-[var(--bg-surface-inset)] text-[var(--text-muted)] border border-[var(--border-subtle)]">
+                {{ winnerDetails?.price_level === 1 ? '€ (Éco)' : winnerDetails?.price_level === 3 ? '€€€ (Gourmet)' : '€€ (Moyen)' }}
+              </span>
             </div>
+
+            <!-- Badges Régimes Alimentaires & Allergies du Vainqueur -->
+            <div v-if="getDietaryBadges(winnerDetails?.dietary_tags).length > 0 || winnerDetails?.allergen_info" class="flex flex-wrap items-center gap-1.5 mt-3">
+              <span 
+                v-for="(badge, bIdx) in getDietaryBadges(winnerDetails?.dietary_tags)" 
+                :key="bIdx"
+                :class="['inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-serif font-medium border shadow-2xs', badge.class]"
+              >
+                <span>{{ badge.icon }}</span>
+                <span>{{ badge.label }}</span>
+              </span>
+
+              <span 
+                v-if="winnerDetails?.allergen_info" 
+                class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-serif bg-amber-500/15 text-amber-900 dark:text-amber-200 border border-amber-500/30"
+                :title="winnerDetails.allergen_info"
+              >
+                <AlertTriangle class="w-3 h-3 text-amber-600 dark:text-amber-400 shrink-0" />
+                <span>{{ winnerDetails.allergen_info }}</span>
+              </span>
+            </div>
+
             <div class="flex items-center gap-2 mt-3 text-sm sm:text-base font-serif text-[var(--text-muted)]">
               <span class="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-[var(--bg-surface-inset)] border border-[var(--border-subtle)] text-[var(--text-main)]">
                 <Footprints class="w-4 h-4 text-[var(--accent-brass)]" />
@@ -215,7 +300,19 @@ onMounted(() => {
           </div>
         </div>
 
+        <!-- Liens d'action et réservation -->
         <div class="mt-6 pt-5 border-t border-[var(--border-subtle)] flex flex-wrap items-center gap-4 text-sm sm:text-base font-serif">
+          <!-- Bouton Appel Téléphonique Direct -->
+          <a 
+            v-if="winnerDetails?.phone"
+            :href="'tel:' + winnerDetails.phone"
+            class="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-[var(--accent-brass-soft)] hover:bg-[var(--accent-brass)] hover:text-white text-[var(--accent-brass)] border border-[var(--accent-brass-border)] font-semibold transition shadow-xs cursor-pointer"
+            :title="`Appeler : ${winnerDetails.phone}`"
+          >
+            <Phone class="w-4 h-4" />
+            <span>Appeler pour réserver ({{ winnerDetails.phone }})</span>
+          </a>
+
           <a 
             v-if="winner.google_maps_url"
             :href="winner.google_maps_url"
@@ -253,7 +350,19 @@ onMounted(() => {
           </p>
         </div>
 
-        <div class="flex items-center gap-2.5">
+        <div class="flex flex-wrap items-center gap-2.5">
+          <!-- Bouton Décider entre le Top 3 -->
+          <button
+            v-if="rankings.length >= 2"
+            type="button"
+            @click="openTopDecider"
+            class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-gradient-to-r from-amber-600 via-amber-500 to-amber-700 text-white text-xs sm:text-sm font-serif font-bold shadow-xs hover:scale-[1.02] active:scale-[0.98] transition cursor-pointer border border-amber-300/30"
+            title="Tirer au sort entre les favoris"
+          >
+            <Dices class="w-4 h-4" />
+            <span>Départager le Top 3</span>
+          </button>
+
           <button
             type="button"
             @click="showMap = !showMap"
@@ -300,6 +409,14 @@ onMounted(() => {
                   {{ item.name }}
                 </span>
                 <a
+                  v-if="item.phone"
+                  :href="'tel:' + item.phone"
+                  class="text-[var(--accent-brass)] hover:underline transition"
+                  :title="`Appeler : ${item.phone}`"
+                >
+                  <Phone class="w-3.5 h-3.5 inline" />
+                </a>
+                <a
                   v-if="item.google_maps_url"
                   :href="item.google_maps_url"
                   target="_blank"
@@ -325,6 +442,15 @@ onMounted(() => {
                 <span class="italic">{{ item.cuisine }}</span>
                 <span v-if="item.rating" class="inline-flex items-center gap-1 text-[var(--accent-brass)] bg-[var(--accent-brass-soft)] border border-[var(--accent-brass-border)] px-2.5 py-0.5 rounded-full text-xs sm:text-sm font-semibold">
                   ⭐ {{ Number(item.rating).toFixed(1) }}
+                </span>
+                <!-- Badges régimes miniatures -->
+                <span 
+                  v-for="(b, bI) in getDietaryBadges(item.dietary_tags)" 
+                  :key="bI"
+                  class="text-xs px-2 py-0.5 rounded-full bg-[var(--bg-surface-inset)] border border-[var(--border-subtle)]"
+                  :title="b.label"
+                >
+                  {{ b.icon }}
                 </span>
                 <span class="text-[var(--text-faint)]">•</span>
                 <span>{{ item.walking_time_min }} min ({{ item.distance_meters }} m)</span>
@@ -367,6 +493,89 @@ onMounted(() => {
           firstChoiceId: winner ? winner.restaurant_id : null
         }"
       />
+    </div>
+
+    <!-- Modal Tirage Top 3 : Départager les favoris -->
+    <div 
+      v-if="showTopDeciderModal" 
+      class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs transition-opacity duration-200"
+    >
+      <div class="bistro-card-frame rounded-3xl p-6 sm:p-8 max-w-lg w-full shadow-2xl relative border-2 border-[var(--accent-brass)]">
+        <button
+          type="button"
+          @click="showTopDeciderModal = false"
+          class="absolute top-4 right-4 p-2 rounded-full text-[var(--text-muted)] hover:text-[var(--text-main)] hover:bg-[var(--bg-surface-inset)] transition cursor-pointer"
+        >
+          <X class="w-5 h-5" />
+        </button>
+
+        <div class="text-center mb-6">
+          <div class="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-[var(--accent-brass-soft)] text-[var(--accent-brass)] border border-[var(--accent-brass-border)] mb-3 shadow-xs">
+            <Dices class="w-8 h-8 stroke-[2.2]" />
+          </div>
+          <h3 class="font-serif text-3xl font-normal text-[var(--text-main)]">
+            Départager le Top 3
+          </h3>
+          <p class="text-sm text-[var(--text-muted)] font-serif italic mt-1">
+            Tirage au sort express entre les favoris du groupe !
+          </p>
+        </div>
+
+        <div class="p-6 rounded-2xl bg-[var(--bg-surface-inset)] border border-[var(--border-main)] text-center mb-6 min-h-[160px] flex flex-col items-center justify-center">
+          <div v-if="isDeciderRolling" class="space-y-3">
+            <div class="inline-block animate-spin text-3xl">🎲</div>
+            <p class="font-serif text-xl font-bold text-[var(--accent-brass)] animate-pulse">
+              {{ deciderPick ? deciderPick.name : 'Suspense du chef...' }}
+            </p>
+            <p class="text-xs text-[var(--text-muted)] font-serif italic">Le sort est en train d'être scellé...</p>
+          </div>
+
+          <div v-else-if="deciderPick" class="space-y-3 w-full">
+            <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-serif font-bold uppercase bg-[var(--accent-brass-soft)] text-[var(--accent-brass)] border border-[var(--accent-brass-border)]">
+              <Sparkles class="w-3.5 h-3.5" />
+              Choix officiel de la roulette
+            </span>
+            <h4 class="font-serif text-2xl sm:text-3xl font-bold text-[var(--text-main)] leading-tight">
+              {{ deciderPick.name }}
+            </h4>
+            <div class="flex flex-wrap items-center justify-center gap-2 text-sm text-[var(--text-muted)] font-serif">
+              <span>❧ {{ deciderPick.cuisine }} ☙</span>
+              <span>•</span>
+              <span>{{ deciderPick.points }} points</span>
+              <span>•</span>
+              <span>{{ deciderPick.walking_time_min }} min</span>
+            </div>
+          </div>
+        </div>
+
+        <div v-if="!isDeciderRolling && deciderPick" class="flex items-center justify-center gap-3">
+          <a
+            v-if="deciderPick.google_maps_url"
+            :href="deciderPick.google_maps_url"
+            target="_blank"
+            rel="noopener"
+            class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-[var(--accent-red)] text-white font-serif font-semibold text-sm shadow-md hover:bg-[var(--accent-red)]/90 transition cursor-pointer"
+          >
+            <MapPin class="w-4 h-4" />
+            <span>Voir l'itinéraire</span>
+          </a>
+          <button
+            type="button"
+            @click="triggerDecider"
+            class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl border border-[var(--border-main)] hover:border-[var(--accent-brass)] bg-[var(--bg-surface-inset)] text-[var(--text-main)] text-sm font-serif font-medium transition cursor-pointer"
+          >
+            <Dices class="w-4 h-4 text-[var(--accent-brass)]" />
+            <span>Relancer 🎲</span>
+          </button>
+          <button
+            type="button"
+            @click="showTopDeciderModal = false"
+            class="px-4 py-2.5 rounded-xl text-sm font-serif text-[var(--text-muted)] hover:text-[var(--text-main)] cursor-pointer"
+          >
+            Fermer
+          </button>
+        </div>
+      </div>
     </div>
   </div>
 </template>

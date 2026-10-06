@@ -230,7 +230,7 @@ async function handleCreateSession() {
                     @click="maxRestaurants = opt.count"
                     :class="[
                       maxRestaurants === opt.count
-                        ? 'bg-[var(--accent-red)] border border-[var(--accent-red)] text-white font-medium shadow-md'
+                        ? 'bg-[var(--accent-red)] border border-[var(--accent-red)] text-white font-medium shadow-sm'
                         : 'bg-[var(--bg-surface)] border border-[var(--border-main)] text-[var(--text-muted)] hover:border-[var(--accent-brass)] hover:text-[var(--text-main)]',
                       'cursor-pointer transition p-3 rounded-2xl text-center flex flex-col items-center justify-center'
                     ]"
@@ -238,8 +238,8 @@ async function handleCreateSession() {
                     <span class="font-serif text-base sm:text-lg font-bold">{{ opt.label }}</span>
                     <span 
                       :class="[
-                        maxRestaurants === opt.count ? 'text-white/85' : 'text-[var(--text-faint)]',
-                        'text-xs font-sans mt-0.5'
+                        maxRestaurants === opt.count ? 'text-white/90 font-serif italic' : 'text-[var(--text-faint)] font-serif italic',
+                        'text-xs mt-0.5'
                       ]"
                     >
                       {{ opt.desc }}
@@ -271,9 +271,9 @@ async function handleCreateSession() {
 
             <!-- Bouton de Création -->
             <div class="pt-2">
-              <div class="flex items-center justify-between text-xs sm:text-sm text-[var(--chalk-yellow)] mb-1 px-1 font-chalk opacity-90">
+              <div class="flex items-center justify-between text-xs sm:text-sm text-[var(--accent-brass)] mb-1.5 px-1 font-serif italic opacity-90">
                 <span class="tracking-wider">~ Service express ~</span>
-                <span class="tracking-wider">☞ Prêt à voter</span>
+                <span class="tracking-wider">❧ Prêt à voter ☙</span>
               </div>
               <button
                 type="submit"

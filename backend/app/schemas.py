@@ -24,6 +24,10 @@ class RestaurantBase(BaseModel):
     lunch_formulas: List[Any] = []
     rating: Optional[float] = None
     rating_count: Optional[int] = None
+    dietary_tags: List[str] = []
+    allergen_info: Optional[str] = None
+    price_level: Optional[int] = 2
+    phone: Optional[str] = None
 
 
 class RestaurantResponse(RestaurantBase):
@@ -83,6 +87,10 @@ class LeaderboardItem(BaseModel):
     google_maps_url: Optional[str] = None
     rating: Optional[float] = None
     rating_count: Optional[int] = None
+    dietary_tags: List[str] = []
+    allergen_info: Optional[str] = None
+    price_level: Optional[int] = 2
+    phone: Optional[str] = None
     points: int = 0
 
     first_votes: int = 0

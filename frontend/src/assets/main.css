@@ -68,13 +68,13 @@ html.theme-carte {
   --text-muted: #312821ff;
   --text-faint: #9A8471;
 
-  --accent-red: #8B1515;
-  --accent-red-hover: #731111;
-  --accent-red-soft: #FBF0EF;
-  --accent-red-border: #F3C4C4;
+  --accent-red: #9E2429;
+  --accent-red-hover: #851C20;
+  --accent-red-soft: #FBF1F1;
+  --accent-red-border: #F0C4C6;
 
-  --accent-brass: #B45309;
-  --accent-brass-hover: #92400E;
+  --accent-brass: #B86B1B;
+  --accent-brass-hover: #9A5510;
   --accent-brass-soft: #FEF9EE;
   --accent-brass-border: #FDE2AA;
 
@@ -83,7 +83,7 @@ html.theme-carte {
   --accent-zinc-soft: #F1F5F9;
   --accent-zinc-border: #CBD5E1;
 
-  --card-shadow: 0 4px 20px -3px rgba(90, 70, 45, 0.08), 0 1px 3px rgba(90, 70, 45, 0.05);
+  --card-shadow: 0 4px 20px -2px rgba(80, 60, 40, 0.06), 0 1px 3px rgba(80, 60, 40, 0.04);
   --header-bg: rgba(246, 241, 234, 0.94);
 }
 
@@ -259,18 +259,18 @@ html.theme-ardoise .bistro-card-frame:hover {
 html.theme-carte .bistro-grand-frame {
   position: relative;
   background-color: var(--bg-surface);
-  border: 8px solid #3A2213;
-  outline: 2px solid #C5A880;
+  border: 4px solid #4A2E1B;
+  outline: 1.5px solid #C5A880;
   border-radius: 1.5rem;
-  box-shadow: 0 25px 60px -10px rgba(58, 34, 19, 0.35), 0 0 0 1px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 16px 45px -8px rgba(74, 46, 27, 0.16), 0 2px 8px rgba(74, 46, 27, 0.06);
 }
 
 html.theme-carte .bistro-grand-frame::after {
   content: "";
   position: absolute;
-  inset: 8px;
+  inset: 6px;
   border: 1px solid #D8C7B0;
-  border-radius: calc(1.5rem - 8px);
+  border-radius: calc(1.5rem - 6px);
   pointer-events: none;
 }
 
@@ -393,28 +393,33 @@ html.theme-ardoise .brass-corner-br { bottom: 10px; right: 10px; }
    ========================================================================= */
 .wax-seal-btn {
   position: relative;
-  background: radial-gradient(circle at 35% 30%, #A81B1B, #700E0E);
+  background: linear-gradient(180deg, #A8242A 0%, #87181D 100%);
   color: #FFFFFF;
-  border: 2px solid #550808;
+  border: 1px solid #721418;
+  border-radius: 1rem;
   box-shadow: 
-    0 8px 25px rgba(136, 19, 19, 0.45), 
-    inset 0 2px 4px rgba(255, 255, 255, 0.35), 
-    inset 0 -2px 5px rgba(0, 0, 0, 0.5);
+    0 4px 16px -2px rgba(135, 24, 29, 0.32), 
+    0 2px 6px -1px rgba(135, 24, 29, 0.18), 
+    inset 0 1px 0 rgba(255, 255, 255, 0.22);
   transition: all 0.25s cubic-bezier(0.25, 1, 0.5, 1);
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.6);
+  text-shadow: 0 1px 2px rgba(60, 10, 12, 0.35);
+  letter-spacing: 0.02em;
 }
 
 .wax-seal-btn:hover:not(:disabled) {
-  transform: translateY(-2px) scale(1.01);
+  background: linear-gradient(180deg, #B52B31 0%, #941C21 100%);
+  transform: translateY(-1.5px);
   box-shadow: 
-    0 12px 30px rgba(136, 19, 19, 0.55), 
-    inset 0 2px 5px rgba(255, 255, 255, 0.45), 
-    inset 0 -2px 6px rgba(0, 0, 0, 0.6);
+    0 8px 22px -3px rgba(135, 24, 29, 0.4), 
+    0 3px 8px -1px rgba(135, 24, 29, 0.22), 
+    inset 0 1px 0 rgba(255, 255, 255, 0.28);
 }
 
 .wax-seal-btn:active:not(:disabled) {
-  transform: translateY(1px) scale(0.99);
-  box-shadow: 0 4px 15px rgba(136, 19, 19, 0.4);
+  transform: translateY(0.5px);
+  box-shadow: 
+    0 2px 6px rgba(135, 24, 29, 0.28), 
+    inset 0 1px 2px rgba(0, 0, 0, 0.15);
 }
 
 /* Ardoise — le bouton principal est en "craie appuyée" rose/rouge */
@@ -455,21 +460,21 @@ html.theme-ardoise .wax-seal-btn:active:not(:disabled) {
 .waiter-docket {
   position: relative;
   background-color: var(--bg-surface);
-  border: 1px solid var(--border-main);
-  box-shadow: 0 12px 35px -5px rgba(0, 0, 0, 0.25);
+  border: 1.5px solid var(--border-main);
+  box-shadow: 0 10px 30px -5px rgba(90, 70, 45, 0.12), 0 2px 8px rgba(90, 70, 45, 0.05);
 }
 
 .waiter-clip {
   position: absolute;
-  top: -12px;
+  top: -10px;
   left: 50%;
   transform: translateX(-50%);
-  width: 56px;
-  height: 18px;
-  background: linear-gradient(180deg, #D4AF37, #996515);
+  width: 52px;
+  height: 16px;
+  background: linear-gradient(180deg, #ECC87A, #C89B38 60%, #9E7420);
   border-radius: 4px;
-  border: 1px solid #734F18;
-  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.35);
+  border: 1px solid #84601A;
+  box-shadow: 0 2px 6px rgba(100, 75, 40, 0.22), inset 0 1px 1px rgba(255, 255, 255, 0.6);
   z-index: 25;
 }
 
@@ -479,10 +484,11 @@ html.theme-ardoise .wax-seal-btn:active:not(:disabled) {
   top: 4px;
   left: 50%;
   transform: translateX(-50%);
-  width: 24px;
-  height: 2px;
-  background: #5C3D10;
+  width: 22px;
+  height: 1.5px;
+  background: #6D4C13;
   border-radius: 1px;
+  box-shadow: 0 1px 1px rgba(255, 255, 255, 0.3);
 }
 
 html.theme-ardoise .waiter-docket {
@@ -616,9 +622,8 @@ html.theme-ardoise .slider-custom::-moz-range-thumb {
   font-family: var(--font-chalk-body);
 }
 
-/* Sous-titres esquissés — Cabin Sketch */
+/* Sous-titres esquissés (spécifique ardoise) */
 .chalk-sketch {
-  font-family: var(--font-sketch);
   letter-spacing: 0.5px;
 }
 
@@ -765,6 +770,32 @@ html.theme-ardoise .chalk-tally-btn.active-choice-3 {
   box-shadow: 0 0 14px rgba(140, 184, 232, 0.18), inset 0 0 10px rgba(140, 184, 232, 0.08) !important;
 }
 
+/* Boutons de vote — Mode Carte (Bistrot chic) */
+html.theme-carte .chalk-tally-btn {
+  font-family: var(--font-serif);
+}
+
+html.theme-carte .chalk-tally-btn.active-choice-1 {
+  background: linear-gradient(180deg, #9E2429 0%, #831B1F 100%) !important;
+  border: 1px solid #72161A !important;
+  color: #FFFFFF !important;
+  box-shadow: 0 4px 12px -2px rgba(131, 27, 31, 0.32), inset 0 1px 0 rgba(255, 255, 255, 0.2) !important;
+}
+
+html.theme-carte .chalk-tally-btn.active-choice-2 {
+  background: linear-gradient(180deg, #C27618 0%, #9F5908 100%) !important;
+  border: 1px solid #844805 !important;
+  color: #FFFFFF !important;
+  box-shadow: 0 4px 12px -2px rgba(159, 89, 8, 0.32), inset 0 1px 0 rgba(255, 255, 255, 0.2) !important;
+}
+
+html.theme-carte .chalk-tally-btn.active-choice-3 {
+  background: linear-gradient(180deg, #516377 0%, #3B4B5C 100%) !important;
+  border: 1px solid #2F3C4A !important;
+  color: #FFFFFF !important;
+  box-shadow: 0 4px 12px -2px rgba(59, 75, 92, 0.32), inset 0 1px 0 rgba(255, 255, 255, 0.2) !important;
+}
+
 /* =========================================================================
    INTERACTIONS — Bouton générique
    ========================================================================= */
@@ -794,9 +825,9 @@ html.theme-carte .leaflet-popup-tip {
 
 html.theme-ardoise .leaflet-popup-content-wrapper {
   background: #1e2520;
-  color: var(--chalk-white);
+  color: #f8fafc;
   border: 2px dashed rgba(245, 243, 238, 0.3);
-  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.7);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.7);
   border-radius: 4px;
   font-family: "Walter Turncoat", cursive;
 }
@@ -816,14 +847,17 @@ html.theme-ardoise .leaflet-popup-tip {
    BADGES — Résultats & Votants
    ========================================================================= */
 .badge-winner {
-  background-color: var(--accent-red) !important;
+  background: linear-gradient(180deg, #9E2429 0%, #831B1F 100%) !important;
   color: #ffffff !important;
+  border: 1px solid #72161A !important;
+  box-shadow: 0 4px 12px -2px rgba(131, 27, 31, 0.3) !important;
 }
 
 .badge-voter-me {
-  background-color: var(--accent-red) !important;
+  background: linear-gradient(180deg, #9E2429 0%, #831B1F 100%) !important;
   color: #ffffff !important;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
+  border: 1px solid #72161A !important;
+  box-shadow: 0 2px 6px rgba(131, 27, 31, 0.2) !important;
 }
 
 .badge-voter-other {
@@ -833,18 +867,21 @@ html.theme-ardoise .leaflet-popup-tip {
 }
 
 .badge-choice-1 {
-  background-color: var(--accent-red) !important;
+  background: linear-gradient(180deg, #9E2429 0%, #831B1F 100%) !important;
   color: #ffffff !important;
+  border: 1px solid #72161A !important;
 }
 
 .badge-choice-2 {
-  background-color: var(--accent-brass) !important;
+  background: linear-gradient(180deg, #C27618 0%, #9F5908 100%) !important;
   color: #ffffff !important;
+  border: 1px solid #844805 !important;
 }
 
 .badge-choice-3 {
-  background-color: var(--accent-zinc) !important;
+  background: linear-gradient(180deg, #516377 0%, #3B4B5C 100%) !important;
   color: #ffffff !important;
+  border: 1px solid #2F3C4A !important;
 }
 
 /* Ardoise badges — craie dessinée */

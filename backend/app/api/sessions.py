@@ -18,7 +18,7 @@ logger = logging.getLogger(__name__)
 
 
 async def scrape_restaurant_worker(sem: asyncio.Semaphore, r_data: dict, city_context: str):
-    from backend.app.services.menu_scraper import build_google_maps_url, scrape_restaurant_menu
+    from backend.app.services.menu_scraper import build_google_maps_url, scrape_restaurant_menu, detect_dietary_from_menu_text
     r_data["google_maps_url"] = build_google_maps_url(r_data["name"], r_data.get("address") or city_context)
 
     # Si pas de site web OSM, éviter les requêtes DuckDuckGo lentes en rafale
@@ -48,6 +48,20 @@ async def scrape_restaurant_worker(sem: asyncio.Semaphore, r_data: dict, city_co
                 r_data["lunch_formulas"] = formulas
             if g_maps_url:
                 r_data["google_maps_url"] = g_maps_url
+
+            # Enrichissement régimes & allergènes d'après le menu extrait
+            detected_tags, detected_allergens, detected_price_lvl = detect_dietary_from_menu_text(
+                summary or "", formulas or []
+            )
+            if detected_tags:
+                existing = set(r_data.get("dietary_tags", []))
+                existing.update(detected_tags)
+                r_data["dietary_tags"] = sorted(list(existing))
+            if detected_allergens:
+                curr_all = r_data.get("allergen_info")
+                r_data["allergen_info"] = f"{curr_all} • {detected_allergens}" if curr_all else detected_allergens
+            if detected_price_lvl:
+                r_data["price_level"] = detected_price_lvl
         except Exception as exc:
             logger.debug(f"Timeout ou erreur pour {r_data.get('name')}: {exc}")
             if not r_data.get("menu_summary"):
@@ -124,7 +138,11 @@ async def create_session(payload: SessionCreate, db: AsyncSession = Depends(get_
             lunch_formulas=r.get("lunch_formulas", []),
             osm_id=r.get("osm_id"),
             rating=r.get("rating"),
-            rating_count=r.get("rating_count")
+            rating_count=r.get("rating_count"),
+            dietary_tags=r.get("dietary_tags", []),
+            allergen_info=r.get("allergen_info"),
+            price_level=r.get("price_level", 2),
+            phone=r.get("phone")
         )
         db.add(rest_model)
 

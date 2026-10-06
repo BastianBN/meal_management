@@ -44,6 +44,10 @@ class RestaurantModel(Base):
     osm_id = Column(String(50), nullable=True)
     rating = Column(Float, nullable=True)
     rating_count = Column(Integer, nullable=True)
+    dietary_tags = Column(JSON, default=list)
+    allergen_info = Column(Text, nullable=True)
+    price_level = Column(Integer, default=2)
+    phone = Column(String(50), nullable=True)
 
     session = relationship("SessionModel", back_populates="restaurants")
 

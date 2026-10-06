@@ -142,6 +142,82 @@ def format_cuisine(raw_cuisine: Optional[str]) -> str:
     return translations.get(first_type, first_type.capitalize())
 
 
+def extract_dietary_and_details(tags: Dict[str, Any], cuisine_str: str, name: str) -> tuple[List[str], Optional[str], int, Optional[str]]:
+    """
+    Détecte les options de régimes spécifiques (végétarien, végan, sans gluten, halal, etc.),
+    les informations d'allergies, le niveau de prix estimé (1=€, 2=€€, 3=€€€) et le numéro de téléphone.
+    """
+    dietary_tags = set()
+    allergens = []
+
+    # 1. Tags OSM explicites
+    if tags.get("diet:vegetarian") in ("yes", "only") or tags.get("vegetarian") in ("yes", "only"):
+        dietary_tags.add("vegetarian")
+    if tags.get("diet:vegan") in ("yes", "only") or tags.get("vegan") in ("yes", "only"):
+        dietary_tags.add("vegan")
+        dietary_tags.add("vegetarian")
+    if tags.get("diet:gluten_free") in ("yes", "only") or tags.get("gluten_free") in ("yes", "only"):
+        dietary_tags.add("gluten_free")
+        allergens.append("Options sans gluten")
+    if tags.get("diet:halal") in ("yes", "only") or tags.get("halal") in ("yes", "only"):
+        dietary_tags.add("halal")
+    if tags.get("diet:lactose_free") in ("yes", "only"):
+        allergens.append("Options sans lactose")
+
+    # 2. Analyse de la cuisine et du nom
+    combined = f"{name} {cuisine_str} {tags.get('cuisine', '')}".lower()
+
+    if any(k in combined for k in ["veggie", "végétarien", "vegetarien", "salad", "salade", "falafel", "bowl", "poké", "poke"]):
+        dietary_tags.add("vegetarian")
+    if any(k in combined for k in ["vegan", "végan", "végétal", "vegetal", "plant-based"]):
+        dietary_tags.add("vegan")
+        dietary_tags.add("vegetarian")
+    if any(k in combined for k in ["gluten free", "sans gluten"]):
+        dietary_tags.add("gluten_free")
+        if "Options sans gluten" not in allergens:
+            allergens.append("Options sans gluten")
+    if any(k in combined for k in ["halal"]):
+        dietary_tags.add("halal")
+
+    # Cuisines traditionnellement riches en options végétariennes
+    if any(k in combined for k in ["indien", "indian", "libanais", "lebanese", "italien", "pizza", "crêperie", "creperie", "thaï", "thai", "asiatique", "couscous"]):
+        dietary_tags.add("vegetarian")
+
+    # 3. Niveau de prix (1 = €, 2 = €€, 3 = €€€)
+    price_level = 2
+    raw_price = tags.get("price_level") or tags.get("price_range")
+    if raw_price:
+        try:
+            val = int(raw_price)
+            price_level = min(3, max(1, val))
+        except (ValueError, TypeError):
+            if "€€€" in str(raw_price):
+                price_level = 3
+            elif "€€" in str(raw_price):
+                price_level = 2
+            elif "€" in str(raw_price):
+                price_level = 1
+    else:
+        has_michelin = any(k in tags for k in ["award:michelin", "michelin", "stars", "gault_millau"])
+        if has_michelin:
+            price_level = 3
+        elif any(k in combined for k in ["fast_food", "kebab", "sandwich", "burger", "boulangerie", "tacos", "snack"]):
+            price_level = 1
+        elif any(k in combined for k in ["gastronomique", "seafood", "étoilé", "etoile"]):
+            price_level = 3
+        else:
+            price_level = 2
+
+    # 4. Téléphone
+    phone = tags.get("phone") or tags.get("contact:phone")
+    if phone:
+        phone = phone.strip()
+
+    allergen_summary = " • ".join(allergens) if allergens else None
+
+    return sorted(list(dietary_tags)), allergen_summary, price_level, phone
+
+
 async def _fetch_overpass_mirror(client: httpx.AsyncClient, endpoint: str, query: str) -> Optional[Dict[str, Any]]:
     try:
         response = await client.post(endpoint, data={"data": query})
@@ -183,6 +259,7 @@ async def _search_nominatim_restaurants(lat: float, lon: float, radius_meters: i
                     dist = haversine_distance(lat, lon, r_lat, r_lon)
                     osm_id = str(item.get("osm_id", ""))
                     rating, rating_count, quality_score = evaluate_restaurant_quality({}, osm_id, name)
+                    dietary_tags, allergen_info, price_level, phone = extract_dietary_and_details({}, "Bistrot & Restauration", name)
                     restaurants.append({
                         "osm_id": osm_id,
                         "name": name,
@@ -198,7 +275,11 @@ async def _search_nominatim_restaurants(lat: float, lon: float, radius_meters: i
                         "lunch_formulas": [],
                         "rating": rating,
                         "rating_count": rating_count,
-                        "quality_score": quality_score
+                        "quality_score": quality_score,
+                        "dietary_tags": dietary_tags,
+                        "allergen_info": allergen_info,
+                        "price_level": price_level,
+                        "phone": phone
                     })
                 restaurants.sort(key=lambda r: r["distance_meters"])
                 return restaurants[:limit]
@@ -310,12 +391,14 @@ async def find_nearby_restaurants(
 
         osm_id = str(elem.get("id"))
         rating, rating_count, quality_score = evaluate_restaurant_quality(tags, osm_id, name.strip())
+        cuisine_fmt = format_cuisine(tags.get("cuisine"))
+        dietary_tags, allergen_info, price_level, phone = extract_dietary_and_details(tags, cuisine_fmt, name.strip())
 
         restaurants.append({
             "osm_id": osm_id,
             "name": name.strip(),
             "address": address_str,
-            "cuisine": format_cuisine(tags.get("cuisine")),
+            "cuisine": cuisine_fmt,
             "distance_meters": distance,
             "walking_time_min": walking_time,
             "latitude": elem_lat,
@@ -326,7 +409,11 @@ async def find_nearby_restaurants(
             "lunch_formulas": [],
             "rating": rating,
             "rating_count": rating_count,
-            "quality_score": quality_score
+            "quality_score": quality_score,
+            "dietary_tags": dietary_tags,
+            "allergen_info": allergen_info,
+            "price_level": price_level,
+            "phone": phone
         })
 
     # Si le nombre total est inférieur ou égal à la limite voulue

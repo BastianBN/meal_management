@@ -39,6 +39,14 @@ async def init_db():
                         sync_conn.execute(text("ALTER TABLE restaurants ADD COLUMN rating FLOAT;"))
                     if "rating_count" not in existing_cols:
                         sync_conn.execute(text("ALTER TABLE restaurants ADD COLUMN rating_count INTEGER;"))
+                    if "dietary_tags" not in existing_cols:
+                        sync_conn.execute(text("ALTER TABLE restaurants ADD COLUMN dietary_tags JSON DEFAULT '[]';"))
+                    if "allergen_info" not in existing_cols:
+                        sync_conn.execute(text("ALTER TABLE restaurants ADD COLUMN allergen_info TEXT;"))
+                    if "price_level" not in existing_cols:
+                        sync_conn.execute(text("ALTER TABLE restaurants ADD COLUMN price_level INTEGER DEFAULT 2;"))
+                    if "phone" not in existing_cols:
+                        sync_conn.execute(text("ALTER TABLE restaurants ADD COLUMN phone VARCHAR(50);"))
             except Exception:
                 pass
 

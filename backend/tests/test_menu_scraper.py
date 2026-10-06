@@ -52,3 +52,43 @@ def test_build_google_maps_url():
     url = build_google_maps_url("Le Bistrot", "Paris")
     assert "https://www.google.com/maps/search/?api=1&query=" in url
     assert "Le+Bistrot" in url
+
+
+def test_extract_dietary_and_details():
+    from backend.app.services.places import extract_dietary_and_details
+
+    # Test OSM tags
+    tags = {
+        "diet:vegetarian": "yes",
+        "diet:vegan": "yes",
+        "diet:gluten_free": "yes",
+        "phone": "01 42 68 00 00",
+        "price_level": "2"
+    }
+    dietary, allergen, price_lvl, phone = extract_dietary_and_details(tags, "Bistrot", "Chez Marcel")
+    assert "vegetarian" in dietary
+    assert "vegan" in dietary
+    assert "gluten_free" in dietary
+    assert allergen is not None
+    assert "sans gluten" in allergen.lower()
+    assert price_lvl == 2
+    assert phone == "01 42 68 00 00"
+
+    # Test cuisine heuristics (Indian, Salad, etc.)
+    tags_indien = {}
+    dietary_ind, _, _, _ = extract_dietary_and_details(tags_indien, "Indien & Curry", "Taj Mahal")
+    assert "vegetarian" in dietary_ind
+
+
+def test_detect_dietary_from_menu_text():
+    from backend.app.services.menu_scraper import detect_dietary_from_menu_text
+
+    text = "Plat du jour : Risotto de saison 100% végétarien. Option sans gluten disponible sur demande. Attention présence d'arachide."
+    formulas = [{"name": "Formule Veggie", "price": "14,50 €", "description": "Entrée + Plat végétal"}]
+
+    tags, allergens, price_lvl = detect_dietary_from_menu_text(text, formulas)
+    assert "vegetarian" in tags
+    assert "gluten_free" in tags
+    assert "sans gluten" in allergens.lower()
+    assert "arachide" in allergens.lower()
+    assert price_lvl == 1

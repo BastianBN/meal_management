@@ -271,3 +271,58 @@ async def scrape_restaurant_menu(
         menu_summary = "Carte et formules du midi disponibles sur place."
 
     return website_url, menu_url, menu_summary, lunch_formulas, google_maps_url
+
+
+def detect_dietary_from_menu_text(text: str, formulas: List[Dict[str, Any]]) -> Tuple[List[str], Optional[str], Optional[int]]:
+    """
+    Analyse le texte du menu pour détecter des options de régime (végétarien, végan, sans gluten)
+    et les mentions d'allergènes courants ou le niveau de prix d'après les formules.
+    """
+    found_tags = set()
+    allergens = []
+    lower_text = text.lower() if text else ""
+
+    for f in formulas:
+        f_name = f.get("name", "").lower()
+        f_desc = (f.get("description") or "").lower()
+        lower_text += f" {f_name} {f_desc}"
+
+    if any(k in lower_text for k in ["végétarien", "vegetarien", "veggie", "végétal", "vegetal"]):
+        found_tags.add("vegetarian")
+    if any(k in lower_text for k in ["végan", "vegan", "végétalien", "vegetalien"]):
+        found_tags.add("vegan")
+        found_tags.add("vegetarian")
+    if any(k in lower_text for k in ["sans gluten", "gluten free", "sans-gluten"]):
+        found_tags.add("gluten_free")
+        allergens.append("Options sans gluten")
+    if any(k in lower_text for k in ["halal"]):
+        found_tags.add("halal")
+
+    if any(k in lower_text for k in ["sans lactose", "lactose free"]):
+        allergens.append("Options sans lactose")
+    if any(k in lower_text for k in ["fruits à coque", "arachide", "cacahuète"]):
+        allergens.append("Présence d'arachides/fruits à coque signalée")
+
+    price_level = None
+    prices = []
+    for f in formulas:
+        raw_price = f.get("price", "")
+        match = re.search(r"(\d+[\.,]?\d*)", raw_price)
+        if match:
+            try:
+                val = float(match.group(1).replace(",", "."))
+                if 5.0 <= val <= 100.0:
+                    prices.append(val)
+            except ValueError:
+                pass
+    if prices:
+        avg = sum(prices) / len(prices)
+        if avg < 15.0:
+            price_level = 1
+        elif avg <= 25.0:
+            price_level = 2
+        else:
+            price_level = 3
+
+    allergen_str = " • ".join(allergens) if allergens else None
+    return sorted(list(found_tags)), allergen_str, price_level

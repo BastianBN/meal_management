@@ -4,7 +4,7 @@ import RestaurantCard from './RestaurantCard.vue';
 
 import RestaurantsMap from './RestaurantsMap.vue';
 import { submitVote } from '../api';
-import { Share2, MapPin, Footprints, AlertCircle, CheckCircle2, User, Lock, Map as MapIcon, List, Star, Search, Filter } from 'lucide-vue-next';
+import { Share2, MapPin, Footprints, AlertCircle, CheckCircle2, User, Lock, Map as MapIcon, List, Star, Search, Filter, Dices, Sparkles, X, Check } from 'lucide-vue-next';
 
 const props = defineProps({
   session: {
@@ -26,8 +26,16 @@ const showMap = ref(true);
 
 const sortBy = ref('rating'); // 'rating' or 'distance'
 const selectedCuisine = ref('ALL');
+const selectedDiet = ref('ALL'); // 'ALL', 'vegetarian', 'vegan', 'gluten_free', 'halal'
+const selectedPrice = ref('ALL'); // 'ALL', 1, 2, 3
 const onlyWithMenu = ref(false);
 const searchQuery = ref('');
+
+// Roulette / Surprends-nous
+const showSurpriseModal = ref(false);
+const isRolling = ref(false);
+const surprisePick = ref(null);
+let rollTimer = null;
 
 const restaurants = computed(() => props.session.restaurants || []);
 
@@ -59,6 +67,16 @@ const filteredRestaurants = computed(() => {
     list = list.filter(r => r.cuisine === selectedCuisine.value);
   }
 
+  // Filtre régimes alimentaires
+  if (selectedDiet.value !== 'ALL') {
+    list = list.filter(r => (r.dietary_tags || []).includes(selectedDiet.value));
+  }
+
+  // Filtre niveau de prix
+  if (selectedPrice.value !== 'ALL') {
+    list = list.filter(r => (r.price_level || 2) === Number(selectedPrice.value));
+  }
+
   // Filtre carte / menu
   if (onlyWithMenu.value) {
     list = list.filter(r => 
@@ -82,6 +100,38 @@ const filteredRestaurants = computed(() => {
 
   return list;
 });
+
+function openSurpriseModal() {
+  const pool = filteredRestaurants.value.length > 0 ? filteredRestaurants.value : restaurants.value;
+  if (pool.length === 0) return;
+  showSurpriseModal.value = true;
+  triggerRoll();
+}
+
+function triggerRoll() {
+  const pool = filteredRestaurants.value.length > 0 ? filteredRestaurants.value : restaurants.value;
+  if (pool.length === 0) return;
+  isRolling.value = true;
+  let counter = 0;
+  const maxIterations = 14;
+  if (rollTimer) clearInterval(rollTimer);
+
+  rollTimer = setInterval(() => {
+    counter++;
+    const randomIdx = Math.floor(Math.random() * pool.length);
+    surprisePick.value = pool[randomIdx];
+    if (counter >= maxIterations) {
+      clearInterval(rollTimer);
+      isRolling.value = false;
+    }
+  }, 85);
+}
+
+function assignSurpriseRank(rank) {
+  if (!surprisePick.value) return;
+  handleToggleRank({ restaurantId: surprisePick.value.id, rank });
+  showSurpriseModal.value = false;
+}
 
 
 // Attribution d'un rang (1, 2 ou 3) à un restaurant
@@ -362,7 +412,7 @@ async function handleVoteSubmit() {
             @click="handleVoteSubmit"
             :class="[
               canSubmit
-                ? 'wax-seal-btn font-serif font-bold shadow-lg cursor-pointer scale-[1.02]'
+                ? 'wax-seal-btn font-serif font-bold shadow-md cursor-pointer'
                 : 'bg-[var(--bg-surface-inset)] text-[var(--text-faint)] cursor-not-allowed border border-[var(--border-main)] font-serif',
               'px-6 py-3.5 rounded-2xl text-base transition flex items-center justify-center gap-2'
             ]"
@@ -384,8 +434,9 @@ async function handleVoteSubmit() {
     </div>
 
     <!-- Barre de filtrage & tri brasserie -->
-    <div class="bistro-card-frame rounded-2xl p-4 sm:p-5 space-y-3 shadow-sm">
-      <div class="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
+    <div class="bistro-card-frame rounded-2xl p-4 sm:p-5 space-y-3.5 shadow-sm">
+      <!-- Ligne 1 : Recherche + Tri + Bouton Surprends-nous -->
+      <div class="flex flex-col lg:flex-row items-stretch lg:items-center justify-between gap-3">
         <!-- Recherche textuelle -->
         <div class="relative flex-1">
           <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3.5 text-[var(--text-faint)]">
@@ -399,35 +450,182 @@ async function handleVoteSubmit() {
           />
         </div>
 
-        <!-- Bascule de Tri : Note vs Distance -->
-        <div class="flex items-center gap-1.5 shrink-0 bg-[var(--bg-surface-inset)] p-1 rounded-xl border border-[var(--border-main)]">
+        <div class="flex flex-wrap items-center gap-2">
+          <!-- Bascule de Tri : Note vs Distance -->
+          <div class="flex items-center gap-1 bg-[var(--bg-surface-inset)] p-1 rounded-xl border border-[var(--border-main)]">
+            <button
+              type="button"
+              @click="sortBy = 'rating'"
+              :class="[
+                sortBy === 'rating' ? 'bg-[var(--bg-surface)] text-[var(--text-main)] font-semibold border border-[var(--border-main)] shadow-xs' : 'text-[var(--text-faint)] hover:text-[var(--text-main)]',
+                'px-3.5 py-1.5 rounded-lg text-sm font-serif transition flex items-center gap-1.5 cursor-pointer'
+              ]"
+            >
+              <Star class="w-4 h-4 text-[var(--accent-brass)] fill-[var(--accent-brass)]" />
+              <span>Mieux notées</span>
+            </button>
+            <button
+              type="button"
+              @click="sortBy = 'distance'"
+              :class="[
+                sortBy === 'distance' ? 'bg-[var(--bg-surface)] text-[var(--text-main)] font-semibold border border-[var(--border-main)] shadow-xs' : 'text-[var(--text-faint)] hover:text-[var(--text-main)]',
+                'px-3.5 py-1.5 rounded-lg text-sm font-serif transition flex items-center gap-1.5 cursor-pointer'
+              ]"
+            >
+              <Footprints class="w-4 h-4 text-[var(--accent-brass)]" />
+              <span>Plus proches</span>
+            </button>
+          </div>
+
+          <!-- Bouton festif "Surprends-nous !" (Roulette) -->
           <button
             type="button"
-            @click="sortBy = 'rating'"
-            :class="[
-              sortBy === 'rating' ? 'bg-[var(--bg-surface)] text-[var(--text-main)] font-semibold border border-[var(--border-main)] shadow-xs' : 'text-[var(--text-faint)] hover:text-[var(--text-main)]',
-              'px-4 py-2 rounded-lg text-sm font-serif transition flex items-center gap-1.5 cursor-pointer'
-            ]"
+            @click="openSurpriseModal"
+            class="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-gradient-to-r from-amber-600 via-amber-500 to-amber-700 text-white font-serif font-bold text-sm shadow-md hover:shadow-lg hover:scale-[1.02] active:scale-[0.98] transition cursor-pointer border border-amber-300/40"
+            title="Tirer un restaurant au sort parmi la sélection"
           >
-            <Star class="w-4 h-4 text-[var(--accent-brass)] fill-[var(--accent-brass)]" />
-            <span>Mieux notées ⭐</span>
-          </button>
-          <button
-            type="button"
-            @click="sortBy = 'distance'"
-            :class="[
-              sortBy === 'distance' ? 'bg-[var(--bg-surface)] text-[var(--text-main)] font-semibold border border-[var(--border-main)] shadow-xs' : 'text-[var(--text-faint)] hover:text-[var(--text-main)]',
-              'px-4 py-2 rounded-lg text-sm font-serif transition flex items-center gap-1.5 cursor-pointer'
-            ]"
-          >
-            <Footprints class="w-4 h-4 text-[var(--accent-brass)]" />
-            <span>Plus proches</span>
+            <Dices class="w-4 h-4 stroke-[2.5]" />
+            <span>Surprends-nous !</span>
+            <Sparkles class="w-3.5 h-3.5 opacity-90" />
           </button>
         </div>
       </div>
 
-      <!-- Filtres secondaires : Cuisines, Formules, Compteur -->
-      <div class="flex flex-wrap items-center justify-between gap-3 pt-3 border-t border-[var(--border-subtle)] text-sm">
+      <!-- Ligne 2 : Filtres Régimes alimentaires (Végétarien, Végan, Sans Gluten, Halal) -->
+      <div class="flex flex-wrap items-center gap-2 pt-2 border-t border-[var(--border-subtle)] text-xs sm:text-sm">
+        <span class="font-serif font-bold text-[var(--text-muted)] shrink-0 mr-1">Régime :</span>
+        <button
+          type="button"
+          @click="selectedDiet = 'ALL'"
+          :class="[
+            selectedDiet === 'ALL' 
+              ? 'bg-[var(--accent-brass)] text-white font-bold border-[var(--accent-brass)] shadow-xs' 
+              : 'bg-[var(--bg-surface-inset)] text-[var(--text-muted)] border-[var(--border-main)] hover:bg-[var(--bg-surface)]',
+            'px-3 py-1 rounded-full border transition font-serif cursor-pointer'
+          ]"
+        >
+          Tous régimes
+        </button>
+
+        <button
+          type="button"
+          @click="selectedDiet = selectedDiet === 'vegetarian' ? 'ALL' : 'vegetarian'"
+          :class="[
+            selectedDiet === 'vegetarian' 
+              ? 'bg-emerald-700 text-white font-bold border-emerald-600 shadow-xs' 
+              : 'bg-[var(--bg-surface-inset)] text-[var(--text-muted)] border-[var(--border-main)] hover:bg-[var(--bg-surface)]',
+            'px-3 py-1 rounded-full border transition font-serif cursor-pointer flex items-center gap-1'
+          ]"
+        >
+          <span>🌿</span>
+          <span>Végétarien</span>
+        </button>
+
+        <button
+          type="button"
+          @click="selectedDiet = selectedDiet === 'vegan' ? 'ALL' : 'vegan'"
+          :class="[
+            selectedDiet === 'vegan' 
+              ? 'bg-green-700 text-white font-bold border-green-600 shadow-xs' 
+              : 'bg-[var(--bg-surface-inset)] text-[var(--text-muted)] border-[var(--border-main)] hover:bg-[var(--bg-surface)]',
+            'px-3 py-1 rounded-full border transition font-serif cursor-pointer flex items-center gap-1'
+          ]"
+        >
+          <span>🌱</span>
+          <span>Végan</span>
+        </button>
+
+        <button
+          type="button"
+          @click="selectedDiet = selectedDiet === 'gluten_free' ? 'ALL' : 'gluten_free'"
+          :class="[
+            selectedDiet === 'gluten_free' 
+              ? 'bg-amber-700 text-white font-bold border-amber-600 shadow-xs' 
+              : 'bg-[var(--bg-surface-inset)] text-[var(--text-muted)] border-[var(--border-main)] hover:bg-[var(--bg-surface)]',
+            'px-3 py-1 rounded-full border transition font-serif cursor-pointer flex items-center gap-1'
+          ]"
+        >
+          <span>🌾</span>
+          <span>Sans gluten</span>
+        </button>
+
+        <button
+          type="button"
+          @click="selectedDiet = selectedDiet === 'halal' ? 'ALL' : 'halal'"
+          :class="[
+            selectedDiet === 'halal' 
+              ? 'bg-teal-700 text-white font-bold border-teal-600 shadow-xs' 
+              : 'bg-[var(--bg-surface-inset)] text-[var(--text-muted)] border-[var(--border-main)] hover:bg-[var(--bg-surface)]',
+            'px-3 py-1 rounded-full border transition font-serif cursor-pointer flex items-center gap-1'
+          ]"
+        >
+          <span>☪️</span>
+          <span>Halal</span>
+        </button>
+
+        <!-- Séparateur visuel -->
+        <span class="text-[var(--text-faint)] hidden sm:inline px-1">|</span>
+
+        <!-- Filtre Gamme de Prix -->
+        <span class="font-serif font-bold text-[var(--text-muted)] shrink-0 mr-1">Prix :</span>
+        <button
+          type="button"
+          @click="selectedPrice = 'ALL'"
+          :class="[
+            selectedPrice === 'ALL' 
+              ? 'bg-[var(--accent-brass)] text-white font-bold border-[var(--accent-brass)] shadow-xs' 
+              : 'bg-[var(--bg-surface-inset)] text-[var(--text-muted)] border-[var(--border-main)] hover:bg-[var(--bg-surface)]',
+            'px-2.5 py-1 rounded-full border transition font-serif cursor-pointer'
+          ]"
+        >
+          Tous
+        </button>
+
+        <button
+          type="button"
+          @click="selectedPrice = selectedPrice === 1 ? 'ALL' : 1"
+          :class="[
+            selectedPrice === 1 
+              ? 'bg-[var(--accent-brass)] text-white font-bold border-[var(--accent-brass)] shadow-xs' 
+              : 'bg-[var(--bg-surface-inset)] text-[var(--text-muted)] border-[var(--border-main)] hover:bg-[var(--bg-surface)]',
+            'px-2.5 py-1 rounded-full border transition font-serif cursor-pointer'
+          ]"
+          title="Moins de 15€"
+        >
+          € (&lt;15€)
+        </button>
+
+        <button
+          type="button"
+          @click="selectedPrice = selectedPrice === 2 ? 'ALL' : 2"
+          :class="[
+            selectedPrice === 2 
+              ? 'bg-[var(--accent-brass)] text-white font-bold border-[var(--accent-brass)] shadow-xs' 
+              : 'bg-[var(--bg-surface-inset)] text-[var(--text-muted)] border-[var(--border-main)] hover:bg-[var(--bg-surface)]',
+            'px-2.5 py-1 rounded-full border transition font-serif cursor-pointer'
+          ]"
+          title="15 à 25€"
+        >
+          €€ (15-25€)
+        </button>
+
+        <button
+          type="button"
+          @click="selectedPrice = selectedPrice === 3 ? 'ALL' : 3"
+          :class="[
+            selectedPrice === 3 
+              ? 'bg-[var(--accent-brass)] text-white font-bold border-[var(--accent-brass)] shadow-xs' 
+              : 'bg-[var(--bg-surface-inset)] text-[var(--text-muted)] border-[var(--border-main)] hover:bg-[var(--bg-surface)]',
+            'px-2.5 py-1 rounded-full border transition font-serif cursor-pointer'
+          ]"
+          title="Plus de 25€"
+        >
+          €€€ (&gt;25€)
+        </button>
+      </div>
+
+      <!-- Ligne 3 : Cuisines, Formules, Compteur & Reset -->
+      <div class="flex flex-wrap items-center justify-between gap-3 pt-2.5 border-t border-[var(--border-subtle)] text-sm">
         <div class="flex flex-wrap items-center gap-2.5">
           <!-- Filtre Cuisine -->
           <div class="flex items-center gap-1.5 text-[var(--text-muted)] font-serif text-base">
@@ -457,9 +655,19 @@ async function handleVoteSubmit() {
           </button>
         </div>
 
-        <span class="text-[var(--text-faint)] font-serif text-base">
-          <strong class="text-[var(--text-main)] font-semibold">{{ filteredRestaurants.length }}</strong> sur {{ restaurants.length }} adresses
-        </span>
+        <div class="flex items-center gap-3">
+          <button
+            v-if="selectedDiet !== 'ALL' || selectedPrice !== 'ALL' || selectedCuisine !== 'ALL' || onlyWithMenu || searchQuery"
+            type="button"
+            @click="selectedDiet = 'ALL'; selectedPrice = 'ALL'; selectedCuisine = 'ALL'; onlyWithMenu = false; searchQuery = '';"
+            class="text-xs font-serif text-[var(--accent-red)] hover:underline cursor-pointer"
+          >
+            Réinitialiser
+          </button>
+          <span class="text-[var(--text-faint)] font-serif text-base">
+            <strong class="text-[var(--text-main)] font-semibold">{{ filteredRestaurants.length }}</strong> sur {{ restaurants.length }} adresses
+          </span>
+        </div>
       </div>
     </div>
 
@@ -479,13 +687,13 @@ async function handleVoteSubmit() {
       <!-- État vide si filtre trop restrictif -->
       <div v-if="filteredRestaurants.length === 0" class="bistro-card-frame rounded-2xl p-8 text-center text-[var(--text-muted)] space-y-2 shadow-sm">
         <p class="font-serif text-2xl font-normal text-[var(--text-main)]">Aucun restaurant ne correspond à vos filtres.</p>
-        <p class="text-sm">Essayez de réinitialiser la recherche ou de sélectionner "Toutes les cuisines".</p>
+        <p class="text-sm">Essayez d'assouplir le régime alimentaire ou de sélectionner "Toutes les cuisines".</p>
         <button
           type="button"
-          @click="searchQuery = ''; selectedCuisine = 'ALL'; onlyWithMenu = false;"
+          @click="searchQuery = ''; selectedCuisine = 'ALL'; selectedDiet = 'ALL'; selectedPrice = 'ALL'; onlyWithMenu = false;"
           class="mt-2 inline-flex items-center px-4 py-2 rounded-xl bg-[var(--bg-surface-inset)] border border-[var(--border-main)] text-sm font-serif font-medium text-[var(--text-main)] hover:bg-[var(--bg-surface)] cursor-pointer shadow-xs"
         >
-          Réinitialiser les filtres
+          Réinitialiser tous les filtres
         </button>
       </div>
 
@@ -497,6 +705,119 @@ async function handleVoteSubmit() {
           :current-rank="getRestaurantRank(r.id)"
           @toggle-rank="handleToggleRank"
         />
+      </div>
+    </div>
+
+    <!-- Modal Roulette : "Surprends-nous !" -->
+    <div 
+      v-if="showSurpriseModal" 
+      class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs transition-opacity duration-200"
+    >
+      <div class="bistro-card-frame rounded-3xl p-6 sm:p-8 max-w-lg w-full shadow-2xl relative border-2 border-[var(--accent-brass)]">
+        <!-- Bouton fermer -->
+        <button
+          type="button"
+          @click="showSurpriseModal = false"
+          class="absolute top-4 right-4 p-2 rounded-full text-[var(--text-muted)] hover:text-[var(--text-main)] hover:bg-[var(--bg-surface-inset)] transition cursor-pointer"
+        >
+          <X class="w-5 h-5" />
+        </button>
+
+        <!-- En-tête -->
+        <div class="text-center mb-6">
+          <div class="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-[var(--accent-brass-soft)] text-[var(--accent-brass)] border border-[var(--accent-brass-border)] mb-3 shadow-xs">
+            <Dices class="w-8 h-8 stroke-[2.2]" />
+          </div>
+          <h3 class="font-serif text-3xl font-normal text-[var(--text-main)]">
+            Tirage au Sort Gourmand
+          </h3>
+          <p class="text-sm text-[var(--text-muted)] font-serif italic mt-1">
+            Laissez le destin culinaire choisir pour votre groupe !
+          </p>
+        </div>
+
+        <!-- Corps du tirage -->
+        <div class="p-6 rounded-2xl bg-[var(--bg-surface-inset)] border border-[var(--border-main)] text-center mb-6 min-h-[160px] flex flex-col items-center justify-center">
+          <div v-if="isRolling" class="space-y-3">
+            <div class="inline-block animate-spin text-3xl">🎲</div>
+            <p class="font-serif text-xl font-bold text-[var(--accent-brass)] animate-pulse">
+              {{ surprisePick ? surprisePick.name : 'Mélange des ardoises...' }}
+            </p>
+            <p class="text-xs text-[var(--text-muted)] font-serif italic">Le chef fait tourner la roue...</p>
+          </div>
+
+          <div v-else-if="surprisePick" class="space-y-3 w-full">
+            <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-serif font-bold uppercase bg-[var(--accent-brass-soft)] text-[var(--accent-brass)] border border-[var(--accent-brass-border)]">
+              <Sparkles class="w-3.5 h-3.5" />
+              L'élu du destin culinaire
+            </span>
+            <h4 class="font-serif text-2xl sm:text-3xl font-bold text-[var(--text-main)] leading-tight">
+              {{ surprisePick.name }}
+            </h4>
+            <div class="flex flex-wrap items-center justify-center gap-2 text-sm text-[var(--text-muted)] font-serif">
+              <span>❧ {{ surprisePick.cuisine || 'Bistrot' }} ☙</span>
+              <span>•</span>
+              <span class="flex items-center gap-1">
+                <Star class="w-3.5 h-3.5 text-[var(--accent-brass)] fill-[var(--accent-brass)]" />
+                {{ Number(surprisePick.rating || 4.2).toFixed(1) }}
+              </span>
+              <span>•</span>
+              <span>{{ surprisePick.walking_time_min }} min ({{ surprisePick.distance_meters }} m)</span>
+            </div>
+            <p v-if="surprisePick.address" class="text-xs text-[var(--text-faint)] font-serif truncate max-w-sm mx-auto">
+              {{ surprisePick.address }}
+            </p>
+          </div>
+        </div>
+
+        <!-- Boutons d'attribution de vote rapide -->
+        <div v-if="!isRolling && surprisePick" class="space-y-3">
+          <p class="text-xs font-serif text-center text-[var(--text-muted)] font-medium">Attribuer directement à votre sélection :</p>
+          <div class="grid grid-cols-3 gap-2">
+            <button
+              type="button"
+              @click="assignSurpriseRank(1)"
+              class="py-2.5 px-2 rounded-xl bg-[var(--accent-red)] hover:bg-[var(--accent-red)]/90 text-white font-serif font-bold text-xs sm:text-sm transition flex flex-col items-center justify-center cursor-pointer shadow-xs"
+            >
+              <span>1er Choix</span>
+              <span class="text-[11px] opacity-90">+3 pts</span>
+            </button>
+            <button
+              type="button"
+              @click="assignSurpriseRank(2)"
+              class="py-2.5 px-2 rounded-xl bg-[var(--accent-brass)] hover:bg-[var(--accent-brass)]/90 text-white font-serif font-bold text-xs sm:text-sm transition flex flex-col items-center justify-center cursor-pointer shadow-xs"
+            >
+              <span>2e Choix</span>
+              <span class="text-[11px] opacity-90">+2 pts</span>
+            </button>
+            <button
+              type="button"
+              @click="assignSurpriseRank(3)"
+              class="py-2.5 px-2 rounded-xl bg-[var(--accent-zinc)] hover:bg-[var(--accent-zinc)]/90 text-white font-serif font-bold text-xs sm:text-sm transition flex flex-col items-center justify-center cursor-pointer shadow-xs"
+            >
+              <span>3e Choix</span>
+              <span class="text-[11px] opacity-90">+1 pt</span>
+            </button>
+          </div>
+
+          <div class="flex items-center justify-center gap-3 pt-2">
+            <button
+              type="button"
+              @click="triggerRoll"
+              class="inline-flex items-center gap-2 px-4 py-2 rounded-xl border border-[var(--border-main)] hover:border-[var(--accent-brass)] bg-[var(--bg-surface-inset)] text-[var(--text-main)] text-sm font-serif font-medium transition cursor-pointer"
+            >
+              <Dices class="w-4 h-4 text-[var(--accent-brass)]" />
+              <span>Relancer le dé 🎲</span>
+            </button>
+            <button
+              type="button"
+              @click="showSurpriseModal = false"
+              class="px-4 py-2 rounded-xl text-sm font-serif text-[var(--text-muted)] hover:text-[var(--text-main)] cursor-pointer"
+            >
+              Fermer
+            </button>
+          </div>
+        </div>
       </div>
     </div>
   </div>
