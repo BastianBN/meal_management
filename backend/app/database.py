@@ -47,6 +47,14 @@ async def init_db():
                         sync_conn.execute(text("ALTER TABLE restaurants ADD COLUMN price_level INTEGER DEFAULT 2;"))
                     if "phone" not in existing_cols:
                         sync_conn.execute(text("ALTER TABLE restaurants ADD COLUMN phone VARCHAR(50);"))
+
+                res_sess = sync_conn.execute(text("PRAGMA table_info(sessions);")).fetchall()
+                existing_sess_cols = {row[1] for row in res_sess}
+                if existing_sess_cols:
+                    if "min_rating" not in existing_sess_cols:
+                        sync_conn.execute(text("ALTER TABLE sessions ADD COLUMN min_rating FLOAT;"))
+                    if "dietary_preferences" not in existing_sess_cols:
+                        sync_conn.execute(text("ALTER TABLE sessions ADD COLUMN dietary_preferences JSON DEFAULT '[]';"))
             except Exception:
                 pass
 

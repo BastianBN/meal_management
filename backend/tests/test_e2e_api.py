@@ -98,8 +98,8 @@ async def test_create_session_fails_cleanly_when_no_restaurants(monkeypatch):
 
 
 @pytest.mark.asyncio
-async def test_find_nearby_restaurants_rating_and_stratification():
-    """Vérifie que les restaurants ont une note et sont distribués au-delà du voisinage immédiat."""
+async def test_find_nearby_restaurants_ordered_close_to_far():
+    """Vérifie que les restaurants ont une note et sont triés du plus proche au plus éloigné."""
     from backend.app.services.places import find_nearby_restaurants
     rests = await find_nearby_restaurants(45.732413, 4.8413486, radius_meters=2000, limit=35)
     assert len(rests) > 0
@@ -109,7 +109,43 @@ async def test_find_nearby_restaurants_rating_and_stratification():
         assert r["rating"] is not None
         assert r["rating"] >= 3.5
         assert r["rating_count"] >= 10
-    if len(rests) >= 10:
-        max_dist = max(r["distance_meters"] for r in rests)
-        assert max_dist > 600
+    # Vérification de l'ordre strict par distance croissante (du plus proche au plus loin)
+    for i in range(len(rests) - 1):
+        assert rests[i]["distance_meters"] <= rests[i + 1]["distance_meters"]
+
+
+@pytest.mark.asyncio
+async def test_find_nearby_restaurants_min_rating_filter():
+    """Vérifie que le filtre min_rating ne retourne que des établissements atteignant la note."""
+    from backend.app.services.places import find_nearby_restaurants
+    min_rate = 4.3
+    rests = await find_nearby_restaurants(45.732413, 4.8413486, radius_meters=2000, limit=20, min_rating=min_rate)
+    assert len(rests) > 0
+    for r in rests:
+        assert r["rating"] >= min_rate
+
+
+@pytest.mark.asyncio
+async def test_session_create_with_min_rating_and_diet():
+    """Vérifie la création d'une session avec options min_rating et dietary_preferences."""
+    async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as client:
+        resp = await client.post("/api/sessions", json={
+            "departure_address": "Place Bellecour, Lyon",
+            "radius_meters": 1200,
+            "limit": 20,
+            "min_rating": 4.0,
+            "dietary_preferences": ["vegetarian"]
+        })
+        assert resp.status_code == 201
+        data = resp.json()
+        assert data["min_rating"] == 4.0
+        assert "vegetarian" in data["dietary_preferences"]
+        assert len(data["restaurants"]) > 0
+        for r in data["restaurants"]:
+            assert r["rating"] >= 4.0
+            assert "vegetarian" in r["dietary_tags"]
+            assert r["distance_meters"] <= 1200
+        # Vérification de l'ordre par distance
+        for i in range(len(data["restaurants"]) - 1):
+            assert data["restaurants"][i]["distance_meters"] <= data["restaurants"][i+1]["distance_meters"]
 

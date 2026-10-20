@@ -24,7 +24,8 @@ const errorMessage = ref('');
 const copySuccess = ref(false);
 const showMap = ref(true);
 
-const sortBy = ref('rating'); // 'rating' or 'distance'
+const sortBy = ref('distance'); // 'distance' par défaut (du plus proche au plus éloigné) ou 'rating'
+const selectedRating = ref(3.5); // slider 1 décimale de 3.5 à 5.0 (3.5 = Toutes les notes)
 const selectedCuisine = ref('ALL');
 const selectedDiet = ref('ALL'); // 'ALL', 'vegetarian', 'vegan', 'gluten_free', 'halal'
 const selectedPrice = ref('ALL'); // 'ALL', 1, 2, 3
@@ -60,6 +61,12 @@ const filteredRestaurants = computed(() => {
       (r.address && r.address.toLowerCase().includes(q)) ||
       (r.cuisine && r.cuisine.toLowerCase().includes(q))
     );
+  }
+
+  // Filtre note minimale (slider 1 décimale)
+  if (Number(selectedRating.value) > 3.5) {
+    const minR = Number(selectedRating.value);
+    list = list.filter(r => (Number(r.rating) || 0) >= minR);
   }
 
   // Filtre cuisine
@@ -292,7 +299,26 @@ async function handleVoteSubmit() {
               Périmètre : <strong class="text-[var(--text-main)] font-semibold">{{ session.radius_meters >= 1000 ? (session.radius_meters / 1000).toFixed(1).replace('.', ',') + ' km' : session.radius_meters + ' m' }}</strong> (~{{ Math.round(session.radius_meters / 100) }} min à pied)
             </span>
             <span class="text-[var(--text-faint)]">•</span>
-            <span class="font-medium text-sm sm:text-base text-[var(--text-main)]">{{ restaurants.length }} restaurants trouvés</span>
+            <span class="font-medium text-sm sm:text-base text-[var(--text-main)]">{{ restaurants.length }} adresses retenues</span>
+
+            <template v-if="session.min_rating">
+              <span class="text-[var(--text-faint)]">•</span>
+              <span class="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-[var(--accent-brass-soft)] border border-[var(--accent-brass-border)] text-[var(--accent-brass)] text-xs sm:text-sm font-semibold">
+                <Star class="w-3.5 h-3.5 fill-current" />
+                Filtre départ : dès {{ Number(session.min_rating).toFixed(1) }}★
+              </span>
+            </template>
+
+            <template v-if="session.dietary_preferences && session.dietary_preferences.length > 0">
+              <span class="text-[var(--text-faint)]">•</span>
+              <span 
+                v-for="pref in session.dietary_preferences" 
+                :key="pref"
+                class="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-emerald-500/15 border border-emerald-500/30 text-emerald-800 dark:text-emerald-300 text-xs sm:text-sm font-medium"
+              >
+                {{ pref === 'vegan' ? '🌱 Végan' : pref === 'vegetarian' ? '🌿 Végétarien' : pref === 'gluten_free' ? '🌾 Sans gluten' : pref === 'halal' ? '☪️ Halal' : pref }}
+              </span>
+            </template>
           </div>
         </div>
 
@@ -491,83 +517,116 @@ async function handleVoteSubmit() {
         </div>
       </div>
 
-      <!-- Ligne 2 : Filtres Régimes alimentaires (Végétarien, Végan, Sans Gluten, Halal) -->
-      <div class="flex flex-wrap items-center gap-2 pt-2 border-t border-[var(--border-subtle)] text-xs sm:text-sm">
-        <span class="font-serif font-bold text-[var(--text-muted)] shrink-0 mr-1">Régime :</span>
-        <button
-          type="button"
-          @click="selectedDiet = 'ALL'"
-          :class="[
-            selectedDiet === 'ALL' 
-              ? 'bg-[var(--accent-brass)] text-white font-bold border-[var(--accent-brass)] shadow-xs' 
-              : 'bg-[var(--bg-surface-inset)] text-[var(--text-muted)] border-[var(--border-main)] hover:bg-[var(--bg-surface)]',
-            'px-3 py-1 rounded-full border transition font-serif cursor-pointer'
-          ]"
-        >
-          Tous régimes
-        </button>
+      <!-- Ligne 2 : Slider Note (1 décimale) + Régimes alimentaires & Prix -->
+      <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-3 pt-2.5 border-t border-[var(--border-subtle)]">
+        <!-- Slider Note minimale (1 décimale) -->
+        <div class="flex items-center gap-2.5 bg-[var(--bg-surface-inset)] px-3 py-1.5 rounded-xl border border-[var(--border-main)] lg:max-w-xs w-full shadow-2xs">
+          <div class="flex items-center gap-1 shrink-0 text-xs sm:text-sm font-serif font-bold text-[var(--text-main)]">
+            <Star class="w-3.5 h-3.5 text-[var(--accent-brass)] fill-[var(--accent-brass)] shrink-0" />
+            <span class="whitespace-nowrap">Note min. :</span>
+          </div>
+          <div class="flex-1 flex items-center gap-2">
+            <input
+              type="range"
+              min="3.5"
+              max="5.0"
+              step="0.1"
+              v-model.number="selectedRating"
+              class="slider-custom flex-1 cursor-pointer"
+              title="Filtrer par note minimale (au dixième)"
+            />
+            <span class="font-serif font-bold text-xs sm:text-sm text-[var(--accent-brass)] min-w-[50px] text-right whitespace-nowrap">
+              {{ selectedRating <= 3.5 ? 'Toutes' : '≥ ' + Number(selectedRating).toFixed(1) + '★' }}
+            </span>
+          </div>
+          <button
+            v-if="selectedRating > 3.5"
+            type="button"
+            @click="selectedRating = 3.5"
+            class="text-[11px] text-[var(--text-faint)] hover:text-[var(--accent-red)] font-serif cursor-pointer ml-0.5"
+            title="Réinitialiser le filtre de note"
+          >
+            ✕
+          </button>
+        </div>
 
-        <button
-          type="button"
-          @click="selectedDiet = selectedDiet === 'vegetarian' ? 'ALL' : 'vegetarian'"
-          :class="[
-            selectedDiet === 'vegetarian' 
-              ? 'bg-emerald-700 text-white font-bold border-emerald-600 shadow-xs' 
-              : 'bg-[var(--bg-surface-inset)] text-[var(--text-muted)] border-[var(--border-main)] hover:bg-[var(--bg-surface)]',
-            'px-3 py-1 rounded-full border transition font-serif cursor-pointer flex items-center gap-1'
-          ]"
-        >
-          <span>🌿</span>
-          <span>Végétarien</span>
-        </button>
+        <!-- Filtres Régimes alimentaires (Végétarien, Végan, Sans Gluten, Halal) & Prix -->
+        <div class="flex flex-wrap items-center gap-2 text-xs sm:text-sm">
+          <span class="font-serif font-bold text-[var(--text-muted)] shrink-0 mr-1">Régime :</span>
+          <button
+            type="button"
+            @click="selectedDiet = 'ALL'"
+            :class="[
+              selectedDiet === 'ALL' 
+                ? 'bg-[var(--accent-brass)] text-white font-bold border-[var(--accent-brass)] shadow-xs' 
+                : 'bg-[var(--bg-surface-inset)] text-[var(--text-muted)] border-[var(--border-main)] hover:bg-[var(--bg-surface)]',
+              'px-3 py-1 rounded-full border transition font-serif cursor-pointer'
+            ]"
+          >
+            Tous régimes
+          </button>
 
-        <button
-          type="button"
-          @click="selectedDiet = selectedDiet === 'vegan' ? 'ALL' : 'vegan'"
-          :class="[
-            selectedDiet === 'vegan' 
-              ? 'bg-green-700 text-white font-bold border-green-600 shadow-xs' 
-              : 'bg-[var(--bg-surface-inset)] text-[var(--text-muted)] border-[var(--border-main)] hover:bg-[var(--bg-surface)]',
-            'px-3 py-1 rounded-full border transition font-serif cursor-pointer flex items-center gap-1'
-          ]"
-        >
-          <span>🌱</span>
-          <span>Végan</span>
-        </button>
+          <button
+            type="button"
+            @click="selectedDiet = selectedDiet === 'vegetarian' ? 'ALL' : 'vegetarian'"
+            :class="[
+              selectedDiet === 'vegetarian' 
+                ? 'bg-emerald-700 text-white font-bold border-emerald-600 shadow-xs' 
+                : 'bg-[var(--bg-surface-inset)] text-[var(--text-muted)] border-[var(--border-main)] hover:bg-[var(--bg-surface)]',
+              'px-3 py-1 rounded-full border transition font-serif cursor-pointer flex items-center gap-1'
+            ]"
+          >
+            <span>🌿</span>
+            <span>Végétarien</span>
+          </button>
 
-        <button
-          type="button"
-          @click="selectedDiet = selectedDiet === 'gluten_free' ? 'ALL' : 'gluten_free'"
-          :class="[
-            selectedDiet === 'gluten_free' 
-              ? 'bg-amber-700 text-white font-bold border-amber-600 shadow-xs' 
-              : 'bg-[var(--bg-surface-inset)] text-[var(--text-muted)] border-[var(--border-main)] hover:bg-[var(--bg-surface)]',
-            'px-3 py-1 rounded-full border transition font-serif cursor-pointer flex items-center gap-1'
-          ]"
-        >
-          <span>🌾</span>
-          <span>Sans gluten</span>
-        </button>
+          <button
+            type="button"
+            @click="selectedDiet = selectedDiet === 'vegan' ? 'ALL' : 'vegan'"
+            :class="[
+              selectedDiet === 'vegan' 
+                ? 'bg-green-700 text-white font-bold border-green-600 shadow-xs' 
+                : 'bg-[var(--bg-surface-inset)] text-[var(--text-muted)] border-[var(--border-main)] hover:bg-[var(--bg-surface)]',
+              'px-3 py-1 rounded-full border transition font-serif cursor-pointer flex items-center gap-1'
+            ]"
+          >
+            <span>🌱</span>
+            <span>Végan</span>
+          </button>
 
-        <button
-          type="button"
-          @click="selectedDiet = selectedDiet === 'halal' ? 'ALL' : 'halal'"
-          :class="[
-            selectedDiet === 'halal' 
-              ? 'bg-teal-700 text-white font-bold border-teal-600 shadow-xs' 
-              : 'bg-[var(--bg-surface-inset)] text-[var(--text-muted)] border-[var(--border-main)] hover:bg-[var(--bg-surface)]',
-            'px-3 py-1 rounded-full border transition font-serif cursor-pointer flex items-center gap-1'
-          ]"
-        >
-          <span>☪️</span>
-          <span>Halal</span>
-        </button>
+          <button
+            type="button"
+            @click="selectedDiet = selectedDiet === 'gluten_free' ? 'ALL' : 'gluten_free'"
+            :class="[
+              selectedDiet === 'gluten_free' 
+                ? 'bg-amber-700 text-white font-bold border-amber-600 shadow-xs' 
+                : 'bg-[var(--bg-surface-inset)] text-[var(--text-muted)] border-[var(--border-main)] hover:bg-[var(--bg-surface)]',
+              'px-3 py-1 rounded-full border transition font-serif cursor-pointer flex items-center gap-1'
+            ]"
+          >
+            <span>🌾</span>
+            <span>Sans gluten</span>
+          </button>
 
-        <!-- Séparateur visuel -->
-        <span class="text-[var(--text-faint)] hidden sm:inline px-1">|</span>
+          <button
+            type="button"
+            @click="selectedDiet = selectedDiet === 'halal' ? 'ALL' : 'halal'"
+            :class="[
+              selectedDiet === 'halal' 
+                ? 'bg-teal-700 text-white font-bold border-teal-600 shadow-xs' 
+                : 'bg-[var(--bg-surface-inset)] text-[var(--text-muted)] border-[var(--border-main)] hover:bg-[var(--bg-surface)]',
+              'px-3 py-1 rounded-full border transition font-serif cursor-pointer flex items-center gap-1'
+            ]"
+          >
+            <span>☪️</span>
+            <span>Halal</span>
+          </button>
 
-        <!-- Filtre Gamme de Prix -->
-        <span class="font-serif font-bold text-[var(--text-muted)] shrink-0 mr-1">Prix :</span>
+          <!-- Séparateur visuel -->
+          <span class="text-[var(--text-faint)] hidden sm:inline px-1">|</span>
+
+          <!-- Filtre Gamme de Prix -->
+          <span class="font-serif font-bold text-[var(--text-muted)] shrink-0 mr-1">Prix :</span>
         <button
           type="button"
           @click="selectedPrice = 'ALL'"
@@ -622,6 +681,7 @@ async function handleVoteSubmit() {
         >
           €€€ (&gt;25€)
         </button>
+        </div>
       </div>
 
       <!-- Ligne 3 : Cuisines, Formules, Compteur & Reset -->
@@ -657,9 +717,9 @@ async function handleVoteSubmit() {
 
         <div class="flex items-center gap-3">
           <button
-            v-if="selectedDiet !== 'ALL' || selectedPrice !== 'ALL' || selectedCuisine !== 'ALL' || onlyWithMenu || searchQuery"
+            v-if="Number(selectedRating) > 3.5 || selectedDiet !== 'ALL' || selectedPrice !== 'ALL' || selectedCuisine !== 'ALL' || onlyWithMenu || searchQuery"
             type="button"
-            @click="selectedDiet = 'ALL'; selectedPrice = 'ALL'; selectedCuisine = 'ALL'; onlyWithMenu = false; searchQuery = '';"
+            @click="selectedRating = 3.5; selectedDiet = 'ALL'; selectedPrice = 'ALL'; selectedCuisine = 'ALL'; onlyWithMenu = false; searchQuery = '';"
             class="text-xs font-serif text-[var(--accent-red)] hover:underline cursor-pointer"
           >
             Réinitialiser
@@ -687,10 +747,10 @@ async function handleVoteSubmit() {
       <!-- État vide si filtre trop restrictif -->
       <div v-if="filteredRestaurants.length === 0" class="bistro-card-frame rounded-2xl p-8 text-center text-[var(--text-muted)] space-y-2 shadow-sm">
         <p class="font-serif text-2xl font-normal text-[var(--text-main)]">Aucun restaurant ne correspond à vos filtres.</p>
-        <p class="text-sm">Essayez d'assouplir le régime alimentaire ou de sélectionner "Toutes les cuisines".</p>
+        <p class="text-sm">Essayez d'assouplir la note, le régime alimentaire ou de sélectionner "Toutes les cuisines".</p>
         <button
           type="button"
-          @click="searchQuery = ''; selectedCuisine = 'ALL'; selectedDiet = 'ALL'; selectedPrice = 'ALL'; onlyWithMenu = false;"
+          @click="searchQuery = ''; selectedRating = 3.5; selectedCuisine = 'ALL'; selectedDiet = 'ALL'; selectedPrice = 'ALL'; onlyWithMenu = false;"
           class="mt-2 inline-flex items-center px-4 py-2 rounded-xl bg-[var(--bg-surface-inset)] border border-[var(--border-main)] text-sm font-serif font-medium text-[var(--text-main)] hover:bg-[var(--bg-surface)] cursor-pointer shadow-xs"
         >
           Réinitialiser tous les filtres

@@ -17,6 +17,8 @@ class SessionModel(Base):
     latitude = Column(Float, nullable=False)
     longitude = Column(Float, nullable=False)
     radius_meters = Column(Integer, default=800)
+    min_rating = Column(Float, nullable=True)
+    dietary_preferences = Column(JSON, default=list)
     is_closed = Column(Boolean, default=False)
     created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
 

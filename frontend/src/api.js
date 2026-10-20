@@ -2,17 +2,26 @@ const API_BASE_URL = import.meta.env.VITE_API_BASE_URL
   ? import.meta.env.VITE_API_BASE_URL.replace(/\/$/, '') 
   : '';
 
-export async function createSession(departureAddress, radiusMeters = 800, limit = 35) {
+export async function createSession(departureAddress, radiusMeters = 1500, limit = 35, options = {}) {
+  const payload = {
+    departure_address: departureAddress,
+    radius_meters: Number(radiusMeters),
+    limit: Number(limit),
+  };
+
+  if (options.minRating !== undefined && options.minRating !== null && options.minRating !== 'ALL' && Number(options.minRating) > 0) {
+    payload.min_rating = Number(options.minRating);
+  }
+
+  if (Array.isArray(options.dietaryPreferences) && options.dietaryPreferences.length > 0) {
+    payload.dietary_preferences = options.dietaryPreferences;
+  }
+
   const res = await fetch(`${API_BASE_URL}/api/sessions`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      departure_address: departureAddress,
-      radius_meters: Number(radiusMeters),
-      limit: Number(limit),
-    }),
+    body: JSON.stringify(payload),
   });
-
 
   if (!res.ok) {
     const errorData = await res.json().catch(() => ({}));

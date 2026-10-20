@@ -84,10 +84,19 @@ async def create_session(payload: SessionCreate, db: AsyncSession = Depends(get_
     except GeocodingError as e:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))
 
-    radius = payload.radius_meters or 800
+    radius = payload.radius_meters or 1500
     limit = payload.limit or 35
+    min_rating = payload.min_rating
+    dietary_preferences = payload.dietary_preferences or []
+
     try:
-        raw_restaurants = await find_nearby_restaurants(lat, lon, radius_meters=radius, limit=limit)
+        raw_restaurants = await find_nearby_restaurants(
+            lat, lon, 
+            radius_meters=radius, 
+            limit=limit,
+            min_rating=min_rating,
+            dietary_preferences=dietary_preferences
+        )
     except Exception as exc:
         logger.error(f"Erreur lors de la recherche des restaurants: {exc}")
         raise HTTPException(
@@ -96,9 +105,15 @@ async def create_session(payload: SessionCreate, db: AsyncSession = Depends(get_
         )
 
     if not raw_restaurants:
+        detail_msg = "Aucun restaurant trouvé à proximité de cette adresse"
+        if min_rating or dietary_preferences:
+            detail_msg += " avec les critères demandés (note minimale ou régime spécifique)."
+        else:
+            detail_msg += " pour ce rayon de marche."
+        detail_msg += " Veuillez augmenter la durée de marche ou assouplir les filtres de départ."
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
-            detail="Aucun restaurant trouvé à proximité de cette adresse pour ce rayon de marche. Veuillez augmenter la durée de marche ou préciser l'adresse."
+            detail=detail_msg
         )
 
     # Scraping concurrent des menus avec sémaphore (max 6 requêtes simultanées)
@@ -115,6 +130,8 @@ async def create_session(payload: SessionCreate, db: AsyncSession = Depends(get_
         latitude=lat,
         longitude=lon,
         radius_meters=radius,
+        min_rating=min_rating,
+        dietary_preferences=dietary_preferences,
         is_closed=False
     )
     db.add(new_session)
@@ -158,6 +175,9 @@ async def create_session(payload: SessionCreate, db: AsyncSession = Depends(get_
     )
     result = await db.execute(stmt)
     session_with_rests = result.scalar_one()
+
+    # Trier les restaurants par distance croissante pour cohérence totale
+    session_with_rests.restaurants.sort(key=lambda r: r.distance_meters)
 
     return session_with_rests
 

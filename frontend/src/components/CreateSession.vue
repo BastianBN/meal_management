@@ -7,22 +7,18 @@ const emit = defineEmits(['sessionCreated']);
 
 const departureAddress = ref('');
 const walkMinutes = ref(15);
-const maxRestaurants = ref(35);
+const maxRestaurants = ref(30);
+const selectedMinRating = ref(3.5); // slider 1 décimale de 3.5 à 5.0 (3.5 = Toutes les notes)
+const selectedDietary = ref([]); // ['vegan', 'vegetarian', 'gluten_free', 'halal']
+
 const WALKING_SPEED_M_PER_MIN = 100; // Allure dynamique ~6 km/h (100 m/min)
 const radiusMeters = computed(() => Math.round(walkMinutes.value * WALKING_SPEED_M_PER_MIN));
 const isLoading = ref(false);
 const loadingStep = ref('');
 const errorMessage = ref('');
 
-// Si l'utilisateur choisit un très grand rayon (>=25 min), suggérer 50 restaurants automatiquement
-watch(walkMinutes, (newMins) => {
-  if (newMins >= 25 && maxRestaurants.value === 20) {
-    maxRestaurants.value = 50;
-  }
-});
-
-// Efface l'erreur dès que l'utilisateur modifie l'adresse ou la durée
-watch([departureAddress, walkMinutes, maxRestaurants], () => {
+// Efface l'erreur dès que l'utilisateur modifie l'adresse, la durée ou les filtres
+watch([departureAddress, walkMinutes, maxRestaurants, selectedMinRating, selectedDietary], () => {
   if (errorMessage.value) errorMessage.value = '';
 });
 
@@ -34,6 +30,22 @@ const durationPresets = [
   { minutes: 30, label: '30 min', meters: '~3 km' },
 ];
 
+const dietaryOptions = [
+  { id: 'vegan', label: 'Végan', icon: '🌱', desc: '100% végétal' },
+  { id: 'vegetarian', label: 'Végétarien', icon: '🌿', desc: 'Sans viande/poisson' },
+  { id: 'gluten_free', label: 'Sans gluten', icon: '🌾', desc: 'Plats sans gluten' },
+  { id: 'halal', label: 'Halal', icon: '☪️', desc: 'Viandes certifiées' },
+];
+
+function toggleDietary(id) {
+  const index = selectedDietary.value.indexOf(id);
+  if (index >= 0) {
+    selectedDietary.value.splice(index, 1);
+  } else {
+    selectedDietary.value.push(id);
+  }
+}
+
 async function handleCreateSession() {
   const address = departureAddress.value.trim();
   if (!address) {
@@ -43,10 +55,14 @@ async function handleCreateSession() {
 
   isLoading.value = true;
   errorMessage.value = '';
-  loadingStep.value = "Recherche des restaurants les mieux notés et extraction des formules...";
+  loadingStep.value = "Recherche des restaurants les plus proches et extraction des menus...";
 
   try {
-    const session = await createSession(address, radiusMeters.value, maxRestaurants.value);
+    const options = {
+      minRating: Number(selectedMinRating.value) > 3.5 ? Number(selectedMinRating.value) : null,
+      dietaryPreferences: selectedDietary.value,
+    };
+    const session = await createSession(address, radiusMeters.value, maxRestaurants.value, options);
     emit('sessionCreated', session);
   } catch (err) {
     errorMessage.value = err.message || "Une erreur est survenue lors de la création de la session.";
@@ -213,16 +229,22 @@ async function handleCreateSession() {
               </div>
 
               <!-- Nombre de restaurants -->
-              <div class="space-y-2.5">
-                <label class="block font-serif text-base font-semibold text-[var(--text-main)]">
-                  Nombre de restaurants à retenir
-                </label>
-                <div class="grid grid-cols-3 gap-2">
+              <div class="space-y-2">
+                <div class="flex items-center justify-between">
+                  <label class="block font-serif text-base font-semibold text-[var(--text-main)]">
+                    Nombre d'adresses à retenir
+                  </label>
+                  <span class="text-xs text-[var(--text-muted)] font-serif italic">
+                    {{ maxRestaurants }} adresses
+                  </span>
+                </div>
+                <div class="grid grid-cols-4 gap-2">
                   <button
                     v-for="opt in [
-                      { count: 20, label: '20 adresses', desc: 'Sélection' },
-                      { count: 35, label: '35 adresses', desc: 'Recommandé' },
-                      { count: 50, label: '50 adresses', desc: 'Large choix' },
+                      { count: 20, label: '20', desc: 'Rapide' },
+                      { count: 30, label: '30', desc: 'Idéal' },
+                      { count: 40, label: '40', desc: 'Élargi' },
+                      { count: 50, label: '50', desc: 'Max' },
                     ]"
                     :key="opt.count"
                     type="button"
@@ -232,7 +254,7 @@ async function handleCreateSession() {
                       maxRestaurants === opt.count
                         ? 'bg-[var(--accent-red)] border border-[var(--accent-red)] text-white font-medium shadow-sm'
                         : 'bg-[var(--bg-surface)] border border-[var(--border-main)] text-[var(--text-muted)] hover:border-[var(--accent-brass)] hover:text-[var(--text-main)]',
-                      'cursor-pointer transition p-3 rounded-2xl text-center flex flex-col items-center justify-center'
+                      'cursor-pointer transition p-2.5 rounded-2xl text-center flex flex-col items-center justify-center'
                     ]"
                   >
                     <span class="font-serif text-base sm:text-lg font-bold">{{ opt.label }}</span>
@@ -248,14 +270,140 @@ async function handleCreateSession() {
                 </div>
               </div>
 
+              <!-- Note minimale de départ (Slider 1 décimale) -->
+              <div class="space-y-2.5 bg-[var(--bg-surface-inset)] p-4 rounded-2xl border border-[var(--border-subtle)]">
+                <div class="flex items-center justify-between gap-2">
+                  <label for="create-rating-slider" class="block font-serif text-base font-semibold text-[var(--text-main)] flex items-center gap-1.5">
+                    <Star class="w-4 h-4 text-[var(--accent-brass)] fill-[var(--accent-brass)] shrink-0" />
+                    <span>Note minimale de départ</span>
+                  </label>
+                  <div class="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-[var(--bg-surface)] border border-[var(--border-main)] text-sm shadow-xs">
+                    <Star class="w-3.5 h-3.5 text-[var(--accent-brass)] fill-[var(--accent-brass)]" />
+                    <span class="font-serif font-bold text-base text-[var(--accent-brass)]">
+                      {{ selectedMinRating <= 3.5 ? 'Toutes (dès 3.5★)' : '≥ ' + Number(selectedMinRating).toFixed(1) + '★' }}
+                    </span>
+                  </div>
+                </div>
+
+                <div class="py-1">
+                  <input
+                    id="create-rating-slider"
+                    v-model.number="selectedMinRating"
+                    type="range"
+                    min="3.5"
+                    max="5.0"
+                    step="0.1"
+                    :disabled="isLoading"
+                    class="slider-custom cursor-pointer"
+                  />
+                </div>
+
+                <!-- Raccourcis cliquables sous le slider -->
+                <div class="flex justify-between items-center text-xs font-serif text-[var(--text-muted)]">
+                  <button
+                    type="button"
+                    :disabled="isLoading"
+                    @click="selectedMinRating = 3.5"
+                    :class="[selectedMinRating <= 3.5 ? 'text-[var(--accent-brass)] font-bold' : 'hover:text-[var(--text-main)]', 'cursor-pointer transition']"
+                  >
+                    3.5★ (Toutes)
+                  </button>
+                  <button
+                    type="button"
+                    :disabled="isLoading"
+                    @click="selectedMinRating = 4.0"
+                    :class="[selectedMinRating === 4.0 ? 'text-[var(--accent-brass)] font-bold' : 'hover:text-[var(--text-main)]', 'cursor-pointer transition']"
+                  >
+                    4.0★
+                  </button>
+                  <button
+                    type="button"
+                    :disabled="isLoading"
+                    @click="selectedMinRating = 4.2"
+                    :class="[selectedMinRating === 4.2 ? 'text-[var(--accent-brass)] font-bold' : 'hover:text-[var(--text-main)]', 'cursor-pointer transition']"
+                  >
+                    4.2★
+                  </button>
+                  <button
+                    type="button"
+                    :disabled="isLoading"
+                    @click="selectedMinRating = 4.5"
+                    :class="[selectedMinRating === 4.5 ? 'text-[var(--accent-brass)] font-bold' : 'hover:text-[var(--text-main)]', 'cursor-pointer transition']"
+                  >
+                    4.5★
+                  </button>
+                  <button
+                    type="button"
+                    :disabled="isLoading"
+                    @click="selectedMinRating = 5.0"
+                    :class="[selectedMinRating === 5.0 ? 'text-[var(--accent-brass)] font-bold' : 'hover:text-[var(--text-main)]', 'cursor-pointer transition']"
+                  >
+                    5.0★
+                  </button>
+                </div>
+
+                <p class="text-xs text-[var(--text-muted)] font-serif">
+                  Seuls les restaurants atteignant cette note seront sélectionnés au départ.
+                </p>
+              </div>
+
+              <!-- Régimes alimentaires requis d'office -->
+              <div class="space-y-2">
+                <div class="flex items-center justify-between">
+                  <label class="block font-serif text-base font-semibold text-[var(--text-main)]">
+                    Régimes alimentaires pré-requis
+                  </label>
+                  <span v-if="selectedDietary.length > 0" class="text-xs text-[var(--accent-brass)] font-serif font-bold">
+                    {{ selectedDietary.length }} actif{{ selectedDietary.length > 1 ? 's' : '' }}
+                  </span>
+                  <span v-else class="text-xs text-[var(--text-muted)] font-serif italic">
+                    Optionnel
+                  </span>
+                </div>
+                <div class="grid grid-cols-2 gap-2">
+                  <button
+                    v-for="diet in dietaryOptions"
+                    :key="diet.id"
+                    type="button"
+                    :disabled="isLoading"
+                    @click="toggleDietary(diet.id)"
+                    :class="[
+                      selectedDietary.includes(diet.id)
+                        ? 'bg-[var(--accent-brass-soft)] border-2 border-[var(--accent-brass)] text-[var(--accent-brass)] font-bold shadow-xs'
+                        : 'bg-[var(--bg-surface)] border border-[var(--border-main)] text-[var(--text-muted)] hover:border-[var(--accent-brass)] hover:text-[var(--text-main)]',
+                      'cursor-pointer transition p-2.5 rounded-2xl text-left flex items-center justify-between gap-2'
+                    ]"
+                  >
+                    <div class="flex items-center gap-2">
+                      <span class="text-lg">{{ diet.icon }}</span>
+                      <div>
+                        <span class="font-serif text-sm font-bold block leading-tight">{{ diet.label }}</span>
+                        <span class="text-[11px] text-[var(--text-faint)] font-serif italic block">{{ diet.desc }}</span>
+                      </div>
+                    </div>
+                    <div 
+                      :class="[
+                        selectedDietary.includes(diet.id) ? 'bg-[var(--accent-brass)] text-white' : 'border border-[var(--border-main)]',
+                        'w-4 h-4 rounded-full flex items-center justify-center shrink-0 text-[10px]'
+                      ]"
+                    >
+                      <span v-if="selectedDietary.includes(diet.id)">✓</span>
+                    </div>
+                  </button>
+                </div>
+                <p class="text-xs text-[var(--text-muted)] font-serif">
+                  Les adresses retenues intégreront ces régimes. Vous pourrez toujours filtrer lors du vote.
+                </p>
+              </div>
+
               <!-- Comment fonctionne le vote -->
-              <div class="p-4 rounded-2xl bg-[var(--bg-surface-inset)] border border-[var(--border-subtle)] text-sm sm:text-base text-[var(--text-muted)] space-y-1.5">
-                <div class="flex items-center gap-2 text-[var(--accent-brass)] font-serif font-bold text-sm uppercase tracking-wider">
+              <div class="p-3.5 rounded-2xl bg-[var(--bg-surface-inset)] border border-[var(--border-subtle)] text-xs sm:text-sm text-[var(--text-muted)] space-y-1">
+                <div class="flex items-center gap-1.5 text-[var(--accent-brass)] font-serif font-bold uppercase tracking-wider text-xs">
                   <span>💡</span>
                   <span>Principe du vote</span>
                 </div>
                 <p class="leading-relaxed font-serif">
-                  Chaque personne choisit <strong>3 restaurants préférés</strong> (1er choix : 3 pts, 2e : 2 pts, 3e : 1 pt). Les résultats et le nombre de participants s'actualisent en direct.
+                  Chaque personne choisit <strong>3 restaurants préférés</strong> (1er : 3 pts, 2e : 2 pts, 3e : 1 pt). Résultats en direct.
                 </p>
               </div>
 

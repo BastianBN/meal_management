@@ -39,8 +39,10 @@ class RestaurantResponse(RestaurantBase):
 
 class SessionCreate(BaseModel):
     departure_address: str = Field(..., min_length=2, description="Adresse de départ")
-    radius_meters: Optional[int] = Field(default=1000, ge=200, le=6000, description="Rayon de marche en mètres")
+    radius_meters: Optional[int] = Field(default=1500, ge=200, le=6000, description="Rayon de marche en mètres")
     limit: Optional[int] = Field(default=35, ge=10, le=60, description="Nombre maximum de restaurants")
+    min_rating: Optional[float] = Field(default=None, ge=1.0, le=5.0, description="Note minimale de départ (ex: 4.0, 4.2, 4.5)")
+    dietary_preferences: Optional[List[str]] = Field(default_factory=list, description="Régimes alimentaires requis au départ (ex: vegan, vegetarian, gluten_free, halal)")
 
 
 
@@ -50,6 +52,8 @@ class SessionResponse(BaseModel):
     latitude: float
     longitude: float
     radius_meters: int
+    min_rating: Optional[float] = None
+    dietary_preferences: List[str] = []
     is_closed: bool
     created_at: datetime
     restaurants: List[RestaurantResponse] = []

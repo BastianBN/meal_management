@@ -230,7 +230,14 @@ async def _fetch_overpass_mirror(client: httpx.AsyncClient, endpoint: str, query
     return None
 
 
-async def _search_nominatim_restaurants(lat: float, lon: float, radius_meters: int, limit: int = settings.MAX_RESTAURANTS) -> List[Dict[str, Any]]:
+async def _search_nominatim_restaurants(
+    lat: float, 
+    lon: float, 
+    radius_meters: int, 
+    limit: int = settings.MAX_RESTAURANTS,
+    min_rating: Optional[float] = None,
+    dietary_preferences: Optional[List[str]] = None
+) -> List[Dict[str, Any]]:
     """Secours via la recherche amenity de Nominatim si tous les miroirs Overpass sont inaccessibles."""
     delta = (radius_meters / 111000.0) * 1.15
     viewbox = f"{lon - delta},{lat + delta},{lon + delta},{lat - delta}"
@@ -281,7 +288,25 @@ async def _search_nominatim_restaurants(lat: float, lon: float, radius_meters: i
                         "price_level": price_level,
                         "phone": phone
                     })
-                restaurants.sort(key=lambda r: r["distance_meters"])
+
+                # Filtre par note minimale
+                if min_rating is not None and min_rating > 0:
+                    restaurants = [
+                        r for r in restaurants 
+                        if r.get("rating") is not None and r["rating"] >= min_rating
+                    ]
+
+                # Filtre par régimes alimentaires préalables
+                if dietary_preferences:
+                    clean_prefs = [p.lower().strip() for p in dietary_preferences if p]
+                    if clean_prefs:
+                        restaurants = [
+                            r for r in restaurants 
+                            if all(pref in (r.get("dietary_tags") or []) for pref in clean_prefs)
+                        ]
+
+                # Tri du plus proche au plus éloigné
+                restaurants.sort(key=lambda r: (r["distance_meters"], -(r.get("rating") or 0)))
                 return restaurants[:limit]
     except Exception as exc:
         logger.debug(f"Nominatim fallback restaurants échoué: {exc}")
@@ -292,12 +317,16 @@ async def find_nearby_restaurants(
     lat: float, 
     lon: float, 
     radius_meters: int = 1000, 
-    limit: Optional[int] = None
+    limit: Optional[int] = None,
+    min_rating: Optional[float] = None,
+    dietary_preferences: Optional[List[str]] = None
 ) -> List[Dict[str, Any]]:
     """
     Interroge l'API Overpass pour trouver les restaurants et brasseries dans un rayon donné.
     Utilise plusieurs miroirs interrogés en concurrence pour une réponse sub-seconde et haute disponibilité.
-    Filtre et distribue intelligemment les restaurants par note et zones de distance.
+    Filtre par note minimale et régimes alimentaires (si demandés), et retourne les établissements
+    ordonnés du plus proche au plus éloigné pour garantir que les restaurants à proximité immédiate
+    apparaissent systématiquement.
     """
     if limit is None:
         limit = settings.MAX_RESTAURANTS
@@ -348,7 +377,9 @@ async def find_nearby_restaurants(
 
     if not data or not data.get("elements"):
         logger.info("Miroirs Overpass indisponibles ou vides. Utilisation du fallback Nominatim...")
-        nominatim_res = await _search_nominatim_restaurants(lat, lon, radius_meters, limit=limit)
+        nominatim_res = await _search_nominatim_restaurants(
+            lat, lon, radius_meters, limit=limit, min_rating=min_rating, dietary_preferences=dietary_preferences
+        )
         if nominatim_res:
             return nominatim_res
         return []
@@ -416,45 +447,28 @@ async def find_nearby_restaurants(
             "phone": phone
         })
 
-    # Si le nombre total est inférieur ou égal à la limite voulue
-    if len(restaurants) <= limit:
-        restaurants.sort(key=lambda r: r["distance_meters"])
-        return restaurants
+    # 1. Filtrer par note minimale si spécifiée
+    if min_rating is not None and min_rating > 0:
+        restaurants = [
+            r for r in restaurants 
+            if r.get("rating") is not None and r["rating"] >= min_rating
+        ]
 
-    # Lorsque le pool est grand, filtrer par note et assurer une répartition géographique sur tout le rayon
-    if radius_meters <= 800:
-        # Pour les petites distances, privilégier directement la note et le score qualité
-        restaurants.sort(key=lambda r: (r["rating"], r["quality_score"], -r["distance_meters"]), reverse=True)
-        selected = restaurants[:limit]
-    else:
-        # Découpage en 3 couronnes de distance pour couvrir tout le trajet piéton
-        band_close = [r for r in restaurants if r["distance_meters"] <= radius_meters * 0.35]
-        band_mid = [r for r in restaurants if radius_meters * 0.35 < r["distance_meters"] <= radius_meters * 0.70]
-        band_far = [r for r in restaurants if r["distance_meters"] > radius_meters * 0.70]
+    # 2. Filtrer par régimes alimentaires préalables si spécifiés
+    if dietary_preferences:
+        clean_prefs = [p.lower().strip() for p in dietary_preferences if p]
+        if clean_prefs:
+            restaurants = [
+                r for r in restaurants 
+                if all(pref in (r.get("dietary_tags") or []) for pref in clean_prefs)
+            ]
 
-        # Quotas cibles
-        q_close = int(round(limit * 0.40))  # 40% proches
-        q_mid = int(round(limit * 0.35))    # 35% mi-distance
-        q_far = limit - q_close - q_mid     # 25% destination
+    # 3. Tri naturel du plus proche au plus éloigné (avec note en cas d'égalité stricte)
+    restaurants.sort(key=lambda r: (r["distance_meters"], -(r.get("rating") or 0), -(r.get("quality_score") or 0)))
 
-        # Trier chaque couronne par note & score qualité en premier
-        for band in (band_close, band_mid, band_far):
-            band.sort(key=lambda r: (r["rating"], r["quality_score"]), reverse=True)
+    # 4. Limiter aux N restaurants demandés
+    if limit is not None and limit > 0:
+        restaurants = restaurants[:limit]
 
-        selected = []
-        selected.extend(band_close[:q_close])
-        selected.extend(band_mid[:q_mid])
-        selected.extend(band_far[:q_far])
-
-        # Si une couronne n'a pas assez d'éléments, compléter avec les meilleurs restants
-        if len(selected) < limit:
-            selected_ids = {r["osm_id"] for r in selected}
-            pool_remaining = [r for r in restaurants if r["osm_id"] not in selected_ids]
-            pool_remaining.sort(key=lambda r: (r["rating"], r["quality_score"]), reverse=True)
-            needed = limit - len(selected)
-            selected.extend(pool_remaining[:needed])
-
-    # Tri final par distance pour une navigation fluide et intuitive
-    selected.sort(key=lambda r: r["distance_meters"])
-    return selected
+    return restaurants
 
