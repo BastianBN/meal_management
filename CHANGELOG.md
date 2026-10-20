@@ -1,3 +1,10 @@
+# [1.5.0](https://github.com/BastianBN/meal_management/compare/v1.4.0...v1.5.0) (2026-10-20)
+
+
+### Features
+
+* add proximity-first ordering, dietary pre-filters, and 1-decimal rating slider ([f9c76df](https://github.com/BastianBN/meal_management/commit/f9c76dfe59c8a94097fe8139dadae8b1957e9a76))
+
 # [1.4.0](https://github.com/BastianBN/meal_management/compare/v1.3.0...v1.4.0) (2026-09-17)
 
 
